@@ -1,7 +1,10 @@
 #pragma once
 #include <vector>
 #include <memory>
+#include "Model.h"
+#include "ModelAssetHandler.h"
 #include "Math/Vector3.hpp"
+#include "Math/Matrix4x4.hpp"
 
 using namespace CommonUtilities;
 
@@ -12,6 +15,7 @@ struct Transform
 	Vector3<float> myPosition;
 	Vector3<float> myRotation;
 	Vector3<float> myScale;
+	Matrix4x4<float> myMatrix;
 };
 
 class SceneObject
@@ -39,15 +43,23 @@ protected:
 class Scene
 {
 public:
+
+	Scene();
+	~Scene();
+	
 	template<typename T>
 	void AddGameObject(std::shared_ptr<T> aSceneObject)
 	{
 		mySceneObjects.push_back(std::move(aSceneObject));
 	}
+	
+	const std::vector<std::shared_ptr<Model>> CullModels(const std::shared_ptr<Camera>& camera) const;
 
-	void SetCamera(std::shared_ptr<Camera> aCamera);
+	void SetMainCamera(const std::shared_ptr<Camera>& aCamera);
+	const std::shared_ptr<Camera>& GetMainCamera() const { return myMainCamera; };
 
 private:
+	ModelAssetHandler myModelAssetHandler;
 	std::vector<std::shared_ptr<SceneObject>> mySceneObjects;
 	std::shared_ptr<Camera> myMainCamera;
 };

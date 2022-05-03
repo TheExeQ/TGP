@@ -2,6 +2,7 @@
 #include <d3d11.h>
 #include <wrl/client.h>
 #include <memory>
+#include <vector>
 #include "Math/Matrix4x4.hpp"
 
 class Camera;
@@ -13,8 +14,8 @@ using namespace Microsoft::WRL;
 class ForwardRenderer
 {
 public:
-	bool Init();
-	void Render(const std::shared_ptr<Camera>& aCamera, const std::shared_ptr<Model>& aModelList);
+	bool Initialize();
+	void Render(const std::shared_ptr<Camera>& aCamera, const std::vector<std::shared_ptr<Model>>& aModelList);
 
 private:
 	

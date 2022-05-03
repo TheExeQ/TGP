@@ -37,7 +37,26 @@ void SceneObject::SetScale(float someX, float someY, float someZ)
 	myTransform.myScale = Vector3<float>(someX, someY, someZ);
 }
 
-void Scene::SetCamera(std::shared_ptr<Camera> aCamera)
+Scene::Scene()
+{
+	myModelAssetHandler.Init();
+}
+
+Scene::~Scene()
+{
+
+}
+
+const std::vector<std::shared_ptr<Model>> Scene::CullModels(const std::shared_ptr<Camera>& camera) const
+{
+	std::vector<std::shared_ptr<Model>> visibleModels;
+
+	visibleModels.push_back(myModelAssetHandler.GetModel("Cube"));
+
+	return visibleModels;
+}
+
+void Scene::SetMainCamera(const std::shared_ptr<Camera>& aCamera)
 {
 	myMainCamera = aCamera;
 }

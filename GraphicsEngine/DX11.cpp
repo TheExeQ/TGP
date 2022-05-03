@@ -81,6 +81,12 @@ bool DX11::Initialize(HWND aWindowHandle, bool aDebug)
 	{
 		return false;
 	}
+	
+	result = depthBufferTexture->Release();
+	if (FAILED(result))
+	{
+		return false;
+	}
 
 	myContext->OMSetRenderTargets(1, myRenderTarget.GetAddressOf(), myDepthStencil.Get());
 	if (FAILED(result))
@@ -88,15 +94,19 @@ bool DX11::Initialize(HWND aWindowHandle, bool aDebug)
 		return false;
 	}
 
-	D3D11_VIEWPORT vp = {};
-	vp.TopLeftX = 0.f;
-	vp.TopLeftY = 0.f;
-	vp.Width = static_cast<FLOAT>(clientRect.right - clientRect.left);
-	vp.Height = static_cast<FLOAT>(clientRect.bottom - clientRect.top);
-	vp.MinDepth = 0.f;
-	vp.MaxDepth = 1.f;
-
-	myContext->RSSetViewports(1, &vp);
+	D3D11_VIEWPORT viewport = {};
+	viewport.Width = static_cast<float>(clientRect.right - clientRect.left);
+	viewport.Height = static_cast<float>(clientRect.bottom - clientRect.top);
+	viewport.MinDepth = 0.0f;
+	viewport.MaxDepth = 1.0f;
+	viewport.TopLeftX = 0;
+	viewport.TopLeftY = 0;
+	myContext->RSSetViewports(1, &viewport);
+	if (FAILED(result))
+	{
+		return false;
+	}
+	
 	return true;
 }
 

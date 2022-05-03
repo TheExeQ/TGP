@@ -2,6 +2,7 @@
 #include <vector>
 #include <memory>
 #include "DX11.h"
+#include "ForwardRenderer.h"
 #include "Scene.h"
 #include "Model.h"
 
@@ -27,6 +28,7 @@ public:
 
 private:
 	DX11 myFramework;
-	Scene myScene;
+	ForwardRenderer myForwardRenderer;
+	std::shared_ptr<Scene> myScene;
 };
 

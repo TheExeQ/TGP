@@ -25,8 +25,8 @@ public:
 	};
 	
 	void Init(ModelData& someModelData, const std::string& aPath);
-	inline const ModelData& GetModelData() const { return myData; }
-	inline std::string GetName() const { return myName; }
+	FORCEINLINE ModelData const& GetModelData() const { return myData; }
+	FORCEINLINE std::string GetName() const { return myName; }
 
 private:
 	ModelData myData;
