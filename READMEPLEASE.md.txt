@@ -1,1 +1,0 @@
-yo sluta jobba bre, orka forka bre
