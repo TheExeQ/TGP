@@ -5,7 +5,6 @@
 *.slo
 *.lo
 *.o
-*.obj
 
 # Precompiled Headers
 *.gch
@@ -14,7 +13,6 @@
 # Compiled Dynamic libraries
 *.so
 *.dylib
-*.dll
 
 # Fortran module files
 *.mod
@@ -24,9 +22,24 @@
 *.lai
 *.la
 *.a
-*.lib
+*.idb
+*.pdb
 
 # Executables
 *.exe
 *.out
 *.app
+
+# Exclude Premake Executable
+!premake5.exe
+
+# Visual Studio Files
+.vs/
+bin/
+bin-int/
+libs/
+!External/**
+*.sln
+*.user
+*.filters
+*.vcxproj
