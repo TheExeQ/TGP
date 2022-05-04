@@ -1,8 +1,10 @@
 #include "GraphicsEngine.pch.h"
 #include "Model.h"
 
-void Model::Init(ModelData& someModelData, const std::string& aPath)
+void Model::Init(ModelData& someModelData, const std::string& aName)
 {
+	myName = aName;
+
 	myData.myVertexBuffer = someModelData.myVertexBuffer;
 	myData.myIndexBuffer = someModelData.myIndexBuffer;
 	myData.myVertexCount = someModelData.myVertexCount;

@@ -2,10 +2,11 @@
 #include <d3d11.h>
 #include <wrl/client.h>
 #include <string>
+#include "Scene.h"
 
 using namespace Microsoft::WRL;
 
-class Model
+class Model : public SceneObject
 {
 public:
 	struct ModelData
@@ -24,7 +25,7 @@ public:
 		UINT myOffset;
 	};
 	
-	void Init(ModelData& someModelData, const std::string& aPath);
+	void Init(ModelData& someModelData, const std::string& aName);
 	FORCEINLINE ModelData const& GetModelData() const { return myData; }
 	FORCEINLINE std::string GetName() const { return myName; }
 

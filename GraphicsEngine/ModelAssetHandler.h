@@ -2,7 +2,8 @@
 #include <unordered_map>
 #include <memory>
 #include <string>
-#include "Model.h"
+
+class Model;
 
 class ModelAssetHandler
 {

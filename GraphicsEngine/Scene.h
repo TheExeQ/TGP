@@ -1,10 +1,9 @@
 #pragma once
 #include <vector>
 #include <memory>
-#include "Model.h"
-#include "ModelAssetHandler.h"
 #include "Math/Vector3.hpp"
 #include "Math/Matrix4x4.hpp"
+#include "ModelAssetHandler.h"
 
 using namespace CommonUtilities;
 
@@ -35,7 +34,7 @@ public:
 	void SetScale(float someX, float someY, float someZ);
 
 	inline const Transform& GetTransform() const { return myTransform; };
-	
+
 protected:
 	Transform myTransform;
 };

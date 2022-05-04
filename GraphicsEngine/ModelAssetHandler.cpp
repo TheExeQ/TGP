@@ -2,6 +2,7 @@
 #include "Vertex.h"
 #include "DX11.h"
 #include <fstream>
+#include "Model.h"
 
 std::unordered_map<std::string, std::shared_ptr<Model>> ModelAssetHandler::myModelRegistry;
 
@@ -71,8 +72,8 @@ bool ModelAssetHandler::InitUnitCube()
 		0, 2, 3,
 
 		// Back
-		4, 5, 6,
-		4, 6, 7,
+		6, 5, 4,
+		7, 6, 4,
 
 		// Left
 		0, 4, 5,

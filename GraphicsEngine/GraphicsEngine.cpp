@@ -51,8 +51,9 @@ bool GraphicsEngine::InitializeScene()
 {	
 	myScene = std::make_shared<Scene>();
 	auto camera = std::make_shared<Camera>();
+	camera->SetProjectionValues(90, 9.f/16.f, 0.1f, 1000.0f);
 	
-	camera->SetPosition(0.0f, 0.0f, -5.0f);
+	camera->SetPosition(0.0f, 0.0f, -250.0f);
 	
 	myScene->SetMainCamera(camera);
 	
@@ -90,6 +91,11 @@ void GraphicsEngine::RenderFrame()
 	{
 		const std::shared_ptr<Camera> camera = myScene->GetMainCamera();
 		const std::vector<std::shared_ptr<Model>> modelsToRender = myScene->CullModels(camera);
+		modelsToRender[0]->SetRotation(
+			modelsToRender[0]->GetTransform().myRotation.x + 1.f,
+			modelsToRender[0]->GetTransform().myRotation.y + 2.5f,
+			modelsToRender[0]->GetTransform().myRotation.z
+			);
 		myForwardRenderer.Render(camera, modelsToRender);
 	}
 }

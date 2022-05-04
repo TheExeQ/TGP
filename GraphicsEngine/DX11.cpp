@@ -112,7 +112,7 @@ bool DX11::Initialize(HWND aWindowHandle, bool aDebug)
 
 void DX11::BeginFrame()
 {
-	float color[] = { 1.f, 0.f, 1.0f, 1.f };
+	float color[] = { 0.f, 1.f, 1.0f, 1.f };
 	myContext->ClearRenderTargetView(myRenderTarget.Get(), color);
 	myContext->ClearDepthStencilView(myDepthStencil.Get(), D3D11_CLEAR_DEPTH | D3D11_CLEAR_STENCIL, 1.0f, 0);
 }

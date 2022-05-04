@@ -1,6 +1,9 @@
 #include "GraphicsEngine.pch.h"
 #include "Camera.h"
+#include "Model.h"
 #include "Scene.h"
+
+#define PI 3.14f
 
 void SceneObject::SetTransform(Transform someTransform)
 {
@@ -9,27 +12,34 @@ void SceneObject::SetTransform(Transform someTransform)
 
 void SceneObject::SetPosition(Vector3<float> somePosition)
 {
-	myTransform.myPosition = somePosition;
+	SetPosition(somePosition.x, somePosition.y, somePosition.z);
 }
 
 void SceneObject::SetPosition(float someX, float someY, float someZ)
 {
 	myTransform.myPosition = Vector3<float>(someX, someY, someZ);
+	myTransform.myMatrix(4, 1) = someX;
+	myTransform.myMatrix(4, 2) = someY;
+	myTransform.myMatrix(4, 3) = someZ;
 }
 
 void SceneObject::SetRotation(Vector3<float> someRotation)
 {
-	myTransform.myRotation = someRotation;
+	SetRotation(someRotation.x, someRotation.y, someRotation.z);
 }
 
 void SceneObject::SetRotation(float someX, float someY, float someZ)
 {
-	myTransform.myRotation = Vector3<float>(someX, someY, someZ);
+	myTransform.myRotation = { someX, someY, someZ};
+	myTransform.myMatrix =
+		myTransform.myMatrix.CreateRotationAroundX(someX * (PI / 180)) *
+		myTransform.myMatrix.CreateRotationAroundY(someY * (PI / 180)) *
+		myTransform.myMatrix.CreateRotationAroundZ(someZ * (PI / 180));
 }
 
 void SceneObject::SetScale(Vector3<float> someScale)
 {
-	myTransform.myScale = someScale;
+	SetScale(someScale.x, someScale.y, someScale.z);
 }
 
 void SceneObject::SetScale(float someX, float someY, float someZ)
