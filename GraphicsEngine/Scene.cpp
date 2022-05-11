@@ -49,7 +49,7 @@ void SceneObject::SetScale(float someX, float someY, float someZ)
 
 Scene::Scene()
 {
-	myModelAssetHandler.Init();
+	mySceneObjects.clear();
 }
 
 Scene::~Scene()
@@ -61,7 +61,7 @@ const std::vector<std::shared_ptr<Model>> Scene::CullModels(const std::shared_pt
 {
 	std::vector<std::shared_ptr<Model>> visibleModels;
 
-	visibleModels.push_back(myModelAssetHandler.GetModel("Cube"));
+	visibleModels.push_back(myModelAssetHandler.GetModelInstance("Cube"));
 
 	return visibleModels;
 }

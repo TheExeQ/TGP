@@ -17,11 +17,13 @@ project "GraphicsEngine"
 	includedirs
 	{
 		"./",
+		"../ThirdParty/"
 	}
 	
 	libdirs
 	{
-		"../libs"
+		"../libs",
+		"../ThirdParty/FBXImporter/lib"
 	}
 	
 	filter { "files:**.hlsl" }
@@ -52,6 +54,7 @@ project "GraphicsEngine"
 		links
 		{
 			"d3d11.lib",
+			"TGAFBXImporter.lib"
 		}
 		
 	filter "configurations:Release"
@@ -62,6 +65,7 @@ project "GraphicsEngine"
 		links
 		{
 			"d3d11.lib",
+			"TGAFBXImporter.lib"
 		}
 		
 	filter "configurations:Retail"
@@ -71,4 +75,5 @@ project "GraphicsEngine"
 		links
 		{
 			"d3d11.lib",
+			"TGAFBXImporter.lib"
 		}

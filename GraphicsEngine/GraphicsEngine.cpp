@@ -3,6 +3,7 @@
 #include <fstream>
 #include "Vertex.h"
 #include "Camera.h"
+#include "ModelInstance.h"
 
 bool GraphicsEngine::Initialize(unsigned someX, unsigned someY,
 	unsigned someWidth, unsigned someHeight,
@@ -52,11 +53,10 @@ bool GraphicsEngine::InitializeScene()
 	myScene = std::make_shared<Scene>();
 	auto camera = std::make_shared<Camera>();
 	camera->SetProjectionValues(90, 9.f/16.f, 0.1f, 1000.0f);
-	
 	camera->SetPosition(0.0f, 0.0f, -250.0f);
-	
 	myScene->SetMainCamera(camera);
 	
+	std::shared_ptr<ModelInstance> mdlChest = myModelAssetHandler.GetModelInstance("SM_Particle_Chest.fbx");
 	return true;
 }
 
