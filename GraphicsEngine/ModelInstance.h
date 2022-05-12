@@ -9,6 +9,7 @@ public:
 	ModelInstance() = default;
 
 	void Init(std::shared_ptr<Model> aModel);
+	FORCEINLINE std::shared_ptr<Model> GetModel() { return myModel; }
 	FORCEINLINE Model::ModelData const& GetModelData(uint16_t anIndex) const { return myModel->GetModelData(anIndex); }
 	FORCEINLINE uint16_t GetNumMeshes() const { return myModel->GetNumMeshes(); }
 

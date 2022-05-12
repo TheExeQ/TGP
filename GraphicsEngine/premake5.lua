@@ -6,6 +6,11 @@ project "GraphicsEngine"
 	targetname ("%{prj.name}-%{cfg.buildcfg}")
 	objdir ("../bin-int/" .. outputdir .. "/%{prj.name}")
 
+	postbuildcommands 
+	{
+		"{COPY} ../ThirdParty/FBXImporter/lib/libfbxsdk.dll ../bin/"
+	}
+
 	files
 	{
 		"./**.h",
@@ -54,7 +59,7 @@ project "GraphicsEngine"
 		links
 		{
 			"d3d11.lib",
-			"TGAFBXImporter.lib"
+			"TGAFBXImporterd.lib"
 		}
 		
 	filter "configurations:Release"

@@ -15,34 +15,35 @@ bool ModelAssetHandler::Init()
 
 std::shared_ptr<ModelInstance> ModelAssetHandler::GetModelInstance(const std::string& name) const
 {
-	// Create modelinstance
+	std::shared_ptr<ModelInstance> modelInstance = std::make_shared<ModelInstance>();
+	modelInstance->Init(myModelRegistry[name]);
 
-	return nullptr;
-	//return myModelRegistry[name];
+	return modelInstance;
 }
 
 bool ModelAssetHandler::LoadModel(const std::string& someFilePath)
 {
+	std::vector<Model::ModelData> modelDataVector;
 	const std::string filePath = "../Assets/Models/" + someFilePath;
 	TGA::FBXModel tgaModel;
-	Model::ModelData modelData;
 	if (TGA::FBXImporter::LoadModel(filePath, tgaModel))
 	{
+		Model::ModelData modelData;
 		std::vector<Model::ModelData> mdlData;
 		mdlData.resize(tgaModel.Meshes.size());
 		for (size_t i = 0; i < tgaModel.Meshes.size(); i++)
 		{
-			TGA::FBXModel::FBXMesh mesh = tgaModel.Meshes[i];
+			TGA::FBXModel::FBXMesh& mesh = tgaModel.Meshes[i];
 
 			std::vector<TGA::FBXVertex> mdlVertices = mesh.Vertices;
 			std::vector<uint32_t> mdlIndices = mesh.Indices;
 			
 			for (size_t v = 0; v < mesh.Vertices.size(); v++)
 			{
-				mdlVertices[v].Position[0] = 0.f;
-				mdlVertices[v].Position[1] = 0.f;
-				mdlVertices[v].Position[2] = 0.f;
-				mdlVertices[v].Position[3] = 1.f;
+				mdlVertices[v].Position[0] = mesh.Vertices[v].Position[0];
+				mdlVertices[v].Position[1] = mesh.Vertices[v].Position[1];
+				mdlVertices[v].Position[2] = mesh.Vertices[v].Position[2];
+				mdlVertices[v].Position[3] = mesh.Vertices[v].Position[3];
 
 				for (int vCol = 0; vCol < 4; vCol++)
 				{
@@ -131,10 +132,12 @@ bool ModelAssetHandler::LoadModel(const std::string& someFilePath)
 			modelData.myPrimitiveTopology = D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST;
 			modelData.myStride = sizeof(Vertex);
 			modelData.myOffset = 0;
+
+			modelDataVector.push_back(modelData);
 		}
 		auto mdl = std::make_shared<Model>();
 
-		mdl->Init(modelData, someFilePath);
+		mdl->Init(modelDataVector, someFilePath);
 		myModelRegistry.insert({ someFilePath, mdl });
 		return true;
 	}
@@ -143,6 +146,7 @@ bool ModelAssetHandler::LoadModel(const std::string& someFilePath)
 
 bool ModelAssetHandler::InitUnitCube()
 {
+	std::vector<Model::ModelData> modelDataVector;
 	Model::ModelData modelData;
 
 	std::vector<Vertex> mdlVertices =
@@ -266,7 +270,9 @@ bool ModelAssetHandler::InitUnitCube()
 
 	auto mdl = std::make_shared<Model>();
 	
-	mdl->Init(modelData, "Cube");
+	modelDataVector.push_back(modelData);
+
+	mdl->Init(modelDataVector, "Cube");
 	myModelRegistry.insert({ "Cube", mdl });
 	return true;
 }

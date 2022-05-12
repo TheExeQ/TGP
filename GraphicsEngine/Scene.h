@@ -44,7 +44,7 @@ class Scene
 public:
 
 	Scene();
-	~Scene();
+	~Scene() = default;
 	
 	template<typename T>
 	void AddGameObject(std::shared_ptr<T> aSceneObject)

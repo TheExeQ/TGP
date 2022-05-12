@@ -36,7 +36,7 @@ bool ForwardRenderer::Initialize()
 void ForwardRenderer::Render(const std::shared_ptr<Camera>& aCamera, const std::vector<std::shared_ptr<Model>>& aModelList)
 {
 	HRESULT result = S_FALSE;
-	
+
 	D3D11_MAPPED_SUBRESOURCE frameBufferData;
 
 	myFrameBufferData.View = Matrix4x4<float>::GetFastInverse(aCamera->GetTransform().myMatrix);
@@ -51,7 +51,7 @@ void ForwardRenderer::Render(const std::shared_ptr<Camera>& aCamera, const std::
 
 	DX11::myContext->Unmap(myFrameBuffer.Get(), 0);
 	DX11::myContext->VSSetConstantBuffers(0, 1, myFrameBuffer.GetAddressOf());
-	
+
 	for (const std::shared_ptr<Model>& model : aModelList)
 	{
 		D3D11_MAPPED_SUBRESOURCE objBufferData;
@@ -67,21 +67,22 @@ void ForwardRenderer::Render(const std::shared_ptr<Camera>& aCamera, const std::
 
 		DX11::myContext->Unmap(myObjectBuffer.Get(), 0);
 
-		//
+		for (uint16_t i = 0; i < model->GetNumMeshes(); ++i)
+		{
+			const Model::ModelData& modelData = model->GetModelData(i);
+			DX11::myContext->IASetVertexBuffers(0, 1, modelData.myVertexBuffer.GetAddressOf(), &modelData.myStride, &modelData.myOffset);
+			DX11::myContext->IASetIndexBuffer(modelData.myIndexBuffer.Get(), DXGI_FORMAT_R32_UINT, 0);
 
-		const Model::ModelData& modelData = model->GetModelData();
-		DX11::myContext->IASetVertexBuffers(0, 1, modelData.myVertexBuffer.GetAddressOf(), &modelData.myStride, &modelData.myOffset);
-		DX11::myContext->IASetIndexBuffer(modelData.myIndexBuffer.Get(), DXGI_FORMAT_R32_UINT, 0);
+			DX11::myContext->IASetPrimitiveTopology(static_cast<D3D11_PRIMITIVE_TOPOLOGY>(modelData.myPrimitiveTopology));
+			DX11::myContext->IASetInputLayout(modelData.myInputLayout.Get());
 
-		DX11::myContext->IASetPrimitiveTopology(static_cast<D3D11_PRIMITIVE_TOPOLOGY>(modelData.myPrimitiveTopology));
-		DX11::myContext->IASetInputLayout(modelData.myInputLayout.Get());
+			DX11::myContext->VSSetShader(modelData.myVS.Get(), nullptr, 0);
+			DX11::myContext->PSSetShader(modelData.myPS.Get(), nullptr, 0);
 
-		DX11::myContext->VSSetShader(modelData.myVS.Get(), nullptr, 0);
-		DX11::myContext->PSSetShader(modelData.myPS.Get(), nullptr, 0);
+			DX11::myContext->VSSetConstantBuffers(1, 1, myObjectBuffer.GetAddressOf());
+			DX11::myContext->PSSetConstantBuffers(1, 1, myObjectBuffer.GetAddressOf());
 
-		DX11::myContext->VSSetConstantBuffers(1, 1, myObjectBuffer.GetAddressOf());
-		DX11::myContext->PSSetConstantBuffers(1, 1, myObjectBuffer.GetAddressOf());
-
-		DX11::myContext->DrawIndexed(modelData.myIndexCount, 0, 0);
+			DX11::myContext->DrawIndexed(modelData.myIndexCount, 0, 0);
+		}
 	}
 }

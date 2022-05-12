@@ -56,7 +56,9 @@ bool GraphicsEngine::InitializeScene()
 	camera->SetPosition(0.0f, 0.0f, -250.0f);
 	myScene->SetMainCamera(camera);
 	
+	myModelAssetHandler.LoadModel("SM_Particle_Chest.fbx");
 	std::shared_ptr<ModelInstance> mdlChest = myModelAssetHandler.GetModelInstance("SM_Particle_Chest.fbx");
+	myScene->AddGameObject(mdlChest);
 	return true;
 }
 
