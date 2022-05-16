@@ -5,11 +5,13 @@
 #include "Model.h"
 #include "ModelInstance.h"
 #include "FBXImporter/FBXImporter.h"
+#include "Random.h"
 
 std::unordered_map<std::string, std::shared_ptr<Model>> ModelAssetHandler::myModelRegistry;
 
 bool ModelAssetHandler::Init()
 {
+	InitUnitCube();
 	return true;
 }
 
@@ -35,7 +37,8 @@ bool ModelAssetHandler::LoadModel(const std::string& someFilePath)
 		{
 			TGA::FBXModel::FBXMesh& mesh = tgaModel.Meshes[i];
 
-			std::vector<TGA::FBXVertex> mdlVertices = mesh.Vertices;
+			std::vector<TGA::FBXVertex> mdlVertices;
+			mdlVertices.resize(mesh.Vertices.size());
 			std::vector<uint32_t> mdlIndices = mesh.Indices;
 			
 			for (size_t v = 0; v < mesh.Vertices.size(); v++)
@@ -44,16 +47,6 @@ bool ModelAssetHandler::LoadModel(const std::string& someFilePath)
 				mdlVertices[v].Position[1] = mesh.Vertices[v].Position[1];
 				mdlVertices[v].Position[2] = mesh.Vertices[v].Position[2];
 				mdlVertices[v].Position[3] = mesh.Vertices[v].Position[3];
-
-				for (int vCol = 0; vCol < 4; vCol++)
-				{
-
-				}
-
-				mdlVertices[v].VertexColors[0][0] = 0.f;
-				mdlVertices[v].VertexColors[0][1] = 0.f;
-				mdlVertices[v].VertexColors[0][2] = 0.f;
-				mdlVertices[v].VertexColors[0][3] = 1.f;
 			}
 			
 			D3D11_BUFFER_DESC vertexBufferDesc;
@@ -74,7 +67,7 @@ bool ModelAssetHandler::LoadModel(const std::string& someFilePath)
 
 			D3D11_BUFFER_DESC indexBufferDesc;
 			indexBufferDesc.Usage = D3D11_USAGE_DEFAULT;
-			indexBufferDesc.ByteWidth = sizeof(int) * mdlIndices.size();
+			indexBufferDesc.ByteWidth = sizeof(uint32_t) * mdlIndices.size();
 			indexBufferDesc.BindFlags = D3D11_BIND_INDEX_BUFFER;
 			indexBufferDesc.CPUAccessFlags = 0;
 			indexBufferDesc.MiscFlags = 0;

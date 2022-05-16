@@ -14,7 +14,7 @@ struct Vertex
 	};
 
 	Vector4<float> Position = { 0.f, 0.f, 0.f, 1.f };
-	Vector4<float>  VertexColors[4] =
+	Vector4<float> VertexColors[4] =
 	{
 		{ 0.f, 0.f, 0.f, 0.f },
 		{ 0.f, 0.f, 0.f, 0.f },
