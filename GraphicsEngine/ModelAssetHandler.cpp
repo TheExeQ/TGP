@@ -37,16 +37,21 @@ bool ModelAssetHandler::LoadModel(const std::string& someFilePath)
 		{
 			TGA::FBXModel::FBXMesh& mesh = tgaModel.Meshes[i];
 
-			std::vector<TGA::FBXVertex> mdlVertices;
+			std::vector<Vertex> mdlVertices;
 			mdlVertices.resize(mesh.Vertices.size());
 			std::vector<uint32_t> mdlIndices = mesh.Indices;
 			
 			for (size_t v = 0; v < mesh.Vertices.size(); v++)
 			{
-				mdlVertices[v].Position[0] = mesh.Vertices[v].Position[0];
-				mdlVertices[v].Position[1] = mesh.Vertices[v].Position[1];
-				mdlVertices[v].Position[2] = mesh.Vertices[v].Position[2];
-				mdlVertices[v].Position[3] = mesh.Vertices[v].Position[3];
+				mdlVertices[v].Position.x = mesh.Vertices[v].Position[0];
+				mdlVertices[v].Position.y = mesh.Vertices[v].Position[1];
+				mdlVertices[v].Position.z = mesh.Vertices[v].Position[2];
+				mdlVertices[v].Position.w = mesh.Vertices[v].Position[3];
+
+				mdlVertices[v].VertexColors[0] = { Random::GetRandomFloat(0.f, 1.f), Random::GetRandomFloat(0.f, 1.f), Random::GetRandomFloat(0.f, 1.f), 1.f };
+				mdlVertices[v].VertexColors[1] = { Random::GetRandomFloat(0.f, 1.f), Random::GetRandomFloat(0.f, 1.f), Random::GetRandomFloat(0.f, 1.f), 1.f };
+				mdlVertices[v].VertexColors[2] = { Random::GetRandomFloat(0.f, 1.f), Random::GetRandomFloat(0.f, 1.f), Random::GetRandomFloat(0.f, 1.f), 1.f };
+				mdlVertices[v].VertexColors[3] = { Random::GetRandomFloat(0.f, 1.f), Random::GetRandomFloat(0.f, 1.f), Random::GetRandomFloat(0.f, 1.f), 1.f };
 			}
 			
 			D3D11_BUFFER_DESC vertexBufferDesc;

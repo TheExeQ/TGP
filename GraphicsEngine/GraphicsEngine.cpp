@@ -96,11 +96,11 @@ void GraphicsEngine::RenderFrame()
 	{
 		const std::shared_ptr<Camera> camera = myScene->GetMainCamera();
 		const std::vector<std::shared_ptr<Model>> modelsToRender = myScene->CullModels(camera);
-		//modelsToRender[0]->SetRotation(
-		//	modelsToRender[0]->GetTransform().myRotation.x + 1.f,
-		//	modelsToRender[0]->GetTransform().myRotation.y + 2.5f,
-		//	modelsToRender[0]->GetTransform().myRotation.z
-		//	);
+		modelsToRender[0]->SetRotation(
+			modelsToRender[0]->GetTransform().myRotation.x + 1.f,
+			modelsToRender[0]->GetTransform().myRotation.y + 2.5f,
+			modelsToRender[0]->GetTransform().myRotation.z
+		);
 		myForwardRenderer.Render(camera, modelsToRender);
 	}
 }
