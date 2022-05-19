@@ -3,6 +3,7 @@
 #include <fstream>
 #include "Vertex.h"
 #include "Camera.h"
+#include "ModelInstance.h"
 
 bool GraphicsEngine::Initialize(unsigned someX, unsigned someY,
 	unsigned someWidth, unsigned someHeight,
@@ -52,11 +53,15 @@ bool GraphicsEngine::InitializeScene()
 	myScene = std::make_shared<Scene>();
 	auto camera = std::make_shared<Camera>();
 	camera->SetProjectionValues(90, 9.f/16.f, 0.1f, 1000.0f);
-	
 	camera->SetPosition(0.0f, 0.0f, -250.0f);
-	
 	myScene->SetMainCamera(camera);
-	
+
+	//myModelAssetHandler.Init();
+	//auto mdlChest = myModelAssetHandler.GetModelInstance("Cube");
+
+	myModelAssetHandler.LoadModel("SM_Particle_Chest.fbx");
+	std::shared_ptr<ModelInstance> mdlChest = myModelAssetHandler.GetModelInstance("SM_Particle_Chest.fbx");
+	myScene->AddGameObject(mdlChest);
 	return true;
 }
 
@@ -95,7 +100,7 @@ void GraphicsEngine::RenderFrame()
 			modelsToRender[0]->GetTransform().myRotation.x + 1.f,
 			modelsToRender[0]->GetTransform().myRotation.y + 2.5f,
 			modelsToRender[0]->GetTransform().myRotation.z
-			);
+		);
 		myForwardRenderer.Render(camera, modelsToRender);
 	}
 }

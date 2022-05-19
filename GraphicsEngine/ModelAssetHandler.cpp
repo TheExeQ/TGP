@@ -1,8 +1,11 @@
 #include "ModelAssetHandler.h"
+#include <fstream>
 #include "Vertex.h"
 #include "DX11.h"
-#include <fstream>
 #include "Model.h"
+#include "ModelInstance.h"
+#include "FBXImporter/FBXImporter.h"
+#include "Random.h"
 
 std::unordered_map<std::string, std::shared_ptr<Model>> ModelAssetHandler::myModelRegistry;
 
@@ -12,43 +15,137 @@ bool ModelAssetHandler::Init()
 	return true;
 }
 
-std::shared_ptr<Model> ModelAssetHandler::GetModel(const std::string& name) const
+std::shared_ptr<ModelInstance> ModelAssetHandler::GetModelInstance(const std::string& name) const
 {
-	return myModelRegistry[name];
+	std::shared_ptr<ModelInstance> modelInstance = std::make_shared<ModelInstance>();
+	modelInstance->Init(myModelRegistry[name]);
+
+	return modelInstance;
+}
+
+bool ModelAssetHandler::LoadModel(const std::string& someFilePath)
+{
+	std::vector<Model::ModelData> modelDataVector;
+	const std::string filePath = "../Assets/Models/" + someFilePath;
+	TGA::FBXModel tgaModel;
+	if (TGA::FBXImporter::LoadModel(filePath, tgaModel))
+	{
+		Model::ModelData modelData;
+		std::vector<Model::ModelData> mdlData;
+		mdlData.resize(tgaModel.Meshes.size());
+		for (size_t i = 0; i < tgaModel.Meshes.size(); i++)
+		{
+			TGA::FBXModel::FBXMesh& mesh = tgaModel.Meshes[i];
+
+			std::vector<Vertex> mdlVertices;
+			mdlVertices.resize(mesh.Vertices.size());
+			std::vector<uint32_t> mdlIndices = mesh.Indices;
+			
+			for (size_t v = 0; v < mesh.Vertices.size(); v++)
+			{
+				mdlVertices[v].Position.x = mesh.Vertices[v].Position[0];
+				mdlVertices[v].Position.y = mesh.Vertices[v].Position[1];
+				mdlVertices[v].Position.z = mesh.Vertices[v].Position[2];
+				mdlVertices[v].Position.w = mesh.Vertices[v].Position[3];
+
+				mdlVertices[v].VertexColors[0] = { Random::GetRandomFloat(0.f, 1.f), Random::GetRandomFloat(0.f, 1.f), Random::GetRandomFloat(0.f, 1.f), 1.f };
+				mdlVertices[v].VertexColors[1] = { Random::GetRandomFloat(0.f, 1.f), Random::GetRandomFloat(0.f, 1.f), Random::GetRandomFloat(0.f, 1.f), 1.f };
+				mdlVertices[v].VertexColors[2] = { Random::GetRandomFloat(0.f, 1.f), Random::GetRandomFloat(0.f, 1.f), Random::GetRandomFloat(0.f, 1.f), 1.f };
+				mdlVertices[v].VertexColors[3] = { Random::GetRandomFloat(0.f, 1.f), Random::GetRandomFloat(0.f, 1.f), Random::GetRandomFloat(0.f, 1.f), 1.f };
+			}
+			
+			D3D11_BUFFER_DESC vertexBufferDesc;
+			vertexBufferDesc.Usage = D3D11_USAGE_DEFAULT;
+			vertexBufferDesc.ByteWidth = sizeof(Vertex) * mdlVertices.size();
+			vertexBufferDesc.BindFlags = D3D11_BIND_VERTEX_BUFFER;
+			vertexBufferDesc.CPUAccessFlags = 0;
+			vertexBufferDesc.MiscFlags = 0;
+
+			D3D11_SUBRESOURCE_DATA vertexSubData;
+			vertexSubData.pSysMem = &mdlVertices[0];
+
+			HRESULT result = DX11::myDevice->CreateBuffer(&vertexBufferDesc, &vertexSubData, modelData.myVertexBuffer.GetAddressOf());
+			if (FAILED(result))
+			{
+				return false;
+			}
+
+			D3D11_BUFFER_DESC indexBufferDesc;
+			indexBufferDesc.Usage = D3D11_USAGE_DEFAULT;
+			indexBufferDesc.ByteWidth = sizeof(uint32_t) * mdlIndices.size();
+			indexBufferDesc.BindFlags = D3D11_BIND_INDEX_BUFFER;
+			indexBufferDesc.CPUAccessFlags = 0;
+			indexBufferDesc.MiscFlags = 0;
+
+			D3D11_SUBRESOURCE_DATA indexSubData;
+			indexSubData.pSysMem = &mdlIndices[0];
+
+			result = DX11::myDevice->CreateBuffer(&indexBufferDesc, &indexSubData, modelData.myIndexBuffer.GetAddressOf());
+			if (FAILED(result))
+			{
+				return false;
+			}
+
+			std::ifstream vsFile;
+
+			vsFile.open("../Assets/Shaders/DefaultVS.cso", std::ios::binary);
+			std::string vsData = { std::istreambuf_iterator<char>(vsFile), std::istreambuf_iterator<char>() };
+
+			result = DX11::myDevice->CreateVertexShader(vsData.data(), vsData.size(), 0, &modelData.myVS);
+			if (FAILED(result))
+			{
+				return false;
+			}
+			vsFile.close();
+
+			std::ifstream psFile;
+
+			psFile.open("../Assets/Shaders/DefaultPS.cso", std::ios::binary);
+			std::string psData = { std::istreambuf_iterator<char>(psFile), std::istreambuf_iterator<char>() };
+
+			result = DX11::myDevice->CreatePixelShader(psData.data(), psData.size(), 0, &modelData.myPS);
+			if (FAILED(result))
+			{
+				return false;
+			}
+			psFile.close();
+
+			D3D11_INPUT_ELEMENT_DESC layout[] =
+			{
+				{"POSITION", 0, DXGI_FORMAT_R32G32B32A32_FLOAT, 0, D3D11_APPEND_ALIGNED_ELEMENT, D3D11_INPUT_PER_VERTEX_DATA, 0},
+				{"COLOR", 0, DXGI_FORMAT_R32G32B32A32_FLOAT, 0, D3D11_APPEND_ALIGNED_ELEMENT, D3D11_INPUT_PER_VERTEX_DATA, 0},
+				{"COLOR", 1, DXGI_FORMAT_R32G32B32A32_FLOAT, 0, D3D11_APPEND_ALIGNED_ELEMENT, D3D11_INPUT_PER_VERTEX_DATA, 0},
+				{"COLOR", 2, DXGI_FORMAT_R32G32B32A32_FLOAT, 0, D3D11_APPEND_ALIGNED_ELEMENT, D3D11_INPUT_PER_VERTEX_DATA, 0},
+				{"COLOR", 3, DXGI_FORMAT_R32G32B32A32_FLOAT, 0, D3D11_APPEND_ALIGNED_ELEMENT, D3D11_INPUT_PER_VERTEX_DATA, 0},
+			};
+
+			result = DX11::myDevice->CreateInputLayout(layout, sizeof(layout) / sizeof(D3D11_INPUT_ELEMENT_DESC), vsData.data(), vsData.size(), modelData.myInputLayout.GetAddressOf());
+			if (FAILED(result))
+			{
+				return false;
+			}
+
+			modelData.myVertexCount = mdlVertices.size();
+			modelData.myIndexCount = mdlIndices.size();
+			modelData.myPrimitiveTopology = D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST;
+			modelData.myStride = sizeof(Vertex);
+			modelData.myOffset = 0;
+
+			modelDataVector.push_back(modelData);
+		}
+		auto mdl = std::make_shared<Model>();
+
+		mdl->Init(modelDataVector, someFilePath);
+		myModelRegistry.insert({ someFilePath, mdl });
+		return true;
+	}
+	return false;
 }
 
 bool ModelAssetHandler::InitUnitCube()
 {
+	std::vector<Model::ModelData> modelDataVector;
 	Model::ModelData modelData;
-
-	//std::vector<Vertex> mdlVertices =
-	//{
-	//	Vertex(50.f, 50.f, 50.f, 1.f, 0.f, 0.f, 1.f),
-	//	Vertex(50.f, 50.f, -50.f, 0.f, 1.f, 0.f, 1.f),
-	//	Vertex(50.f, -50.f, 50.f, 0.f, 0.f, 1.f, 1.f),
-	//	Vertex(-50.f, 50.f, 50.f, 1.f, 0.f, 1.f, 1.f),
-
-	//	Vertex(50.f, -50.f, -50.f, 0.f, 1.f, 1.f, 1.f),
-	//	Vertex(-50.f, 50.f, -50.f, 1.f, 1.f, 0.f, 1.f),
-	//	Vertex(-50.f, -50.f, 50.f, 1.f, 1.f, 1.f, 1.f),
-	//	Vertex(-50.f, -50.f, -50.f, 0.f, 0.f, 0.f, 1.f),
-	//};
-
-	//std::vector<int> mdlIndices =
-	//{
-	//	0, 1, 2,
-	//	0, 2, 3,
-	//	0, 4, 1,
-	//	4, 5, 1,
-	//	3, 2, 6,
-	//	3, 6, 7,
-	//	0, 3, 4,
-	//	4, 3, 7,
-	//	1, 6, 2,
-	//	1, 5, 6,
-	//	4, 7, 5,
-	//	7, 5, 6,
-	//};
 
 	std::vector<Vertex> mdlVertices =
 	{
@@ -171,7 +268,9 @@ bool ModelAssetHandler::InitUnitCube()
 
 	auto mdl = std::make_shared<Model>();
 	
-	mdl->Init(modelData, "Cube");
+	modelDataVector.push_back(modelData);
+
+	mdl->Init(modelDataVector, "Cube");
 	myModelRegistry.insert({ "Cube", mdl });
 	return true;
 }

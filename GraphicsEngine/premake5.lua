@@ -6,6 +6,11 @@ project "GraphicsEngine"
 	targetname ("%{prj.name}-%{cfg.buildcfg}")
 	objdir ("../bin-int/" .. outputdir .. "/%{prj.name}")
 
+	postbuildcommands 
+	{
+		"{COPY} ../ThirdParty/FBXImporter/lib/libfbxsdk.dll ../bin/"
+	}
+
 	files
 	{
 		"./**.h",
@@ -17,11 +22,13 @@ project "GraphicsEngine"
 	includedirs
 	{
 		"./",
+		"../ThirdParty/"
 	}
 	
 	libdirs
 	{
-		"../libs"
+		"../libs",
+		"../ThirdParty/FBXImporter/lib"
 	}
 	
 	filter { "files:**.hlsl" }
@@ -52,6 +59,7 @@ project "GraphicsEngine"
 		links
 		{
 			"d3d11.lib",
+			"TGAFBXImporterd.lib"
 		}
 		
 	filter "configurations:Release"
@@ -62,6 +70,7 @@ project "GraphicsEngine"
 		links
 		{
 			"d3d11.lib",
+			"TGAFBXImporter.lib"
 		}
 		
 	filter "configurations:Retail"
@@ -71,4 +80,5 @@ project "GraphicsEngine"
 		links
 		{
 			"d3d11.lib",
+			"TGAFBXImporter.lib"
 		}

@@ -1,7 +1,7 @@
 #include "GraphicsEngine.pch.h"
 #include "Camera.h"
-#include "Model.h"
 #include "Scene.h"
+#include "ModelInstance.h"
 
 #define PI 3.14f
 
@@ -49,19 +49,21 @@ void SceneObject::SetScale(float someX, float someY, float someZ)
 
 Scene::Scene()
 {
-	myModelAssetHandler.Init();
-}
-
-Scene::~Scene()
-{
-
+	mySceneObjects.clear();
 }
 
 const std::vector<std::shared_ptr<Model>> Scene::CullModels(const std::shared_ptr<Camera>& camera) const
 {
 	std::vector<std::shared_ptr<Model>> visibleModels;
 
-	visibleModels.push_back(myModelAssetHandler.GetModel("Cube"));
+	for (auto& sceneObject : mySceneObjects)
+	{
+		auto mdlInst = dynamic_pointer_cast<ModelInstance>(sceneObject);
+		if (mdlInst)
+		{
+			visibleModels.push_back(mdlInst->GetModel());
+		}
+	}
 
 	return visibleModels;
 }

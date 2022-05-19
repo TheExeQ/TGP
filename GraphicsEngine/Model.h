@@ -2,6 +2,7 @@
 #include <d3d11.h>
 #include <wrl/client.h>
 #include <string>
+#include <vector>
 #include "Scene.h"
 
 using namespace Microsoft::WRL;
@@ -25,12 +26,13 @@ public:
 		UINT myOffset;
 	};
 	
-	void Init(ModelData& someModelData, const std::string& aName);
-	FORCEINLINE ModelData const& GetModelData() const { return myData; }
+	void Init(std::vector<ModelData>& someModelData, const std::string& aName);
+	FORCEINLINE ModelData const& GetModelData(uint16_t aIndex) const { return myData[aIndex]; }
+	FORCEINLINE uint16_t GetNumMeshes() const { return myData.size(); }
 	FORCEINLINE std::string GetName() const { return myName; }
 
 private:
-	ModelData myData;
+	std::vector<ModelData> myData;
 	std::string myName;
 };
 

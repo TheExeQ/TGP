@@ -4,13 +4,15 @@
 #include <string>
 
 class Model;
+class ModelInstance;
 
 class ModelAssetHandler
 {
 public:
 	bool Init();
 	
-	std::shared_ptr<Model> GetModel(const std::string& name) const;
+	std::shared_ptr<ModelInstance> GetModelInstance(const std::string& name) const;
+	bool LoadModel(const std::string& someFilePath);
 	
 private:
 	bool InitUnitCube();

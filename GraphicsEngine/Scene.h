@@ -44,7 +44,7 @@ class Scene
 public:
 
 	Scene();
-	~Scene();
+	~Scene() = default;
 	
 	template<typename T>
 	void AddGameObject(std::shared_ptr<T> aSceneObject)
@@ -58,7 +58,6 @@ public:
 	const std::shared_ptr<Camera>& GetMainCamera() const { return myMainCamera; };
 
 private:
-	ModelAssetHandler myModelAssetHandler;
 	std::vector<std::shared_ptr<SceneObject>> mySceneObjects;
 	std::shared_ptr<Camera> myMainCamera;
 };
