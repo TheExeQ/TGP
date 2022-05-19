@@ -29,4 +29,7 @@ struct Vertex
 		{ 0.f, 0.f, 0.f, 0.f },
 		{ 0.f, 0.f, 0.f, 0.f }
 	};
+
+	Vector4<unsigned int> BoneIDs = { 0.f, 0.f, 0.f, 0.f };
+	Vector4<float> BoneWeights = { 0.f, 0.f, 0.f, 0.f };
 };

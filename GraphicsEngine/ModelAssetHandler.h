@@ -13,6 +13,7 @@ public:
 	
 	std::shared_ptr<ModelInstance> GetModelInstance(const std::string& name) const;
 	bool LoadModel(const std::string& someFilePath);
+	bool LoadAnimation(const std::string& aModelName, const std::string& someFilePath) const;
 	
 private:
 	bool InitUnitCube();

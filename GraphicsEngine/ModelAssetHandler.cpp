@@ -26,10 +26,20 @@ std::shared_ptr<ModelInstance> ModelAssetHandler::GetModelInstance(const std::st
 bool ModelAssetHandler::LoadModel(const std::string& someFilePath)
 {
 	std::vector<Model::ModelData> modelDataVector;
-	const std::string filePath = "../Assets/Models/" + someFilePath;
+	const std::string filePath = "../Assets/" + someFilePath;
 	TGA::FBXModel tgaModel;
 	if (TGA::FBXImporter::LoadModel(filePath, tgaModel))
 	{
+		Skeleton mdlSkeleton;
+		const bool hasSkeleton = tgaModel.Skeleton.GetRoot();
+		if (hasSkeleton)
+		{
+			for (size_t j = 0; j < tgaModel.Skeleton.Bones.size(); ++j)
+			{
+				
+			}
+		}
+
 		Model::ModelData modelData;
 		std::vector<Model::ModelData> mdlData;
 		mdlData.resize(tgaModel.Meshes.size());
@@ -52,6 +62,19 @@ bool ModelAssetHandler::LoadModel(const std::string& someFilePath)
 				mdlVertices[v].VertexColors[1] = { Random::GetRandomFloat(0.f, 1.f), Random::GetRandomFloat(0.f, 1.f), Random::GetRandomFloat(0.f, 1.f), 1.f };
 				mdlVertices[v].VertexColors[2] = { Random::GetRandomFloat(0.f, 1.f), Random::GetRandomFloat(0.f, 1.f), Random::GetRandomFloat(0.f, 1.f), 1.f };
 				mdlVertices[v].VertexColors[3] = { Random::GetRandomFloat(0.f, 1.f), Random::GetRandomFloat(0.f, 1.f), Random::GetRandomFloat(0.f, 1.f), 1.f };
+
+				if (hasSkeleton)
+				{
+					mdlVertices[v].BoneIDs.x = mesh.Vertices[v].BoneIDs[0];
+					mdlVertices[v].BoneIDs.y = mesh.Vertices[v].BoneIDs[1];
+					mdlVertices[v].BoneIDs.z = mesh.Vertices[v].BoneIDs[2];
+					mdlVertices[v].BoneIDs.w = mesh.Vertices[v].BoneIDs[3];
+
+					mdlVertices[v].BoneWeights.x = mesh.Vertices[v].BoneWeights[0];
+					mdlVertices[v].BoneWeights.y = mesh.Vertices[v].BoneWeights[1];
+					mdlVertices[v].BoneWeights.z = mesh.Vertices[v].BoneWeights[2];
+					mdlVertices[v].BoneWeights.w = mesh.Vertices[v].BoneWeights[3];
+				}
 			}
 			
 			D3D11_BUFFER_DESC vertexBufferDesc;
@@ -117,6 +140,8 @@ bool ModelAssetHandler::LoadModel(const std::string& someFilePath)
 				{"COLOR", 1, DXGI_FORMAT_R32G32B32A32_FLOAT, 0, D3D11_APPEND_ALIGNED_ELEMENT, D3D11_INPUT_PER_VERTEX_DATA, 0},
 				{"COLOR", 2, DXGI_FORMAT_R32G32B32A32_FLOAT, 0, D3D11_APPEND_ALIGNED_ELEMENT, D3D11_INPUT_PER_VERTEX_DATA, 0},
 				{"COLOR", 3, DXGI_FORMAT_R32G32B32A32_FLOAT, 0, D3D11_APPEND_ALIGNED_ELEMENT, D3D11_INPUT_PER_VERTEX_DATA, 0},
+				{"BONEIDS", 0, DXGI_FORMAT_R32G32B32A32_UINT, 0, D3D11_APPEND_ALIGNED_ELEMENT, D3D11_INPUT_PER_VERTEX_DATA, 0},
+				{"BONEWEIGHTS", 0, DXGI_FORMAT_R32G32B32A32_FLOAT, 0, D3D11_APPEND_ALIGNED_ELEMENT, D3D11_INPUT_PER_VERTEX_DATA, 0},
 			};
 
 			result = DX11::myDevice->CreateInputLayout(layout, sizeof(layout) / sizeof(D3D11_INPUT_ELEMENT_DESC), vsData.data(), vsData.size(), modelData.myInputLayout.GetAddressOf());
@@ -135,8 +160,57 @@ bool ModelAssetHandler::LoadModel(const std::string& someFilePath)
 		}
 		auto mdl = std::make_shared<Model>();
 
-		mdl->Init(modelDataVector, someFilePath);
+		if (hasSkeleton)
+		{
+			mdl->Init(modelDataVector, someFilePath, mdlSkeleton);
+		}
+		else
+		{
+			mdl->Init(modelDataVector, someFilePath);
+		}
+
 		myModelRegistry.insert({ someFilePath, mdl });
+		return true;
+	}
+	return false;
+}
+
+bool ModelAssetHandler::LoadAnimation(const std::string& aModelName, const std::string& someFilePath) const
+{
+	auto model = myModelRegistry[aModelName];
+	TGA::FBXAnimation tgaAnimation;
+	if (TGA::FBXImporter::LoadAnimation("../Assets/" + someFilePath, model->GetSkeleton()->BoneNames, tgaAnimation))
+	{
+		Animation result;
+		result.Frames.resize(tgaAnimation.Frames.size());
+
+		for (size_t f = 0; f < result.Frames.size(); f++)
+		{
+			for (size_t i = 0; i < tgaAnimation.Frames[f].LocalTransforms.size(); i++)
+			{
+				result.Frames[f].LocalTransforms[i](1, 1) = tgaAnimation.Frames[f].LocalTransforms[i].Data[0];
+				result.Frames[f].LocalTransforms[i](1, 2) = tgaAnimation.Frames[f].LocalTransforms[i].Data[1];
+				result.Frames[f].LocalTransforms[i](1, 3) = tgaAnimation.Frames[f].LocalTransforms[i].Data[2];
+				result.Frames[f].LocalTransforms[i](1, 4) = tgaAnimation.Frames[f].LocalTransforms[i].Data[3];
+
+				result.Frames[f].LocalTransforms[i](2, 1) = tgaAnimation.Frames[f].LocalTransforms[i].Data[4];
+				result.Frames[f].LocalTransforms[i](2, 2) = tgaAnimation.Frames[f].LocalTransforms[i].Data[5];
+				result.Frames[f].LocalTransforms[i](2, 3) = tgaAnimation.Frames[f].LocalTransforms[i].Data[6];
+				result.Frames[f].LocalTransforms[i](2, 4) = tgaAnimation.Frames[f].LocalTransforms[i].Data[7];
+
+				result.Frames[f].LocalTransforms[i](3, 1) = tgaAnimation.Frames[f].LocalTransforms[i].Data[8];
+				result.Frames[f].LocalTransforms[i](3, 2) = tgaAnimation.Frames[f].LocalTransforms[i].Data[9];
+				result.Frames[f].LocalTransforms[i](3, 3) = tgaAnimation.Frames[f].LocalTransforms[i].Data[10];
+				result.Frames[f].LocalTransforms[i](3, 4) = tgaAnimation.Frames[f].LocalTransforms[i].Data[11];
+													
+				result.Frames[f].LocalTransforms[i](4, 1) = tgaAnimation.Frames[f].LocalTransforms[i].Data[12];
+				result.Frames[f].LocalTransforms[i](4, 2) = tgaAnimation.Frames[f].LocalTransforms[i].Data[13];
+				result.Frames[f].LocalTransforms[i](4, 3) = tgaAnimation.Frames[f].LocalTransforms[i].Data[14];
+				result.Frames[f].LocalTransforms[i](4, 4) = tgaAnimation.Frames[f].LocalTransforms[i].Data[15];
+			}
+		}
+		
+		model->AddAnimation(result);
 		return true;
 	}
 	return false;

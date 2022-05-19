@@ -4,6 +4,7 @@
 #include <string>
 #include <vector>
 #include "Scene.h"
+#include "Skeleton.h"
 
 using namespace Microsoft::WRL;
 
@@ -27,12 +28,18 @@ public:
 	};
 	
 	void Init(std::vector<ModelData>& someModelData, const std::string& aName);
+	void Init(std::vector<ModelData>& someModelData, const std::string& aName, Skeleton& aSkeleton);
 	FORCEINLINE ModelData const& GetModelData(uint16_t aIndex) const { return myData[aIndex]; }
 	FORCEINLINE uint16_t GetNumMeshes() const { return myData.size(); }
 	FORCEINLINE std::string GetName() const { return myName; }
+	FORCEINLINE const Skeleton* GetSkeleton() const { return &mySkeleton; }
+
+	void AddAnimation(Animation aAnimation);
 
 private:
 	std::vector<ModelData> myData;
 	std::string myName;
+
+	Skeleton mySkeleton;
 };
 
