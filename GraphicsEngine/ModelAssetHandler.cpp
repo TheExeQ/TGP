@@ -34,9 +34,37 @@ bool ModelAssetHandler::LoadModel(const std::string& someFilePath)
 		const bool hasSkeleton = tgaModel.Skeleton.GetRoot();
 		if (hasSkeleton)
 		{
+			mdlSkeleton.Name = tgaModel.Skeleton.Name;
+			mdlSkeleton.Bones.resize(tgaModel.Skeleton.Bones.size());
+			mdlSkeleton.BoneNames.resize(tgaModel.Skeleton.Bones.size());
 			for (size_t j = 0; j < tgaModel.Skeleton.Bones.size(); ++j)
 			{
+				mdlSkeleton.Bones[j].Name = tgaModel.Skeleton.Bones[j].Name;
+				mdlSkeleton.BoneNames[j] = tgaModel.Skeleton.Bones[j].Name;
+				mdlSkeleton.BoneNameToIndex[tgaModel.Skeleton.Bones[j].Name] = j;
+
+				mdlSkeleton.Bones[j].Parent = tgaModel.Skeleton.Bones[j].Parent;
+				mdlSkeleton.Bones[j].Children = tgaModel.Skeleton.Bones[j].Children;
+
+				mdlSkeleton.Bones[j].BindPoseInverse(1, 1) = tgaModel.Skeleton.Bones[j].BindPoseInverse.Data[0];
+				mdlSkeleton.Bones[j].BindPoseInverse(1, 2) = tgaModel.Skeleton.Bones[j].BindPoseInverse.Data[1];
+				mdlSkeleton.Bones[j].BindPoseInverse(1, 3) = tgaModel.Skeleton.Bones[j].BindPoseInverse.Data[2];
+				mdlSkeleton.Bones[j].BindPoseInverse(1, 4) = tgaModel.Skeleton.Bones[j].BindPoseInverse.Data[3];
 				
+				mdlSkeleton.Bones[j].BindPoseInverse(2, 1) = tgaModel.Skeleton.Bones[j].BindPoseInverse.Data[4];
+				mdlSkeleton.Bones[j].BindPoseInverse(2, 2) = tgaModel.Skeleton.Bones[j].BindPoseInverse.Data[5];
+				mdlSkeleton.Bones[j].BindPoseInverse(2, 3) = tgaModel.Skeleton.Bones[j].BindPoseInverse.Data[6];
+				mdlSkeleton.Bones[j].BindPoseInverse(2, 4) = tgaModel.Skeleton.Bones[j].BindPoseInverse.Data[7];
+				
+				mdlSkeleton.Bones[j].BindPoseInverse(3, 1) = tgaModel.Skeleton.Bones[j].BindPoseInverse.Data[8];
+				mdlSkeleton.Bones[j].BindPoseInverse(3, 2) = tgaModel.Skeleton.Bones[j].BindPoseInverse.Data[9];
+				mdlSkeleton.Bones[j].BindPoseInverse(3, 3) = tgaModel.Skeleton.Bones[j].BindPoseInverse.Data[10];
+				mdlSkeleton.Bones[j].BindPoseInverse(3, 4) = tgaModel.Skeleton.Bones[j].BindPoseInverse.Data[11];
+				
+				mdlSkeleton.Bones[j].BindPoseInverse(4, 1) = tgaModel.Skeleton.Bones[j].BindPoseInverse.Data[12];
+				mdlSkeleton.Bones[j].BindPoseInverse(4, 2) = tgaModel.Skeleton.Bones[j].BindPoseInverse.Data[13];
+				mdlSkeleton.Bones[j].BindPoseInverse(4, 3) = tgaModel.Skeleton.Bones[j].BindPoseInverse.Data[14];
+				mdlSkeleton.Bones[j].BindPoseInverse(4, 4) = tgaModel.Skeleton.Bones[j].BindPoseInverse.Data[15];
 			}
 		}
 
@@ -186,6 +214,7 @@ bool ModelAssetHandler::LoadAnimation(const std::string& aModelName, const std::
 
 		for (size_t f = 0; f < result.Frames.size(); f++)
 		{
+			result.Frames[f].LocalTransforms.resize(tgaAnimation.Frames[f].LocalTransforms.size());
 			for (size_t i = 0; i < tgaAnimation.Frames[f].LocalTransforms.size(); i++)
 			{
 				result.Frames[f].LocalTransforms[i](1, 1) = tgaAnimation.Frames[f].LocalTransforms[i].Data[0];
@@ -207,9 +236,16 @@ bool ModelAssetHandler::LoadAnimation(const std::string& aModelName, const std::
 				result.Frames[f].LocalTransforms[i](4, 2) = tgaAnimation.Frames[f].LocalTransforms[i].Data[13];
 				result.Frames[f].LocalTransforms[i](4, 3) = tgaAnimation.Frames[f].LocalTransforms[i].Data[14];
 				result.Frames[f].LocalTransforms[i](4, 4) = tgaAnimation.Frames[f].LocalTransforms[i].Data[15];
+
 			}
 		}
 		
+		result.Length = tgaAnimation.Length;
+		result.Name = tgaAnimation.Name;
+		result.FramesPerSecond = tgaAnimation.FramesPerSecond;
+		result.Duration = tgaAnimation.Duration;
+		result.CurrentFrame = 1;
+			
 		model->AddAnimation(result);
 		return true;
 	}

@@ -16,5 +16,5 @@ void Model::Init(std::vector<ModelData>& someModelData, const std::string& aName
 
 void Model::AddAnimation(Animation aAnimation)
 {
-	//mySkeleton.Animations.insert(aAnimation.Name, aAnimation);
+	mySkeleton.Animations[aAnimation.Name] = aAnimation;
 }

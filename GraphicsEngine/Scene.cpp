@@ -2,6 +2,7 @@
 #include "Camera.h"
 #include "Scene.h"
 #include "ModelInstance.h"
+#include "CU/TimeHandler.hpp"
 
 #define PI 3.14f
 
@@ -61,6 +62,7 @@ const std::vector<std::shared_ptr<Model>> Scene::CullModels(const std::shared_pt
 		auto mdlInst = dynamic_pointer_cast<ModelInstance>(sceneObject);
 		if (mdlInst)
 		{
+			mdlInst->Update(Time::GetDeltaTime());
 			visibleModels.push_back(mdlInst->GetModel());
 		}
 	}

@@ -9,13 +9,13 @@ namespace CommonUtilities
 		Time();
 		Time(const Time& aTime) = delete;
 		Time& operator=(const Time& aTime) = delete;
-		void Update();
-		float GetDeltaTime() const;
-		double GetTotalTime() const;
+		static void Update();
+		static float GetDeltaTime();
+		static double GetTotalTime();
 
 	private:
-		std::chrono::time_point<std::chrono::steady_clock> myStart, myLastFrame;
-		std::chrono::duration<double> myDeltaTime, myTotalTime;
+		static std::chrono::time_point<std::chrono::steady_clock> myStart, myLastFrame;
+		static std::chrono::duration<double> myDeltaTime, myTotalTime;
 	};
 }
 

@@ -4,6 +4,7 @@
 #include "Vertex.h"
 #include "Camera.h"
 #include "ModelInstance.h"
+#include "CU/TimeHandler.hpp"
 
 bool GraphicsEngine::Initialize(unsigned someX, unsigned someY,
 	unsigned someWidth, unsigned someHeight,
@@ -59,14 +60,19 @@ bool GraphicsEngine::InitializeScene()
 	//myModelAssetHandler.Init();
 	//auto mdlChest = myModelAssetHandler.GetModelInstance("Cube");
 
-	myModelAssetHandler.LoadModel("SM_Particle_Chest.fbx");
-	std::shared_ptr<ModelInstance> mdlChest = myModelAssetHandler.GetModelInstance("SM_Particle_Chest.fbx");
-	myScene->AddGameObject(mdlChest);
+	myModelAssetHandler.LoadModel("Models/SK/gremlin_sk.fbx");
+	myModelAssetHandler.LoadAnimation("Models/SK/gremlin_sk.fbx", "Models/Animations/gremlin@run.fbx");
+	std::shared_ptr<ModelInstance> gremlin = myModelAssetHandler.GetModelInstance("Models/SK/gremlin_sk.fbx");
+	gremlin->SetAnimation("Models/Animations/gremlin@run.fbx");
+	gremlin->SetAnimationState(eAnimationState::Playing);
+	myScene->AddGameObject(gremlin);
 	return true;
 }
 
 LRESULT CALLBACK GraphicsEngine::WinProc(_In_ HWND hWnd, _In_ UINT uMsg, _In_ WPARAM wParam, _In_ LPARAM lParam)
 {
+	Time::Update();
+
 	// We want to be able to access the Graphics Engine instance from inside this function.
 	static GraphicsEngine* graphicsEnginePtr = nullptr;
 
@@ -96,11 +102,11 @@ void GraphicsEngine::RenderFrame()
 	{
 		const std::shared_ptr<Camera> camera = myScene->GetMainCamera();
 		const std::vector<std::shared_ptr<Model>> modelsToRender = myScene->CullModels(camera);
-		modelsToRender[0]->SetRotation(
-			modelsToRender[0]->GetTransform().myRotation.x + 1.f,
-			modelsToRender[0]->GetTransform().myRotation.y + 2.5f,
-			modelsToRender[0]->GetTransform().myRotation.z
-		);
+		//modelsToRender[0]->SetRotation(
+		//	modelsToRender[0]->GetTransform().myRotation.x + 1.f,
+		//	modelsToRender[0]->GetTransform().myRotation.y + 2.5f,
+		//	modelsToRender[0]->GetTransform().myRotation.z
+		//);
 		myForwardRenderer.Render(camera, modelsToRender);
 	}
 }

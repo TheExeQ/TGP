@@ -1,6 +1,9 @@
 #include "GraphicsEngine.pch.h"
 #include "../CU/TimeHandler.hpp"
 
+std::chrono::time_point<std::chrono::steady_clock> CommonUtilities::Time::myStart, CommonUtilities::Time::myLastFrame;
+std::chrono::duration<double> CommonUtilities::Time::myDeltaTime, CommonUtilities::Time::myTotalTime;
+
 CommonUtilities::Time::Time()
 {
 	myStart = std::chrono::high_resolution_clock::now();
@@ -16,12 +19,12 @@ void CommonUtilities::Time::Update()
 	myLastFrame = std::chrono::high_resolution_clock::now();
 }
 
-float CommonUtilities::Time::GetDeltaTime() const
+float CommonUtilities::Time::GetDeltaTime()
 {
 	return myDeltaTime.count();
 }
 
-double CommonUtilities::Time::GetTotalTime() const
+double CommonUtilities::Time::GetTotalTime()
 {
 	return myTotalTime.count() * 1000;
 }
