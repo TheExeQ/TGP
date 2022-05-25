@@ -6,6 +6,7 @@
 #include "ModelInstance.h"
 #include "FBXImporter/FBXImporter.h"
 #include "Random.h"
+#include "Material.h"
 
 std::unordered_map<std::string, std::shared_ptr<Model>> ModelAssetHandler::myModelRegistry;
 
@@ -36,6 +37,25 @@ bool ModelAssetHandler::LoadModel(const std::string& someFilePath)
 		for (size_t i = 0; i < tgaModel.Meshes.size(); i++)
 		{
 			TGA::FBXModel::FBXMesh& mesh = tgaModel.Meshes[i];
+
+			const std::string matName = mesh.MaterialName;
+			std::shared_ptr<Material> meshMaterial;
+			if (myMaterialRegistry.find(matName) != myMaterialRegistry.end())
+			{
+				meshMaterial = myMaterialRegistry[matName];
+			}
+			else
+			{
+				meshMaterial = std::make_shared<Material>();
+				CommonUtilities::Vector3<float> albedo;
+				albedo.x = Random::GetRandomFloat(0.f, 1.f);
+				albedo.y = Random::GetRandomFloat(0.f, 1.f);
+				albedo.z = Random::GetRandomFloat(0.f, 1.f);
+				meshMaterial->Init(matName, albedo);
+			}
+
+			myMaterialRegistry.insert({ matName, meshMaterial });
+			modelData.myMaterial = meshMaterial;
 
 			std::vector<Vertex> mdlVertices;
 			mdlVertices.resize(mesh.Vertices.size());

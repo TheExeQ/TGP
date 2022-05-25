@@ -30,7 +30,14 @@ private:
 		Matrix4x4<float> World;
 	} myObjectBufferData;
 	
+	struct MaterialBufferData
+	{
+		Vector3<float> Albedo;
+		float padding;
+	} myMaterialBufferData;
+
 	ComPtr<ID3D11Buffer> myFrameBuffer;
 	ComPtr<ID3D11Buffer> myObjectBuffer;
+	ComPtr<ID3D11Buffer> myMaterialBuffer;
 };
 

@@ -16,7 +16,8 @@ project "GraphicsEngine"
 		"./**.h",
 		"./**.hpp",
 		"./**.cpp",
-		"./**.hlsl"
+		"./**.hlsl",
+		"./**.hlsli"
 	}
 	
 	includedirs
@@ -33,11 +34,12 @@ project "GraphicsEngine"
 	
 	filter { "files:**.hlsl" }
 		shadermodel "5.0"
+		shaderobjectfileoutput "../Assets/Shaders/%{file.basename}.cso"
 
-	filter { "files:**-vs.hlsl" }
+	filter { "files:**VS.hlsl" }
 		shadertype "Vertex"
 
-	filter { "files:**-ps.hlsl" }
+	filter { "files:**PS.hlsl" }
 		shadertype "Pixel"
 
 	filter "system:windows"
