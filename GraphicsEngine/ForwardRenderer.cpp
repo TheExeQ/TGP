@@ -32,7 +32,7 @@ bool ForwardRenderer::Initialize()
 	}
 
 	bufferDesc.ByteWidth = sizeof(MaterialBufferData);
-	result = DX11::myDevice->CreateBuffer(&bufferDesc, nullptr, myObjectBuffer.GetAddressOf());
+	result = DX11::myDevice->CreateBuffer(&bufferDesc, nullptr, myMaterialBuffer.GetAddressOf());
 	if (FAILED(result))
 	{
 		return false;

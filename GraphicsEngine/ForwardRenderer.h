@@ -4,6 +4,7 @@
 #include <memory>
 #include <vector>
 #include "Math/Matrix4x4.hpp"
+#include "Math/Vector3.hpp"
 
 class Camera;
 class Model;

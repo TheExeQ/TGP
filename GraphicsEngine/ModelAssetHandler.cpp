@@ -9,6 +9,7 @@
 #include "Material.h"
 
 std::unordered_map<std::string, std::shared_ptr<Model>> ModelAssetHandler::myModelRegistry;
+std::unordered_map<std::string, std::shared_ptr<Material>> ModelAssetHandler::myMaterialRegistry;
 
 bool ModelAssetHandler::Init()
 {
