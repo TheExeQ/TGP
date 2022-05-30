@@ -3,6 +3,7 @@
 #include "Camera.h"
 #include "Model.h"
 #include "DX11.h"
+#include "Material.h"
 
 bool ForwardRenderer::Initialize()
 {
@@ -25,6 +26,13 @@ bool ForwardRenderer::Initialize()
 
 	bufferDesc.ByteWidth = sizeof(ObjectBufferData);
 	result = DX11::myDevice->CreateBuffer(&bufferDesc, nullptr, myObjectBuffer.GetAddressOf());
+	if (FAILED(result))
+	{
+		return false;
+	}
+
+	bufferDesc.ByteWidth = sizeof(MaterialBufferData);
+	result = DX11::myDevice->CreateBuffer(&bufferDesc, nullptr, myMaterialBuffer.GetAddressOf());
 	if (FAILED(result))
 	{
 		return false;
@@ -55,6 +63,7 @@ void ForwardRenderer::Render(const std::shared_ptr<Camera>& aCamera, const std::
 	for (const std::shared_ptr<Model>& model : aModelList)
 	{
 		D3D11_MAPPED_SUBRESOURCE objBufferData;
+		ZeroMemory(&objBufferData, sizeof(objBufferData));
 
 		myObjectBufferData.World = model->GetTransform().myMatrix;
 
@@ -70,6 +79,21 @@ void ForwardRenderer::Render(const std::shared_ptr<Camera>& aCamera, const std::
 		for (uint16_t i = 0; i < model->GetNumMeshes(); ++i)
 		{
 			const Model::ModelData& modelData = model->GetModelData(i);
+
+			D3D11_MAPPED_SUBRESOURCE matBufferData;
+			ZeroMemory(&matBufferData, sizeof(matBufferData));
+
+			myMaterialBufferData.Albedo = modelData.myMaterial->GetAlbedo();
+
+			result = DX11::myContext->Map(myMaterialBuffer.Get(), 0, D3D11_MAP_WRITE_DISCARD, 0, &matBufferData);
+			if (FAILED(result))
+			{
+				return;
+			}
+			memcpy(matBufferData.pData, &myMaterialBufferData, sizeof(ObjectBufferData));
+
+			DX11::myContext->Unmap(myMaterialBuffer.Get(), 0);
+
 			DX11::myContext->IASetVertexBuffers(0, 1, modelData.myVertexBuffer.GetAddressOf(), &modelData.myStride, &modelData.myOffset);
 			DX11::myContext->IASetIndexBuffer(modelData.myIndexBuffer.Get(), DXGI_FORMAT_R32_UINT, 0);
 
@@ -81,6 +105,7 @@ void ForwardRenderer::Render(const std::shared_ptr<Camera>& aCamera, const std::
 
 			DX11::myContext->VSSetConstantBuffers(1, 1, myObjectBuffer.GetAddressOf());
 			DX11::myContext->PSSetConstantBuffers(1, 1, myObjectBuffer.GetAddressOf());
+			DX11::myContext->PSSetConstantBuffers(2, 1, myMaterialBuffer.GetAddressOf());
 
 			DX11::myContext->DrawIndexed(modelData.myIndexCount, 0, 0);
 		}

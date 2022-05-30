@@ -5,6 +5,7 @@
 
 class Model;
 class ModelInstance;
+class Material;
 
 class ModelAssetHandler
 {
@@ -18,5 +19,6 @@ private:
 	bool InitUnitCube();
 	
 	static std::unordered_map<std::string, std::shared_ptr<Model>> myModelRegistry;
+	static std::unordered_map<std::string, std::shared_ptr<Material>> myMaterialRegistry;
 };
 
