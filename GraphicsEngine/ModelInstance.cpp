@@ -26,7 +26,7 @@ void ModelInstance::Update(float aDeltaTime)
 void ModelInstance::UpdateAnimationHierarchy(size_t aCurrentFrame, unsigned int aBoneIdx, const Animation anAnimation, Matrix4x4<float>& aParentTransform, Matrix4x4<float>* outBoneTransform)
 {
 	if (myCurrentAnimation.Frames.size() <= 0) return;
-	myBoneTransforms[2] =
+	outBoneTransform[2] =
 		aParentTransform 
 		* myCurrentAnimation.Frames[aCurrentFrame].LocalTransforms[0]
 		* myCurrentAnimation.Frames[aCurrentFrame].LocalTransforms[1]

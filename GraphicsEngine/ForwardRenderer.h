@@ -4,6 +4,7 @@
 #include <memory>
 #include <vector>
 #include "Math/Matrix4x4.hpp"
+#include "Math/Vector3.hpp"
 
 class Camera;
 class Model;
@@ -30,7 +31,14 @@ private:
 		Matrix4x4<float> World;
 	} myObjectBufferData;
 	
+	struct MaterialBufferData
+	{
+		Vector3<float> Albedo;
+		float padding;
+	} myMaterialBufferData;
+
 	ComPtr<ID3D11Buffer> myFrameBuffer;
 	ComPtr<ID3D11Buffer> myObjectBuffer;
+	ComPtr<ID3D11Buffer> myMaterialBuffer;
 };
 

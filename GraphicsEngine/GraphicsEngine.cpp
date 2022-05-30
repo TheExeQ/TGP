@@ -53,8 +53,8 @@ bool GraphicsEngine::InitializeScene()
 {	
 	myScene = std::make_shared<Scene>();
 	auto camera = std::make_shared<Camera>();
-	camera->SetProjectionValues(90, 9.f/16.f, 0.1f, 1000.0f);
-	camera->SetPosition(0.0f, 0.0f, -250.0f);
+	camera->SetProjectionValues(90, 9.f/16.f, 0.1f, 10000.0f);
+	camera->SetPosition(0.0f, 100.0f, -500.0f);
 	myScene->SetMainCamera(camera);
 
 	//myModelAssetHandler.Init();

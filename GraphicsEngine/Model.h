@@ -6,6 +6,8 @@
 #include "Scene.h"
 #include "Skeleton.h"
 
+class Material;
+
 using namespace Microsoft::WRL;
 
 class Model : public SceneObject
@@ -25,6 +27,8 @@ public:
 		UINT myIndexCount;
 		UINT myStride;
 		UINT myOffset;
+
+		std::shared_ptr<Material> myMaterial;
 	};
 	
 	void Init(std::vector<ModelData>& someModelData, const std::string& aName);
