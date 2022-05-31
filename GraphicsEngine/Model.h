@@ -3,6 +3,7 @@
 #include <wrl/client.h>
 #include <string>
 #include <vector>
+#include <array>
 #include "Scene.h"
 #include "Skeleton.h"
 
@@ -37,10 +38,13 @@ public:
 	FORCEINLINE uint16_t GetNumMeshes() const { return myData.size(); }
 	FORCEINLINE std::string GetName() const { return myName; }
 	FORCEINLINE const Skeleton* GetSkeleton() const { return &mySkeleton; }
+	FORCEINLINE std::array<CommonUtilities::Matrix4x4<float>, 128> GetBoneTransforms() const { return myBoneTransforms; }
 
 	void AddAnimation(Animation aAnimation);
 
 private:
+	std::array<CommonUtilities::Matrix4x4<float>, 128> myBoneTransforms;
+
 	std::vector<ModelData> myData;
 	std::string myName;
 

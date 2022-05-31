@@ -29,6 +29,7 @@ private:
 	struct ObjectBufferData
 	{
 		Matrix4x4<float> World;
+		Matrix4x4<float> BoneData[128];
 	} myObjectBufferData;
 	
 	struct MaterialBufferData

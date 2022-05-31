@@ -11,7 +11,7 @@ void ModelInstance::Update(float aDeltaTime)
 	{
 		Matrix4x4<float> identity;
 		
-		UpdateAnimationHierarchy(myCurrentAnimation.CurrentFrame, 0, myCurrentAnimation, identity, &myBoneTransforms[0]);
+		UpdateAnimationHierarchy(myCurrentAnimation.CurrentFrame, 0, myCurrentAnimation, identity, &myModel->GetBoneTransforms()[0]);
 		if (myCurrentAnimation.CurrentFrame < myCurrentAnimation.Length - 1)
 		{
 			myCurrentAnimation.CurrentFrame++;

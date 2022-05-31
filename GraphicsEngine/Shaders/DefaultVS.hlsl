@@ -4,11 +4,16 @@ VertexToPixel main(VertexInput input)
 {
     VertexToPixel result;
 
-    const float4 vertexObjectPosition = input.myPosition;
-
+    float4 skinnedPosition = 0;
+    
+    skinnedPosition += input.myBoneWeights.x * mul(input.myPosition, OB_BoneData[input.myBoneIDs.x]);
+    skinnedPosition += input.myBoneWeights.y * mul(input.myPosition, OB_BoneData[input.myBoneIDs.y]);
+    skinnedPosition += input.myBoneWeights.z * mul(input.myPosition, OB_BoneData[input.myBoneIDs.z]);
+    skinnedPosition += input.myBoneWeights.w * mul(input.myPosition, OB_BoneData[input.myBoneIDs.w]);
+    
 	// Move the vertex from Object Space (Local) to World space.
 	// (Incidentally moving it from world to object space is the inverse of this)
-    const float4 vertexWorldPosition = mul(OB_ToWorld, vertexObjectPosition);
+    const float4 vertexWorldPosition = mul(OB_ToWorld, skinnedPosition);
 
 	// Move the vertex from World to View Space (Camera space)
     const float4 vertexViewPosition = mul(FB_ToView, vertexWorldPosition);

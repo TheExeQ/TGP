@@ -66,7 +66,9 @@ void ForwardRenderer::Render(const std::shared_ptr<Camera>& aCamera, const std::
 		ZeroMemory(&objBufferData, sizeof(objBufferData));
 
 		myObjectBufferData.World = model->GetTransform().myMatrix;
-
+		memcpy_s(&myObjectBufferData.BoneData[0], sizeof(Matrix4x4<float>) * 128,
+			&model->GetBoneTransforms()[0], sizeof(Matrix4x4<float>) * 128);
+		
 		result = DX11::myContext->Map(myObjectBuffer.Get(), 0, D3D11_MAP_WRITE_DISCARD, 0, &objBufferData);
 		if (FAILED(result))
 		{
@@ -90,7 +92,7 @@ void ForwardRenderer::Render(const std::shared_ptr<Camera>& aCamera, const std::
 			{
 				return;
 			}
-			memcpy(matBufferData.pData, &myMaterialBufferData, sizeof(ObjectBufferData));
+			memcpy(matBufferData.pData, &myMaterialBufferData, sizeof(MaterialBufferData));
 
 			DX11::myContext->Unmap(myMaterialBuffer.Get(), 0);
 

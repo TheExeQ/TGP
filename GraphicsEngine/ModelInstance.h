@@ -23,7 +23,5 @@ private:
 	std::shared_ptr<Model> myModel;
 	Animation myCurrentAnimation;
 
-	CommonUtilities::Matrix4x4<float> myBoneTransforms[128];
-	
 	void UpdateAnimationHierarchy(size_t aCurrentFrame, unsigned int aBoneIdx, const Animation anAnimation, Matrix4x4<float>& aParentTransform, Matrix4x4<float>* outBoneTransform);
 };
