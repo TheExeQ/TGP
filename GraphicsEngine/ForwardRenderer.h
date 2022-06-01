@@ -29,6 +29,8 @@ private:
 	struct ObjectBufferData
 	{
 		Matrix4x4<float> World;
+		bool HasBones = false;
+		Vector3<float> Padding;
 		Matrix4x4<float> BoneData[128];
 	} myObjectBufferData;
 	

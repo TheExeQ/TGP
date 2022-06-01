@@ -5,6 +5,8 @@
 #include "ForwardRenderer.h"
 #include "Scene.h"
 #include "ModelAssetHandler.h"
+#include "CU/Timer.hpp"
+#include "CU/InputHandler.hpp"
 
 class GraphicsEngine
 {
@@ -23,13 +25,20 @@ public:
 	void EndFrame();
 	void RenderFrame();
 
+	static const CommonUtilities::Timer& GetTimer() { return myTimer; };
+
 	[[nodiscard]] HWND FORCEINLINE GetWindowHandle() const { return myWindowHandle; }
 	[[nodiscard]] SIZE FORCEINLINE GetWindowSize() const { return myWindowSize; }
 
 private:
+	void Controller();
+	
 	DX11 myFramework;
 	ForwardRenderer myForwardRenderer;
 	std::shared_ptr<Scene> myScene;
 	ModelAssetHandler myModelAssetHandler;
+	
+	static CommonUtilities::InputHandler myInputHandler;
+	static CommonUtilities::Timer myTimer;
 };
 

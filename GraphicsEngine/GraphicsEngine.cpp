@@ -4,12 +4,23 @@
 #include "Vertex.h"
 #include "Camera.h"
 #include "ModelInstance.h"
-#include "CU/TimeHandler.hpp"
+#include "CU/Timer.hpp"
+
+CommonUtilities::InputHandler GraphicsEngine::myInputHandler;
+CommonUtilities::Timer GraphicsEngine::myTimer;
 
 bool GraphicsEngine::Initialize(unsigned someX, unsigned someY,
 	unsigned someWidth, unsigned someHeight,
 	bool enableDeviceDebug)
 {
+#ifdef DEBUG
+	// Create Console Window
+	AllocConsole();
+	freopen("conin$", "r", stdin);
+	freopen("conout$", "w", stdout);
+	freopen("conout$", "w", stderr);
+#endif // DEBUG
+
 	// Initialize our window:
 	WNDCLASS windowClass = {};
 	windowClass.style = CS_VREDRAW | CS_HREDRAW | CS_OWNDC;
@@ -71,8 +82,8 @@ bool GraphicsEngine::InitializeScene()
 
 LRESULT CALLBACK GraphicsEngine::WinProc(_In_ HWND hWnd, _In_ UINT uMsg, _In_ WPARAM wParam, _In_ LPARAM lParam)
 {
-	Time::Update();
-
+	myInputHandler.UpdateEvents(uMsg, wParam, lParam);
+	
 	// We want to be able to access the Graphics Engine instance from inside this function.
 	static GraphicsEngine* graphicsEnginePtr = nullptr;
 
@@ -97,16 +108,15 @@ void GraphicsEngine::BeginFrame()
 
 void GraphicsEngine::RenderFrame()
 {
+	myTimer.Update();
+
 	// Will be fleshed out later!
 	if (myScene)
 	{
+		Controller();
+
 		const std::shared_ptr<Camera> camera = myScene->GetMainCamera();
 		const std::vector<std::shared_ptr<Model>> modelsToRender = myScene->CullModels(camera);
-		modelsToRender[0]->SetRotation(
-			modelsToRender[0]->GetTransform().myRotation.x,
-			180.f,
-			modelsToRender[0]->GetTransform().myRotation.z
-		);
 		myForwardRenderer.Render(camera, modelsToRender);
 	}
 }
@@ -116,4 +126,43 @@ void GraphicsEngine::EndFrame()
 	// F1 - This is where we finish our rendering and tell the framework
 	// to present our result to the screen.
 	myFramework.EndFrame();
+}
+
+void GraphicsEngine::Controller()
+{
+	static float moveSpeed = 100.f;
+	static float mouseSens = 10.f;
+
+	if (myInputHandler.IsKeyDown(KeyCode::W))
+	{
+		// Change to move forward using matrix
+		myScene->GetMainCamera()->AdjustPosition(0.f, 0.f, moveSpeed * myTimer.GetDeltaTime());
+	}
+	if (myInputHandler.IsKeyDown(KeyCode::A))
+	{
+		myScene->GetMainCamera()->AdjustPosition(-moveSpeed * myTimer.GetDeltaTime(), 0.f, 0.f);
+	}
+	if (myInputHandler.IsKeyDown(KeyCode::S))
+	{
+		myScene->GetMainCamera()->AdjustPosition(0.f, 0.f, -moveSpeed * myTimer.GetDeltaTime());
+	}
+	if (myInputHandler.IsKeyDown(KeyCode::D))
+	{
+		myScene->GetMainCamera()->AdjustPosition(moveSpeed * myTimer.GetDeltaTime(), 0.f, 0.f);
+	}
+
+	if (myInputHandler.IsKeyDown(KeyCode::E))
+	{
+		myScene->GetMainCamera()->AdjustPosition(0.f, moveSpeed * myTimer.GetDeltaTime(), 0.f);
+	}
+	if (myInputHandler.IsKeyDown(KeyCode::Q))
+	{
+		myScene->GetMainCamera()->AdjustPosition(0.f, -moveSpeed * myTimer.GetDeltaTime(), 0.f);
+	}
+
+	if (myInputHandler.IsKeyDown(KeyCode::MOUSERBUTTON))
+	{
+		myScene->GetMainCamera()->AdjustRotation(myInputHandler.GetMouseMovement().y * mouseSens * myTimer.GetDeltaTime(),
+			myInputHandler.GetMouseMovement().x * mouseSens * myTimer.GetDeltaTime(), 0.f);
+	}
 }

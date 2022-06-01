@@ -3,17 +3,21 @@
 VertexToPixel main(VertexInput input)
 {
     VertexToPixel result;
-
-    float4 skinnedPosition = 0;
+    float4 vertexPosition = input.myPosition;
     
-    skinnedPosition += input.myBoneWeights.x * mul(input.myPosition, OB_BoneData[input.myBoneIDs.x]);
-    skinnedPosition += input.myBoneWeights.y * mul(input.myPosition, OB_BoneData[input.myBoneIDs.y]);
-    skinnedPosition += input.myBoneWeights.z * mul(input.myPosition, OB_BoneData[input.myBoneIDs.z]);
-    skinnedPosition += input.myBoneWeights.w * mul(input.myPosition, OB_BoneData[input.myBoneIDs.w]);
+    if (OB_HasBones)
+    {
+        vertexPosition = 0;
+        
+        vertexPosition += input.myBoneWeights.x * mul(input.myPosition, OB_BoneData[input.myBoneIDs.x]);
+        vertexPosition += input.myBoneWeights.y * mul(input.myPosition, OB_BoneData[input.myBoneIDs.y]);
+        vertexPosition += input.myBoneWeights.z * mul(input.myPosition, OB_BoneData[input.myBoneIDs.z]);
+        vertexPosition += input.myBoneWeights.w * mul(input.myPosition, OB_BoneData[input.myBoneIDs.w]);
+    }
     
 	// Move the vertex from Object Space (Local) to World space.
 	// (Incidentally moving it from world to object space is the inverse of this)
-    const float4 vertexWorldPosition = mul(OB_ToWorld, skinnedPosition);
+    const float4 vertexWorldPosition = mul(OB_ToWorld, vertexPosition);
 
 	// Move the vertex from World to View Space (Camera space)
     const float4 vertexViewPosition = mul(FB_ToView, vertexWorldPosition);

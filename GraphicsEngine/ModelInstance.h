@@ -11,7 +11,7 @@ public:
 
 	void Init(std::shared_ptr<Model> aModel);
 
-	void Update(float aDeltaTime);
+	void Update();
 
 	FORCEINLINE std::shared_ptr<Model> GetModel() { return myModel; }
 	FORCEINLINE Model::ModelData const& GetModelData(uint16_t anIndex) const { return myModel->GetModelData(anIndex); }

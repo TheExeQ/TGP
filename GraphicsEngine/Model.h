@@ -38,7 +38,8 @@ public:
 	FORCEINLINE uint16_t GetNumMeshes() const { return myData.size(); }
 	FORCEINLINE std::string GetName() const { return myName; }
 	FORCEINLINE const Skeleton* GetSkeleton() const { return &mySkeleton; }
-	FORCEINLINE std::array<CommonUtilities::Matrix4x4<float>, 128> GetBoneTransforms() const { return myBoneTransforms; }
+	FORCEINLINE std::array<CommonUtilities::Matrix4x4<float>, 128>& GetBoneTransforms() { return myBoneTransforms; }
+	FORCEINLINE bool HasBones() { return (mySkeleton.GetRoot()) ? true : false; };
 
 	void AddAnimation(Animation aAnimation);
 

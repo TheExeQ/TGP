@@ -257,7 +257,7 @@ bool ModelAssetHandler::LoadAnimation(const std::string& aModelName, const std::
 				result.Frames[f].LocalTransforms[i](4, 2) = tgaAnimation.Frames[f].LocalTransforms[i].Data[13];
 				result.Frames[f].LocalTransforms[i](4, 3) = tgaAnimation.Frames[f].LocalTransforms[i].Data[14];
 				result.Frames[f].LocalTransforms[i](4, 4) = tgaAnimation.Frames[f].LocalTransforms[i].Data[15];
-
+				result.Frames[f].LocalTransforms[i] = CommonUtilities::Matrix4x4<float>::Transpose(result.Frames[f].LocalTransforms[i]);
 			}
 		}
 		

@@ -18,11 +18,13 @@ struct Animation
 	};
 
 	std::vector<Frame> Frames;
-	size_t CurrentFrame;
+	size_t CurrentFrame = 1;
 	eAnimationState State;
 
-	unsigned int Length;
-	float Duration;
-	float FramesPerSecond;
-	std::string Name;
+	bool Looping = true;
+	float Timer = 0.f;
+	unsigned int Length = 0;
+	float Duration = 0.f;
+	float FramesPerSecond = 0.f;
+	std::string Name = "";
 };

@@ -30,8 +30,11 @@ public:
 	void SetScale(Vector3<float> someScale);
 
 	void SetPosition(float someX, float someY, float someZ);
+	void AdjustPosition(float someX, float someY, float someZ);
 	void SetRotation(float someX, float someY, float someZ);
+	void AdjustRotation(float someX, float someY, float someZ);
 	void SetScale(float someX, float someY, float someZ);
+	void AdjustScale(float someX, float someY, float someZ);
 
 	inline const Transform& GetTransform() const { return myTransform; };
 
