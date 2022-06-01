@@ -135,20 +135,19 @@ void GraphicsEngine::Controller()
 
 	if (myInputHandler.IsKeyDown(KeyCode::W))
 	{
-		// Change to move forward using matrix
-		myScene->GetMainCamera()->AdjustPosition(0.f, 0.f, moveSpeed * myTimer.GetDeltaTime());
+		myScene->GetMainCamera()->MoveForward(moveSpeed * myTimer.GetDeltaTime());
 	}
 	if (myInputHandler.IsKeyDown(KeyCode::A))
 	{
-		myScene->GetMainCamera()->AdjustPosition(-moveSpeed * myTimer.GetDeltaTime(), 0.f, 0.f);
+		myScene->GetMainCamera()->MoveRight(-moveSpeed * myTimer.GetDeltaTime());
 	}
 	if (myInputHandler.IsKeyDown(KeyCode::S))
 	{
-		myScene->GetMainCamera()->AdjustPosition(0.f, 0.f, -moveSpeed * myTimer.GetDeltaTime());
+		myScene->GetMainCamera()->MoveForward(-moveSpeed * myTimer.GetDeltaTime());
 	}
 	if (myInputHandler.IsKeyDown(KeyCode::D))
 	{
-		myScene->GetMainCamera()->AdjustPosition(moveSpeed * myTimer.GetDeltaTime(), 0.f, 0.f);
+		myScene->GetMainCamera()->MoveRight(moveSpeed * myTimer.GetDeltaTime());
 	}
 
 	if (myInputHandler.IsKeyDown(KeyCode::E))
@@ -160,9 +159,18 @@ void GraphicsEngine::Controller()
 		myScene->GetMainCamera()->AdjustPosition(0.f, -moveSpeed * myTimer.GetDeltaTime(), 0.f);
 	}
 
+	static POINT prevFrame = myInputHandler.GetMousePosition();
+	static POINT currFrame = myInputHandler.GetMousePosition();
 	if (myInputHandler.IsKeyDown(KeyCode::MOUSERBUTTON))
 	{
-		myScene->GetMainCamera()->AdjustRotation(myInputHandler.GetMouseMovement().y * mouseSens * myTimer.GetDeltaTime(),
-			myInputHandler.GetMouseMovement().x * mouseSens * myTimer.GetDeltaTime(), 0.f);
+		currFrame = myInputHandler.GetMousePosition();
+		auto deltaX = currFrame.x - prevFrame.x;
+		auto deltaY = currFrame.y - prevFrame.y;
+		if (deltaX != 0 || deltaY != 0)
+		{
+			myScene->GetMainCamera()->AdjustRotation(deltaY * mouseSens * myTimer.GetDeltaTime(),
+				deltaX * mouseSens * myTimer.GetDeltaTime(), 0.f);
+		}
 	}
+	prevFrame = myInputHandler.GetMousePosition();
 }

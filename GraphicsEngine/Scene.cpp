@@ -22,6 +22,12 @@ void SceneObject::SetPosition(float someX, float someY, float someZ)
 	myTransform.myMatrix(4, 1) = someX;
 	myTransform.myMatrix(4, 2) = someY;
 	myTransform.myMatrix(4, 3) = someZ;
+
+	std::cout << "{" << myTransform.myMatrix(1, 1) << "," << myTransform.myMatrix(1, 2) << "," << myTransform.myMatrix(1, 3) << "," << myTransform.myMatrix(1, 4) << "}" << std::endl;
+	std::cout << "{" << myTransform.myMatrix(2, 1) << "," << myTransform.myMatrix(2, 2) << "," << myTransform.myMatrix(2, 3) << "," << myTransform.myMatrix(2, 4) << "}" << std::endl;
+	std::cout << "{" << myTransform.myMatrix(3, 1) << "," << myTransform.myMatrix(3, 2) << "," << myTransform.myMatrix(3, 3) << "," << myTransform.myMatrix(3, 4) << "}" << std::endl;
+	std::cout << "{" << myTransform.myMatrix(4, 1) << "," << myTransform.myMatrix(4, 2) << "," << myTransform.myMatrix(4, 3) << "," << myTransform.myMatrix(4, 4) << "}" << std::endl;
+	std::cout << "------------------------------------" << std::endl;
 }
 
 void SceneObject::AdjustPosition(float someX, float someY, float someZ)
@@ -36,11 +42,36 @@ void SceneObject::SetRotation(Vector3<float> someRotation)
 
 void SceneObject::SetRotation(float someX, float someY, float someZ)
 {
+	if (someX > 360)
+	{
+		someX -= 360;
+	}
+	if (someX < 0)
+	{
+		someX = 360;
+	}
+	if (someY > 360)
+	{
+		someY -= 360;
+	}
+	if (someY < 0)
+	{
+		someY = 360;
+	}
+	if (someZ > 360)
+	{
+		someZ -= 360;
+	}
+	if (someZ < 0)
+	{
+		someZ = 360;
+	}
 	myTransform.myRotation = { someX, someY, someZ};
 	myTransform.myMatrix =
 		myTransform.myMatrix.CreateRotationAroundX(someX * (PI / 180)) *
 		myTransform.myMatrix.CreateRotationAroundY(someY * (PI / 180)) *
 		myTransform.myMatrix.CreateRotationAroundZ(someZ * (PI / 180));
+	SetPosition(myTransform.myPosition);
 }
 
 void SceneObject::AdjustRotation(float someX, float someY, float someZ)
@@ -61,6 +92,33 @@ void SceneObject::SetScale(float someX, float someY, float someZ)
 void SceneObject::AdjustScale(float someX, float someY, float someZ)
 {
 	SetScale(myTransform.myScale.x + someX, myTransform.myScale.y + someY, myTransform.myScale.z + someZ);
+}
+
+void SceneObject::MoveForward(float someSpeed)
+{
+	CommonUtilities::Vector3<float> forward;
+	forward.x = myTransform.myMatrix(3, 1);
+	forward.y = myTransform.myMatrix(3, 2);
+	forward.z = myTransform.myMatrix(3, 3);
+	AdjustPosition(forward.x * someSpeed, forward.y * someSpeed, forward.z * someSpeed);
+}
+
+void SceneObject::MoveUp(float someSpeed)
+{
+	CommonUtilities::Vector3<float> up;
+	up.x = myTransform.myMatrix(2, 1);
+	up.y = myTransform.myMatrix(2, 2);
+	up.z = myTransform.myMatrix(2, 3);
+	AdjustPosition(up.x * someSpeed, up.y * someSpeed, up.z * someSpeed);
+}
+
+void SceneObject::MoveRight(float someSpeed)
+{
+	CommonUtilities::Vector3<float> right;
+	right.x = myTransform.myMatrix(1, 1);
+	right.y = myTransform.myMatrix(1, 2);
+	right.z = myTransform.myMatrix(1, 3);
+	AdjustPosition(right.x * someSpeed, right.y * someSpeed, right.z * someSpeed);
 }
 
 Scene::Scene()

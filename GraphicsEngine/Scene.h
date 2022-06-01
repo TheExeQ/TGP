@@ -36,6 +36,10 @@ public:
 	void SetScale(float someX, float someY, float someZ);
 	void AdjustScale(float someX, float someY, float someZ);
 
+	void MoveForward(float someSpeed);
+	void MoveUp(float someSpeed);
+	void MoveRight(float someSpeed);
+
 	inline const Transform& GetTransform() const { return myTransform; };
 
 protected:
