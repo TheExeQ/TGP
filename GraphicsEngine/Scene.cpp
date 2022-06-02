@@ -22,12 +22,6 @@ void SceneObject::SetPosition(float someX, float someY, float someZ)
 	myTransform.myMatrix(4, 1) = someX;
 	myTransform.myMatrix(4, 2) = someY;
 	myTransform.myMatrix(4, 3) = someZ;
-
-	std::cout << "{" << myTransform.myMatrix(1, 1) << "," << myTransform.myMatrix(1, 2) << "," << myTransform.myMatrix(1, 3) << "," << myTransform.myMatrix(1, 4) << "}" << std::endl;
-	std::cout << "{" << myTransform.myMatrix(2, 1) << "," << myTransform.myMatrix(2, 2) << "," << myTransform.myMatrix(2, 3) << "," << myTransform.myMatrix(2, 4) << "}" << std::endl;
-	std::cout << "{" << myTransform.myMatrix(3, 1) << "," << myTransform.myMatrix(3, 2) << "," << myTransform.myMatrix(3, 3) << "," << myTransform.myMatrix(3, 4) << "}" << std::endl;
-	std::cout << "{" << myTransform.myMatrix(4, 1) << "," << myTransform.myMatrix(4, 2) << "," << myTransform.myMatrix(4, 3) << "," << myTransform.myMatrix(4, 4) << "}" << std::endl;
-	std::cout << "------------------------------------" << std::endl;
 }
 
 void SceneObject::AdjustPosition(float someX, float someY, float someZ)
