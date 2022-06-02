@@ -86,6 +86,15 @@ void ForwardRenderer::Render(const std::shared_ptr<Camera>& aCamera, const std::
 		{
 			const Model::ModelData& modelData = model->GetModelData(i);
 
+			if (modelData.myMaterial)
+			{
+				modelData.myMaterial->SetAsResource(myMaterialBuffer);
+			}
+			else
+			{
+				// Set Default Material
+			}
+
 			D3D11_MAPPED_SUBRESOURCE matBufferData;
 			ZeroMemory(&matBufferData, sizeof(matBufferData));
 

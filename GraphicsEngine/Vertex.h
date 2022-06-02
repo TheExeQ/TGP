@@ -1,5 +1,5 @@
 #pragma once
-#include "Math/Vector4.hpp"
+#include "Math/Vector.hpp"
 
 using namespace CommonUtilities;
 
@@ -28,6 +28,14 @@ struct Vertex
 		{ 0.f, 0.f, 0.f, 0.f },
 		{ 0.f, 0.f, 0.f, 0.f },
 		{ 0.f, 0.f, 0.f, 0.f }
+	};
+
+	Vector2<float> UVs[4] = 
+	{
+		{0.f, 0.f},
+		{0.f, 0.f},
+		{0.f, 0.f},
+		{0.f, 0.f},
 	};
 
 	Vector4<unsigned int> BoneIDs = { 0.f, 0.f, 0.f, 0.f };

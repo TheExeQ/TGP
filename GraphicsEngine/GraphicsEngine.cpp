@@ -71,10 +71,11 @@ bool GraphicsEngine::InitializeScene()
 	//myModelAssetHandler.Init();
 	//auto mdlChest = myModelAssetHandler.GetModelInstance("Cube");
 
-	myModelAssetHandler.LoadModel("Models/SK/gremlin_sk.fbx");
-	myModelAssetHandler.LoadAnimation("Models/SK/gremlin_sk.fbx", "Models/Animations/gremlin@run.fbx");
-	std::shared_ptr<ModelInstance> gremlin = myModelAssetHandler.GetModelInstance("Models/SK/gremlin_sk.fbx");
-	gremlin->SetAnimation("Models/Animations/gremlin@run.fbx");
+	myModelAssetHandler.LoadModel("Models/SK/gremlin.fbx");
+	myModelAssetHandler.LoadAnimation("Models/SK/gremlin.fbx", "Models/Animations/gremlin@run.fbx");
+	myModelAssetHandler.LoadAnimation("Models/SK/gremlin.fbx", "Models/Animations/gremlin@walk.fbx");
+	std::shared_ptr<ModelInstance> gremlin = myModelAssetHandler.GetModelInstance("Models/SK/gremlin.fbx");
+	gremlin->SetAnimation("Models/Animations/gremlin@walk.fbx");
 	gremlin->SetAnimationState(eAnimationState::Playing);
 	myScene->AddGameObject(gremlin);
 	return true;

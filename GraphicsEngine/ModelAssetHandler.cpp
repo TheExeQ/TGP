@@ -1,4 +1,5 @@
 #include "ModelAssetHandler.h"
+#include <filesystem>
 #include <fstream>
 #include "Vertex.h"
 #include "DX11.h"
@@ -7,6 +8,7 @@
 #include "FBXImporter/FBXImporter.h"
 #include "Random.h"
 #include "Material.h"
+#include "TextureAssetHandler.h"
 
 std::unordered_map<std::string, std::shared_ptr<Model>> ModelAssetHandler::myModelRegistry;
 std::unordered_map<std::string, std::shared_ptr<Material>> ModelAssetHandler::myMaterialRegistry;
@@ -93,6 +95,16 @@ bool ModelAssetHandler::LoadModel(const std::string& someFilePath)
 				meshMaterial->Init(matName, albedo);
 			}
 
+			std::filesystem::path p(someFilePath);
+			const std::string baseFileName = p.stem().string();
+
+			const std::string albedoFileName = "T_" + baseFileName + "_C.dds";
+
+			if (TextureAssetHandler::LoadTexture(albedoFileName))
+			{
+				meshMaterial->SetAlbedoTexture(TextureAssetHandler::GetTexture(albedoFileName));
+			}
+
 			myMaterialRegistry.insert({ matName, meshMaterial });
 			modelData.myMaterial = meshMaterial;
 
@@ -123,6 +135,11 @@ bool ModelAssetHandler::LoadModel(const std::string& someFilePath)
 					mdlVertices[v].BoneWeights.y = mesh.Vertices[v].BoneWeights[1];
 					mdlVertices[v].BoneWeights.z = mesh.Vertices[v].BoneWeights[2];
 					mdlVertices[v].BoneWeights.w = mesh.Vertices[v].BoneWeights[3];
+				}
+
+				for (int uvCh = 0; uvCh < 4; uvCh++)
+				{
+					mdlVertices[v].UVs[uvCh] = {mesh.Vertices[v].UVs[uvCh][0], mesh.Vertices[v].UVs[uvCh][1]};
 				}
 			}
 			
@@ -189,6 +206,10 @@ bool ModelAssetHandler::LoadModel(const std::string& someFilePath)
 				{"COLOR", 1, DXGI_FORMAT_R32G32B32A32_FLOAT, 0, D3D11_APPEND_ALIGNED_ELEMENT, D3D11_INPUT_PER_VERTEX_DATA, 0},
 				{"COLOR", 2, DXGI_FORMAT_R32G32B32A32_FLOAT, 0, D3D11_APPEND_ALIGNED_ELEMENT, D3D11_INPUT_PER_VERTEX_DATA, 0},
 				{"COLOR", 3, DXGI_FORMAT_R32G32B32A32_FLOAT, 0, D3D11_APPEND_ALIGNED_ELEMENT, D3D11_INPUT_PER_VERTEX_DATA, 0},
+				{"UVS", 0, DXGI_FORMAT_R32G32_FLOAT, 0, D3D11_APPEND_ALIGNED_ELEMENT, D3D11_INPUT_PER_VERTEX_DATA, 0},
+				{"UVS", 1, DXGI_FORMAT_R32G32_FLOAT, 0, D3D11_APPEND_ALIGNED_ELEMENT, D3D11_INPUT_PER_VERTEX_DATA, 0},
+				{"UVS", 2, DXGI_FORMAT_R32G32_FLOAT, 0, D3D11_APPEND_ALIGNED_ELEMENT, D3D11_INPUT_PER_VERTEX_DATA, 0},
+				{"UVS", 3, DXGI_FORMAT_R32G32_FLOAT, 0, D3D11_APPEND_ALIGNED_ELEMENT, D3D11_INPUT_PER_VERTEX_DATA, 0},
 				{"BONEIDS", 0, DXGI_FORMAT_R32G32B32A32_UINT, 0, D3D11_APPEND_ALIGNED_ELEMENT, D3D11_INPUT_PER_VERTEX_DATA, 0},
 				{"BONEWEIGHTS", 0, DXGI_FORMAT_R32G32B32A32_FLOAT, 0, D3D11_APPEND_ALIGNED_ELEMENT, D3D11_INPUT_PER_VERTEX_DATA, 0},
 			};
