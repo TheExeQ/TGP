@@ -65,11 +65,13 @@ bool GraphicsEngine::InitializeScene()
 	myScene = std::make_shared<Scene>();
 	auto camera = std::make_shared<Camera>();
 	camera->SetProjectionValues(90, 9.f/16.f, 0.1f, 10000.0f);
-	camera->SetPosition(0.0f, 25.0f, -100.0f);
+	camera->SetPosition(0.0f, 25.0f, -200.0f);
 	myScene->SetMainCamera(camera);
 
-	//myModelAssetHandler.Init();
-	//auto mdlChest = myModelAssetHandler.GetModelInstance("Cube");
+	myModelAssetHandler.Init();
+	myModelAssetHandler.LoadModel("Models/SM/Particle_Chest.fbx");
+	auto mdlCube = myModelAssetHandler.GetModelInstance("Cube");
+	auto mdlChest = myModelAssetHandler.GetModelInstance("Models/SM/Particle_Chest.fbx");
 
 	myModelAssetHandler.LoadModel("Models/SK/gremlin.fbx");
 	myModelAssetHandler.LoadAnimation("Models/SK/gremlin.fbx", "Models/Animations/gremlin@run.fbx");
@@ -77,7 +79,13 @@ bool GraphicsEngine::InitializeScene()
 	std::shared_ptr<ModelInstance> gremlin = myModelAssetHandler.GetModelInstance("Models/SK/gremlin.fbx");
 	gremlin->SetAnimation("Models/Animations/gremlin@walk.fbx");
 	gremlin->SetAnimationState(eAnimationState::Playing);
+
+	gremlin->SetPosition(100.f, 0.f, 0.f);
+	mdlChest->SetPosition(-100.f, 0.f, 0.f);
+
 	myScene->AddGameObject(gremlin);
+	myScene->AddGameObject(mdlChest);
+	myScene->AddGameObject(mdlCube);
 	return true;
 }
 

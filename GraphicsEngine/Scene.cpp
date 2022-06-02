@@ -131,6 +131,9 @@ const std::vector<std::shared_ptr<Model>> Scene::CullModels(const std::shared_pt
 		{
 			mdlInst->Update();
 			visibleModels.push_back(mdlInst->GetModel());
+			visibleModels.back()->SetPosition(mdlInst->GetTransform().myPosition);
+			visibleModels.back()->SetRotation(mdlInst->GetTransform().myRotation);
+			visibleModels.back()->SetScale(mdlInst->GetTransform().myScale);
 		}
 	}
 

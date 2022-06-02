@@ -40,7 +40,8 @@ public:
 	void MoveUp(float someSpeed);
 	void MoveRight(float someSpeed);
 
-	inline const Transform& GetTransform() const { return myTransform; };
+	inline const Transform& GetTransform() const { 
+		return myTransform; };
 
 protected:
 	Transform myTransform;

@@ -341,6 +341,18 @@ bool ModelAssetHandler::InitUnitCube()
 		4, 3, 7,
 	};
 
+	std::shared_ptr<Material> meshMaterial;
+	
+	meshMaterial = std::make_shared<Material>();
+	CommonUtilities::Vector3<float> albedo;
+	albedo.x = Random::GetRandomFloat(0.f, 1.f);
+	albedo.y = Random::GetRandomFloat(0.f, 1.f);
+	albedo.z = Random::GetRandomFloat(0.f, 1.f);
+	meshMaterial->Init("Cube", albedo);
+
+	myMaterialRegistry.insert({ "Cube", meshMaterial });
+	modelData.myMaterial = meshMaterial;
+
 	D3D11_BUFFER_DESC vertexBufferDesc;
 	vertexBufferDesc.Usage = D3D11_USAGE_DEFAULT;
 	vertexBufferDesc.ByteWidth = sizeof(Vertex) * mdlVertices.size();
@@ -404,6 +416,12 @@ bool ModelAssetHandler::InitUnitCube()
 		{"COLOR", 1, DXGI_FORMAT_R32G32B32A32_FLOAT, 0, D3D11_APPEND_ALIGNED_ELEMENT, D3D11_INPUT_PER_VERTEX_DATA, 0},
 		{"COLOR", 2, DXGI_FORMAT_R32G32B32A32_FLOAT, 0, D3D11_APPEND_ALIGNED_ELEMENT, D3D11_INPUT_PER_VERTEX_DATA, 0},
 		{"COLOR", 3, DXGI_FORMAT_R32G32B32A32_FLOAT, 0, D3D11_APPEND_ALIGNED_ELEMENT, D3D11_INPUT_PER_VERTEX_DATA, 0},
+		{"UVS", 0, DXGI_FORMAT_R32G32_FLOAT, 0, D3D11_APPEND_ALIGNED_ELEMENT, D3D11_INPUT_PER_VERTEX_DATA, 0},
+		{"UVS", 1, DXGI_FORMAT_R32G32_FLOAT, 0, D3D11_APPEND_ALIGNED_ELEMENT, D3D11_INPUT_PER_VERTEX_DATA, 0},
+		{"UVS", 2, DXGI_FORMAT_R32G32_FLOAT, 0, D3D11_APPEND_ALIGNED_ELEMENT, D3D11_INPUT_PER_VERTEX_DATA, 0},
+		{"UVS", 3, DXGI_FORMAT_R32G32_FLOAT, 0, D3D11_APPEND_ALIGNED_ELEMENT, D3D11_INPUT_PER_VERTEX_DATA, 0},
+		{"BONEIDS", 0, DXGI_FORMAT_R32G32B32A32_UINT, 0, D3D11_APPEND_ALIGNED_ELEMENT, D3D11_INPUT_PER_VERTEX_DATA, 0},
+		{"BONEWEIGHTS", 0, DXGI_FORMAT_R32G32B32A32_FLOAT, 0, D3D11_APPEND_ALIGNED_ELEMENT, D3D11_INPUT_PER_VERTEX_DATA, 0},
 	};
 
 	result = DX11::myDevice->CreateInputLayout(layout, sizeof(layout) / sizeof(D3D11_INPUT_ELEMENT_DESC), vsData.data(), vsData.size(), modelData.myInputLayout.GetAddressOf());
