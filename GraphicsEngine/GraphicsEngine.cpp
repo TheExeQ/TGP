@@ -65,7 +65,7 @@ bool GraphicsEngine::InitializeScene()
 	myScene = std::make_shared<Scene>();
 	auto camera = std::make_shared<Camera>();
 	camera->SetProjectionValues(90, 9.f/16.f, 0.1f, 10000.0f);
-	camera->SetPosition(0.0f, 25.0f, -200.0f);
+	camera->SetPosition(0.0f, 25.0f, -500.0f);
 	myScene->SetMainCamera(camera);
 
 	myModelAssetHandler.Init();
@@ -80,8 +80,10 @@ bool GraphicsEngine::InitializeScene()
 	gremlin->SetAnimation("Models/Animations/gremlin@walk.fbx");
 	gremlin->SetAnimationState(eAnimationState::Playing);
 
-	gremlin->SetPosition(100.f, 0.f, 0.f);
-	mdlChest->SetPosition(-100.f, 0.f, 0.f);
+	gremlin->SetPosition(200.f, 0.f, 0.f);
+	gremlin->SetRotation(0.f, 160.f, 0.f);
+	mdlChest->SetPosition(-200.f, 0.f, 0.f);
+	mdlChest->SetRotation(0.f, 160.f, 0.f);
 
 	myScene->AddGameObject(gremlin);
 	myScene->AddGameObject(mdlChest);

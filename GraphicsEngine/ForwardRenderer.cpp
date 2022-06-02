@@ -65,6 +65,8 @@ void ForwardRenderer::Render(const std::shared_ptr<Camera>& aCamera, const std::
 		D3D11_MAPPED_SUBRESOURCE objBufferData;
 		ZeroMemory(&objBufferData, sizeof(objBufferData));
 
+		ZeroMemory(&myObjectBufferData.HasBones, 16);
+
 		myObjectBufferData.World = model->GetTransform().myMatrix;
 		myObjectBufferData.HasBones = model->HasBones();
 		if (myObjectBufferData.HasBones)

@@ -40,9 +40,9 @@ cbuffer FrameBuffer : register(b0)
 cbuffer Objectbuffer : register(b1)
 {
     float4x4 OB_ToWorld;
-    bool OB_HasBones;
-    float3 OB_Padding;
+    //float3 OB_Padding = float3(0,0,0);
     float4x4 OB_BoneData[128];
+    bool OB_HasBones = false;
 }
 
 cbuffer MaterialBuffer : register(b2)
