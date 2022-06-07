@@ -23,7 +23,7 @@ PixelOutput main(VertexToPixel input)
     normalMap.z = sqrt(1 - saturate(normalMap.x + normalMap.x + normalMap.y + normalMap.y));
     
     normalMap = normalize(normalMap);
-    const float pixelNormal = normalize(mul(normalMap, TBN));
+    const float3 pixelNormal = normalize(mul(normalMap, TBN));
     
     float3 debugNormal = pixelNormal;
     const float signedLength = (debugNormal.r + debugNormal.g + debugNormal.b) / 3;
