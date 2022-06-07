@@ -40,4 +40,8 @@ struct Vertex
 
 	Vector4<unsigned int> BoneIDs = { 0.f, 0.f, 0.f, 0.f };
 	Vector4<float> BoneWeights = { 0.f, 0.f, 0.f, 0.f };
+
+	Vector3<float> Tangent = { 0.f, 0.f, 0.f };
+	Vector3<float> Binormal = { 0.f, 0.f, 0.f };
+	Vector3<float> Normal = { 0.f, 0.f, 0.f };
 };

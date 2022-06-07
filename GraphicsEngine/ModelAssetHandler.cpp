@@ -99,10 +99,16 @@ bool ModelAssetHandler::LoadModel(const std::string& someFilePath)
 			const std::string baseFileName = p.stem().string();
 
 			const std::string albedoFileName = "T_" + baseFileName + "_C.dds";
+			const std::string normalFileName = "T_" + baseFileName + "_N.dds";
 
 			if (TextureAssetHandler::LoadTexture(albedoFileName))
 			{
 				meshMaterial->SetAlbedoTexture(TextureAssetHandler::GetTexture(albedoFileName));
+			}
+
+			if (TextureAssetHandler::LoadTexture(normalFileName))
+			{
+				meshMaterial->SetNormalTexture(TextureAssetHandler::GetTexture(normalFileName));
 			}
 
 			myMaterialRegistry.insert({ matName, meshMaterial });
@@ -141,6 +147,25 @@ bool ModelAssetHandler::LoadModel(const std::string& someFilePath)
 				{
 					mdlVertices[v].UVs[uvCh] = {mesh.Vertices[v].UVs[uvCh][0], mesh.Vertices[v].UVs[uvCh][1]};
 				}
+
+				mdlVertices[v].Tangent =
+				{ 
+					mesh.Vertices[v].Tangent[0],
+					mesh.Vertices[v].Tangent[1],
+					mesh.Vertices[v].Tangent[2] 
+				};
+				mdlVertices[v].Binormal =
+				{
+					mesh.Vertices[v].Binormal[0],
+					mesh.Vertices[v].Binormal[1],
+					mesh.Vertices[v].Binormal[2]
+				};
+				mdlVertices[v].Normal =
+				{
+					mesh.Vertices[v].Normal[0],
+					mesh.Vertices[v].Normal[1],
+					mesh.Vertices[v].Normal[2]
+				};
 			}
 			
 			D3D11_BUFFER_DESC vertexBufferDesc;
@@ -212,6 +237,9 @@ bool ModelAssetHandler::LoadModel(const std::string& someFilePath)
 				{"UVS", 3, DXGI_FORMAT_R32G32_FLOAT, 0, D3D11_APPEND_ALIGNED_ELEMENT, D3D11_INPUT_PER_VERTEX_DATA, 0},
 				{"BONEIDS", 0, DXGI_FORMAT_R32G32B32A32_UINT, 0, D3D11_APPEND_ALIGNED_ELEMENT, D3D11_INPUT_PER_VERTEX_DATA, 0},
 				{"BONEWEIGHTS", 0, DXGI_FORMAT_R32G32B32A32_FLOAT, 0, D3D11_APPEND_ALIGNED_ELEMENT, D3D11_INPUT_PER_VERTEX_DATA, 0},
+				{"TANGENT", 0, DXGI_FORMAT_R32G32B32_FLOAT, 0, D3D11_APPEND_ALIGNED_ELEMENT, D3D11_INPUT_PER_VERTEX_DATA, 0},
+				{"BINORMAL", 0, DXGI_FORMAT_R32G32B32_FLOAT, 0, D3D11_APPEND_ALIGNED_ELEMENT, D3D11_INPUT_PER_VERTEX_DATA, 0},
+				{"NORMAL", 0, DXGI_FORMAT_R32G32B32_FLOAT, 0, D3D11_APPEND_ALIGNED_ELEMENT, D3D11_INPUT_PER_VERTEX_DATA, 0},
 			};
 
 			result = DX11::myDevice->CreateInputLayout(layout, sizeof(layout) / sizeof(D3D11_INPUT_ELEMENT_DESC), vsData.data(), vsData.size(), modelData.myInputLayout.GetAddressOf());
@@ -287,6 +315,7 @@ bool ModelAssetHandler::LoadAnimation(const std::string& aModelName, const std::
 		result.FramesPerSecond = tgaAnimation.FramesPerSecond;
 		result.Duration = tgaAnimation.Duration;
 		result.CurrentFrame = 1;
+		result.State = eAnimationState::Stopped;
 			
 		model->AddAnimation(result);
 		return true;
@@ -422,6 +451,9 @@ bool ModelAssetHandler::InitUnitCube()
 		{"UVS", 3, DXGI_FORMAT_R32G32_FLOAT, 0, D3D11_APPEND_ALIGNED_ELEMENT, D3D11_INPUT_PER_VERTEX_DATA, 0},
 		{"BONEIDS", 0, DXGI_FORMAT_R32G32B32A32_UINT, 0, D3D11_APPEND_ALIGNED_ELEMENT, D3D11_INPUT_PER_VERTEX_DATA, 0},
 		{"BONEWEIGHTS", 0, DXGI_FORMAT_R32G32B32A32_FLOAT, 0, D3D11_APPEND_ALIGNED_ELEMENT, D3D11_INPUT_PER_VERTEX_DATA, 0},
+		{"TANGENT", 0, DXGI_FORMAT_R32G32B32_FLOAT, 0, D3D11_APPEND_ALIGNED_ELEMENT, D3D11_INPUT_PER_VERTEX_DATA, 0},
+		{"BINORMAL", 0, DXGI_FORMAT_R32G32B32_FLOAT, 0, D3D11_APPEND_ALIGNED_ELEMENT, D3D11_INPUT_PER_VERTEX_DATA, 0},
+		{"NORMAL", 0, DXGI_FORMAT_R32G32B32_FLOAT, 0, D3D11_APPEND_ALIGNED_ELEMENT, D3D11_INPUT_PER_VERTEX_DATA, 0},
 	};
 
 	result = DX11::myDevice->CreateInputLayout(layout, sizeof(layout) / sizeof(D3D11_INPUT_ELEMENT_DESC), vsData.data(), vsData.size(), modelData.myInputLayout.GetAddressOf());

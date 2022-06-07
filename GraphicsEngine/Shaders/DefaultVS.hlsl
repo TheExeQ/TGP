@@ -4,20 +4,28 @@ VertexToPixel main(VertexInput input)
 {
     VertexToPixel result;
     float4 vertexPosition = input.myPosition;
+    float4x4 skinningMatrix = { 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1 };
     
     if (OB_HasBones)
     {
-        vertexPosition = 0;
+        skinningMatrix = 0;
         
-        vertexPosition += input.myBoneWeights.x * mul(input.myPosition, OB_BoneData[input.myBoneIDs.x]);
-        vertexPosition += input.myBoneWeights.y * mul(input.myPosition, OB_BoneData[input.myBoneIDs.y]);
-        vertexPosition += input.myBoneWeights.z * mul(input.myPosition, OB_BoneData[input.myBoneIDs.z]);
-        vertexPosition += input.myBoneWeights.w * mul(input.myPosition, OB_BoneData[input.myBoneIDs.w]);
+        skinningMatrix += input.myBoneWeights.x * OB_BoneData[input.myBoneIDs.x];
+        skinningMatrix += input.myBoneWeights.y * OB_BoneData[input.myBoneIDs.y];
+        skinningMatrix += input.myBoneWeights.z * OB_BoneData[input.myBoneIDs.z];
+        skinningMatrix += input.myBoneWeights.w * OB_BoneData[input.myBoneIDs.w];
     }
+    
+    const float3x3 worldNormalRotation = (float3x3) OB_ToWorld;
+    const float3x3 skinNormalRotation = (float3x3) skinningMatrix;
+    
+    result.myTangent = mul(worldNormalRotation, mul(input.myTangent, skinNormalRotation));
+    result.myBinormal = mul(worldNormalRotation, mul(input.myBinormal, skinNormalRotation));
+    result.myNormal = mul(worldNormalRotation, mul(input.myNormal, skinNormalRotation));
     
 	// Move the vertex from Object Space (Local) to World space.
 	// (Incidentally moving it from world to object space is the inverse of this)
-    const float4 vertexWorldPosition = mul(OB_ToWorld, vertexPosition);
+    const float4 vertexWorldPosition = mul(OB_ToWorld, mul(vertexPosition, skinningMatrix));
 
 	// Move the vertex from World to View Space (Camera space)
     const float4 vertexViewPosition = mul(FB_ToView, vertexWorldPosition);

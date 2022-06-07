@@ -10,6 +10,7 @@ namespace MaterialTextureChannel
 	enum
 	{
 		Albedo,
+		Normal,
 		COUNT
 	};
 }
@@ -26,6 +27,7 @@ public:
 	_inline const CommonUtilities::Vector3<float>& GetAlbedo() const { return myMaterialData.Albedo; };
 
 	void SetAlbedoTexture(std::shared_ptr<Texture> aTexture);
+	void SetNormalTexture(std::shared_ptr<Texture> aTexture);
 	
 	void SetAsResource(ComPtr<ID3D11Resource> aMaterialBuffer) const;
 

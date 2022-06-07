@@ -11,6 +11,9 @@ struct VertexInput
     float2 myUV4 : UVS3;
     uint4 myBoneIDs : BONEIDS;
     float4 myBoneWeights : BONEWEIGHTS;
+    float3 myTangent : TANGENT;
+    float3 myBinormal : BINORMAL;
+    float3 myNormal : NORMAL;
 };
 
 struct VertexToPixel
@@ -24,6 +27,9 @@ struct VertexToPixel
     float2 myUV2 : UVS1;
     float2 myUV3 : UVS2;
     float2 myUV4 : UVS3;
+    float3 myTangent : TANGENT;
+    float3 myBinormal : BINORMAL;
+    float3 myNormal : NORMAL;
 };
 
 struct PixelOutput
