@@ -5,6 +5,8 @@
 #include "Camera.h"
 #include "ModelInstance.h"
 #include "CU/Timer.hpp"
+#include "LightAssetHandler.h"
+#include "TextureAssetHandler.h"
 
 CommonUtilities::InputHandler GraphicsEngine::myInputHandler;
 CommonUtilities::Timer GraphicsEngine::myTimer;
@@ -68,6 +70,11 @@ bool GraphicsEngine::InitializeScene()
 	camera->SetPosition(0.0f, 25.0f, -500.0f);
 	myScene->SetMainCamera(camera);
 
+	TextureAssetHandler::LoadTexture("studio_cubemap.dds");
+	
+	myDirectionalLight = LightAssetHandler::CreateDirectionalLight({ 1.0f,1.0f,1.0f }, 1.0, { 0,0,0 });
+	myEnvironmentLight = LightAssetHandler::CreateEnvironmentLight("studio_cubemap.dds");
+
 	myModelAssetHandler.Init();
 	myModelAssetHandler.LoadModel("Models/SM/Particle_Chest.fbx");
 	auto mdlCube = myModelAssetHandler.GetModelInstance("Cube");
@@ -128,7 +135,7 @@ void GraphicsEngine::RenderFrame()
 
 		const std::shared_ptr<Camera> camera = myScene->GetMainCamera();
 		const std::vector<std::shared_ptr<Model>> modelsToRender = myScene->CullModels(camera);
-		myForwardRenderer.Render(camera, modelsToRender);
+		myForwardRenderer.Render(camera, modelsToRender, myDirectionalLight, myEnvironmentLight);
 	}
 }
 

@@ -7,6 +7,8 @@
 #include "ModelAssetHandler.h"
 #include "CU/Timer.hpp"
 #include "CU/InputHandler.hpp"
+#include "DirectionalLight.h"
+#include "EnvironmentLight.h"
 
 class GraphicsEngine
 {
@@ -38,6 +40,9 @@ private:
 	std::shared_ptr<Scene> myScene;
 	ModelAssetHandler myModelAssetHandler;
 	
+	std::shared_ptr<DirectionalLight> myDirectionalLight;
+	std::shared_ptr<EnvironmentLight> myEnvironmentLight;
+
 	static CommonUtilities::InputHandler myInputHandler;
 	static CommonUtilities::Timer myTimer;
 };

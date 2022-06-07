@@ -56,3 +56,16 @@ cbuffer MaterialBuffer : register(b2)
     float3 MB_Albedo;
     float padding;
 }
+
+cbuffer LightBuffer : register(b3)
+{
+    float3 LB_Color;
+    float LB_Intensity;
+    float3 LB_Direction;
+    float LB_Padding;
+}
+
+SamplerState defaultSampler : register(s0);
+Texture2D albedoTexture : register(t0);
+Texture2D normalTexture : register(t1);
+Texture2D environmentTexture : register(t10);

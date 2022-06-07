@@ -4,6 +4,8 @@
 #include "Model.h"
 #include "DX11.h"
 #include "Material.h"
+#include "DirectionalLight.h"
+#include "EnvironmentLight.h"
 
 bool ForwardRenderer::Initialize()
 {
@@ -38,10 +40,18 @@ bool ForwardRenderer::Initialize()
 		return false;
 	}
 
+	bufferDesc.ByteWidth = sizeof(Light::LightBufferData);
+	result = DX11::myDevice->CreateBuffer(&bufferDesc, nullptr, myLightBuffer.GetAddressOf());
+	if (FAILED(result))
+	{
+		return false;
+	}
+
 	return true;
 }
 
-void ForwardRenderer::Render(const std::shared_ptr<Camera>& aCamera, const std::vector<std::shared_ptr<Model>>& aModelList)
+void ForwardRenderer::Render(const std::shared_ptr<Camera>& aCamera, const std::vector<std::shared_ptr<Model>>& aModelList, 
+	const std::shared_ptr<DirectionalLight>& aDirectionalLight, const std::shared_ptr<EnvironmentLight>& aEnvironmentLight)
 {
 	HRESULT result = S_FALSE;
 
@@ -60,6 +70,15 @@ void ForwardRenderer::Render(const std::shared_ptr<Camera>& aCamera, const std::
 	DX11::myContext->Unmap(myFrameBuffer.Get(), 0);
 	DX11::myContext->VSSetConstantBuffers(0, 1, myFrameBuffer.GetAddressOf());
 
+	if (aDirectionalLight)
+	{
+		aDirectionalLight->SetAsResource(myLightBuffer);
+	}
+	if (aEnvironmentLight)
+	{
+		aEnvironmentLight->SetAsResource(myLightBuffer);
+	}
+	
 	for (const std::shared_ptr<Model>& model : aModelList)
 	{
 		D3D11_MAPPED_SUBRESOURCE objBufferData;

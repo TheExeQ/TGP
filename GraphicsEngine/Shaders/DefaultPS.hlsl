@@ -1,9 +1,5 @@
 #include "ShaderStructs.hlsli"
 
-SamplerState defaultSampler : register(s0);
-Texture2D albedoTexture : register(t0);
-Texture2D normalTexture : register(t1);
-
 PixelOutput main(VertexToPixel input)
 {
     PixelOutput result;
@@ -32,10 +28,24 @@ PixelOutput main(VertexToPixel input)
         debugNormal = float3(1 - abs(debugNormal));
     }
     
+    const float3 L = -1 * normalize(LB_Direction);
+    const float3 N = pixelNormal;
+    const float LdotN = saturate(dot(L, N));
+    const float3 C = LB_Color;
+    const float Ilight = LB_Intensity;
+    
+    const float3 Ipixel = LdotN * C * Ilight;
+    
+    const float3 diffuse = MB_Albedo * Ilight;
+    
+    // IBL
+    const float3 environment = environmentTexture.SampleLevel(defaultSampler, input.myNormal, 5).rgb;
+    const float3 ambient = MB_Albedo * environment;
+    
     //result.myColor.rgb = albedoTexture.Sample(defaultSampler, input.myUV).rgb;
     //result.myColor.a = 1.0f;
     
-    result.myColor.rgb = debugNormal;
+    result.myColor.rgb = saturate(diffuse + ambient);
     result.myColor.a = 1.0f;
 
     return result;

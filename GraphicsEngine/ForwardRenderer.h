@@ -8,6 +8,8 @@
 
 class Camera;
 class Model;
+class DirectionalLight;
+class EnvironmentLight;
 
 using namespace CommonUtilities;
 using namespace Microsoft::WRL;
@@ -16,7 +18,8 @@ class ForwardRenderer
 {
 public:
 	bool Initialize();
-	void Render(const std::shared_ptr<Camera>& aCamera, const std::vector<std::shared_ptr<Model>>& aModelList);
+	void Render(const std::shared_ptr<Camera>& aCamera, const std::vector<std::shared_ptr<Model>>& aModelList,
+		const std::shared_ptr<DirectionalLight>& aDirectionalLight, const std::shared_ptr<EnvironmentLight>& aEnvironmentLight);
 
 private:
 	
@@ -43,5 +46,6 @@ private:
 	ComPtr<ID3D11Buffer> myFrameBuffer;
 	ComPtr<ID3D11Buffer> myObjectBuffer;
 	ComPtr<ID3D11Buffer> myMaterialBuffer;
+	ComPtr<ID3D11Buffer> myLightBuffer;
 };
 
