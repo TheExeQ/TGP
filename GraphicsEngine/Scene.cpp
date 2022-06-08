@@ -120,9 +120,9 @@ Scene::Scene()
 	mySceneObjects.clear();
 }
 
-const std::vector<std::shared_ptr<Model>> Scene::CullModels(const std::shared_ptr<Camera>& camera) const
+const std::vector<std::shared_ptr<ModelInstance>> Scene::CullModels(const std::shared_ptr<Camera>& camera) const
 {
-	std::vector<std::shared_ptr<Model>> visibleModels;
+	std::vector<std::shared_ptr<ModelInstance>> visibleModels;
 
 	for (auto& sceneObject : mySceneObjects)
 	{
@@ -130,10 +130,7 @@ const std::vector<std::shared_ptr<Model>> Scene::CullModels(const std::shared_pt
 		if (mdlInst)
 		{
 			mdlInst->Update();
-			visibleModels.push_back(mdlInst->GetModel());
-			visibleModels.back()->SetPosition(mdlInst->GetTransform().myPosition);
-			visibleModels.back()->SetRotation(mdlInst->GetTransform().myRotation);
-			visibleModels.back()->SetScale(mdlInst->GetTransform().myScale);
+			visibleModels.push_back(mdlInst);
 		}
 	}
 

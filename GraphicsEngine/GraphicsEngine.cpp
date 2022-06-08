@@ -134,7 +134,13 @@ void GraphicsEngine::RenderFrame()
 		Controller();
 
 		const std::shared_ptr<Camera> camera = myScene->GetMainCamera();
-		const std::vector<std::shared_ptr<Model>> modelsToRender = myScene->CullModels(camera);
+		const std::vector<std::shared_ptr<ModelInstance>> modelsToRender = myScene->CullModels(camera);
+		
+		for (auto model : modelsToRender)
+		{
+			model->AdjustRotation(0.f, 1.f, 0.f);
+		}
+
 		myForwardRenderer.Render(camera, modelsToRender, myDirectionalLight, myEnvironmentLight);
 	}
 }

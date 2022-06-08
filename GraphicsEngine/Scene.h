@@ -60,7 +60,7 @@ public:
 		mySceneObjects.push_back(std::move(aSceneObject));
 	}
 	
-	const std::vector<std::shared_ptr<Model>> CullModels(const std::shared_ptr<Camera>& camera) const;
+	const std::vector<std::shared_ptr<ModelInstance>> CullModels(const std::shared_ptr<Camera>& camera) const;
 
 	void SetMainCamera(const std::shared_ptr<Camera>& aCamera);
 	const std::shared_ptr<Camera>& GetMainCamera() const { return myMainCamera; };

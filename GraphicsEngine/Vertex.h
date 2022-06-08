@@ -13,12 +13,17 @@ struct Vertex
 		Position.w = 1.f;
 		VertexColors[0] = { 0.f, 0.f, 0.f, 1.f };
 	};
-	Vertex(float x, float y, float z, float r, float g, float b, float a)
+	Vertex(float x, float y, float z, float r, float g, float b, float a,
+		Vector3<float> aTangent, Vector3<float> aBinormal, Vector3<float> aNormal)
 	{
 		Position.x = x;
 		Position.y = y;
 		Position.z = z;
 		VertexColors[0] = { r, g, b, a };
+
+		Tangent = aTangent;
+		Binormal = aBinormal;
+		Normal = aNormal;
 	};
 
 	Vector4<float> Position = { 0.f, 0.f, 0.f, 1.f };

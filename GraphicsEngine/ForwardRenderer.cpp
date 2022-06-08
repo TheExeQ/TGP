@@ -1,7 +1,7 @@
 #include "GraphicsEngine.pch.h"
 #include "ForwardRenderer.h"
 #include "Camera.h"
-#include "Model.h"
+#include "ModelInstance.h"
 #include "DX11.h"
 #include "Material.h"
 #include "DirectionalLight.h"
@@ -50,7 +50,7 @@ bool ForwardRenderer::Initialize()
 	return true;
 }
 
-void ForwardRenderer::Render(const std::shared_ptr<Camera>& aCamera, const std::vector<std::shared_ptr<Model>>& aModelList, 
+void ForwardRenderer::Render(const std::shared_ptr<Camera>& aCamera, const std::vector<std::shared_ptr<ModelInstance>>& aModelList, 
 	const std::shared_ptr<DirectionalLight>& aDirectionalLight, const std::shared_ptr<EnvironmentLight>& aEnvironmentLight)
 {
 	HRESULT result = S_FALSE;
@@ -79,8 +79,13 @@ void ForwardRenderer::Render(const std::shared_ptr<Camera>& aCamera, const std::
 		aEnvironmentLight->SetAsResource(myLightBuffer);
 	}
 	
-	for (const std::shared_ptr<Model>& model : aModelList)
+	for (const std::shared_ptr<ModelInstance>& modelInst : aModelList)
 	{
+		auto model = modelInst->GetModel();
+		model->SetPosition(modelInst->GetTransform().myPosition);
+		model->SetRotation(modelInst->GetTransform().myRotation);
+		model->SetScale(modelInst->GetTransform().myScale);
+
 		D3D11_MAPPED_SUBRESOURCE objBufferData;
 		ZeroMemory(&objBufferData, sizeof(objBufferData));
 
