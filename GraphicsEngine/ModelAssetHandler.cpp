@@ -100,6 +100,7 @@ bool ModelAssetHandler::LoadModel(const std::string& someFilePath)
 
 			const std::string albedoFileName = "T_" + baseFileName + "_C.dds";
 			const std::string normalFileName = "T_" + baseFileName + "_N.dds";
+			const std::string materialFileName = "T_" + baseFileName + "_M.dds";
 
 			if (TextureAssetHandler::LoadTexture(albedoFileName))
 			{
@@ -109,6 +110,11 @@ bool ModelAssetHandler::LoadModel(const std::string& someFilePath)
 			if (TextureAssetHandler::LoadTexture(normalFileName))
 			{
 				meshMaterial->SetNormalTexture(TextureAssetHandler::GetTexture(normalFileName));
+			}
+
+			if (TextureAssetHandler::LoadTexture(materialFileName))
+			{
+				meshMaterial->SetMaterialTexture(TextureAssetHandler::GetTexture(materialFileName));
 			}
 
 			myMaterialRegistry.insert({ matName, meshMaterial });

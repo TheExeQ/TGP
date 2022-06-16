@@ -1,4 +1,6 @@
 #include "ShaderStructs.hlsli"
+#include "Common.hlsli"
+#include "PBRFunctions.hlsli"
 
 PixelOutput main(VertexToPixel input)
 {
@@ -11,40 +13,48 @@ PixelOutput main(VertexToPixel input)
         normalize(input.myNormal)
     );
     
-    float3 normalMap = normalTexture.Sample(defaultSampler, input.myUV).agr;
-    normalMap.z = 0;
-    
-    normalMap = 2.0f * normalMap - 1;
-    
-    normalMap.z = sqrt(1 - saturate(normalMap.x + normalMap.x + normalMap.y + normalMap.y));
-    
-    normalMap = normalize(normalMap);
-    const float3 pixelNormal = normalize(mul(normalMap, TBN));
-    
-    float3 debugNormal = pixelNormal;
-    const float signedLength = (debugNormal.r + debugNormal.g + debugNormal.b) / 3;
-    if (signedLength < 0)
-    {
-        debugNormal = float3(1 - abs(debugNormal));
-    }
-    
+    const float3 normalMap = normalTexture.Sample(defaultSampler, input.myUV).agb;
     const float3 albedo = albedoTexture.Sample(defaultSampler, input.myUV).rgb;
+    const float4 material = materialTexture.Sample(defaultSampler, input.myUV);
     
-    const float3 L = -1 * normalize(LB_Direction);
-    const float3 N = pixelNormal;
-    const float LdotN = saturate(dot(L, N));
-    const float3 C = LB_Color;
-    const float Ilight = LB_Intensity;
+    const float ambientOcclusion = normalMap.b;
+    const float metalness = material.r;
+    const float roughness = material.g;
+    const float emissive = material.b;
+    const float emissiveStr = material.a;
     
-    const float3 Ipixel = LdotN * C * Ilight;
+    float3 pixelNormal = normalMap;
+    pixelNormal.z = 0;
+    pixelNormal = 2.0f * pixelNormal - 1;
+    pixelNormal.z = sqrt(1 - saturate(pixelNormal.x + pixelNormal.x + pixelNormal.y + pixelNormal.y));
+    pixelNormal = normalize(pixelNormal);
+    pixelNormal = normalize(mul(pixelNormal, TBN));
     
-    const float3 diffuse = albedo * Ipixel;
+    const float3 toEye = normalize(FB_CamTranslation.xyz - input.myVxPosition.xyz);
+    const float3 specularColor = lerp((float3) 0.04f, albedo, metalness);
+    const float3 diffuseColor = lerp((float3) 0.00f, albedo, 1 - metalness);
     
-    // IBL
-    const float3 environment = environmentTexture.SampleLevel(defaultSampler, input.myNormal, 5).rgb;
-    const float3 ambient = albedo * environment;
+    const float3 ambientLighting = EvaluateAmbience(
+    environmentTexture,
+    pixelNormal,
+    input.myNormal,
+    toEye,
+    roughness,
+    ambientOcclusion,
+    diffuseColor,
+    specularColor);
     
-    result.myColor.rgb = saturate(diffuse + ambient);
+    const float3 directLighting = EvaluateDirectionalLight(
+    diffuseColor, 
+    specularColor,
+    pixelNormal,
+    roughness,
+    LB_Color,
+    LB_Intensity,
+    -LB_Direction,
+    toEye);
+    
+    result.myColor.rgb = LinearToGamma(directLighting + ambientLighting);
     result.myColor.a = 1.0f;
 
     return result;

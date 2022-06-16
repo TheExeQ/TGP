@@ -14,12 +14,10 @@ bool ForwardRenderer::Initialize()
 	D3D11_BUFFER_DESC bufferDesc;
 	ZeroMemory(&bufferDesc, sizeof(bufferDesc));
 	bufferDesc.Usage = D3D11_USAGE_DYNAMIC;
-	bufferDesc.ByteWidth = sizeof(FrameBufferData);
 	bufferDesc.BindFlags = D3D11_BIND_CONSTANT_BUFFER;
 	bufferDesc.CPUAccessFlags = D3D11_CPU_ACCESS_WRITE;
-	bufferDesc.MiscFlags = 0;
-	bufferDesc.StructureByteStride = 0;
 
+	bufferDesc.ByteWidth = sizeof(FrameBufferData);
 	result = DX11::myDevice->CreateBuffer(&bufferDesc, nullptr, myFrameBuffer.GetAddressOf());
 	if (FAILED(result))
 	{
@@ -59,6 +57,7 @@ void ForwardRenderer::Render(const std::shared_ptr<Camera>& aCamera, const std::
 
 	myFrameBufferData.View = Matrix4x4<float>::GetFastInverse(aCamera->GetTransform().myMatrix);
 	myFrameBufferData.Projection = aCamera->GetProjectionMatrix();
+	myFrameBufferData.CamTranslation = aCamera->GetTransform().myPosition;
 
 	result = DX11::myContext->Map(myFrameBuffer.Get(), 0, D3D11_MAP_WRITE_DISCARD, 0, &frameBufferData);
 	if (FAILED(result))

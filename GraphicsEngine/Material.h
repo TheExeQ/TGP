@@ -11,6 +11,7 @@ namespace MaterialTextureChannel
 	{
 		Albedo,
 		Normal,
+		Material,
 		COUNT
 	};
 }
@@ -28,6 +29,7 @@ public:
 
 	void SetAlbedoTexture(std::shared_ptr<Texture> aTexture);
 	void SetNormalTexture(std::shared_ptr<Texture> aTexture);
+	void SetMaterialTexture(std::shared_ptr<Texture> aTexture);
 	
 	void SetAsResource(ComPtr<ID3D11Resource> aMaterialBuffer) const;
 

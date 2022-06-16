@@ -19,6 +19,7 @@ struct VertexInput
 struct VertexToPixel
 {
     float4 myPosition : SV_POSITION;
+    float4 myVxPosition : POSITION;
     float4 myVxColor : COLOR0;
     float4 myVxColor2 : COLOR1;
     float4 myVxColor3 : COLOR2;
@@ -41,12 +42,13 @@ cbuffer FrameBuffer : register(b0)
 {
     float4x4 FB_ToView;
     float4x4 FB_ToProjection;
+    float3 FB_CamTranslation;
+    uint FB_RenderMode;
 }
 
 cbuffer Objectbuffer : register(b1)
 {
     float4x4 OB_ToWorld;
-    //float3 OB_Padding = float3(0,0,0);
     float4x4 OB_BoneData[128];
     bool OB_HasBones = false;
 }
@@ -68,4 +70,5 @@ cbuffer LightBuffer : register(b3)
 SamplerState defaultSampler : register(s0);
 Texture2D albedoTexture : register(t0);
 Texture2D normalTexture : register(t1);
-Texture2D environmentTexture : register(t10);
+Texture2D materialTexture : register(t2);
+TextureCube environmentTexture : register(t10);
