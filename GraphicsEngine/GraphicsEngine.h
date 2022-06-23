@@ -10,6 +10,14 @@
 #include "DirectionalLight.h"
 #include "EnvironmentLight.h"
 
+enum BlendState
+{
+	BS_None,
+	BS_AlphaBlend,
+	BS_Additive,
+	BS_Count,
+};
+
 class GraphicsEngine
 {
 	SIZE myWindowSize{0,0};
@@ -32,6 +40,8 @@ public:
 	[[nodiscard]] HWND FORCEINLINE GetWindowHandle() const { return myWindowHandle; }
 	[[nodiscard]] SIZE FORCEINLINE GetWindowSize() const { return myWindowSize; }
 
+	void SetBlendState(BlendState aState);
+
 private:
 	void Controller();
 	
@@ -42,6 +52,8 @@ private:
 	
 	std::shared_ptr<DirectionalLight> myDirectionalLight;
 	std::shared_ptr<EnvironmentLight> myEnvironmentLight;
+
+	std::array<ComPtr<ID3D11BlendState>, BlendState::BS_Count> myBlendStates;
 
 	static CommonUtilities::InputHandler myInputHandler;
 	static CommonUtilities::Timer myTimer;

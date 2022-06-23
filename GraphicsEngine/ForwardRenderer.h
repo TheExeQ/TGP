@@ -10,6 +10,7 @@ class Camera;
 class ModelInstance;
 class DirectionalLight;
 class EnvironmentLight;
+class ParticleSystem;
 
 using namespace CommonUtilities;
 using namespace Microsoft::WRL;
@@ -18,8 +19,9 @@ class ForwardRenderer
 {
 public:
 	bool Initialize();
-	void Render(const std::shared_ptr<Camera>& aCamera, const std::vector<std::shared_ptr<ModelInstance>>& aModelList,
+	void RenderModels(const std::shared_ptr<Camera>& aCamera, const std::vector<std::shared_ptr<ModelInstance>>& aModelList,
 		const std::shared_ptr<DirectionalLight>& aDirectionalLight, const std::shared_ptr<EnvironmentLight>& aEnvironmentLight);
+	void RenderModels(const std::shared_ptr<Camera>& aCamera, const std::vector<std::shared_ptr<ParticleSystem>>& aParticleSystemList);
 
 private:
 	

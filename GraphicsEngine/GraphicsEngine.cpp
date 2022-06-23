@@ -54,6 +54,40 @@ bool GraphicsEngine::Initialize(unsigned someX, unsigned someY,
 		return false;
 	}
 	
+	HRESULT result = S_FALSE;
+
+	D3D11_BLEND_DESC alphaBlendDesc = {};
+	alphaBlendDesc.RenderTarget[0].BlendEnable = true;
+	alphaBlendDesc.RenderTarget[0].SrcBlend = D3D11_BLEND_SRC_ALPHA;
+	alphaBlendDesc.RenderTarget[0].DestBlend = D3D11_BLEND_INV_SRC_ALPHA;
+	alphaBlendDesc.RenderTarget[0].BlendOp = D3D11_BLEND_OP_ADD;
+	alphaBlendDesc.RenderTarget[0].SrcBlendAlpha = D3D11_BLEND_ONE;
+	alphaBlendDesc.RenderTarget[0].DestBlendAlpha = D3D11_BLEND_ONE;
+	alphaBlendDesc.RenderTarget[0].BlendOpAlpha = D3D11_BLEND_OP_MAX;
+	alphaBlendDesc.RenderTarget[0].RenderTargetWriteMask = D3D11_COLOR_WRITE_ENABLE_ALL;
+	result = DX11::myDevice->CreateBlendState(&alphaBlendDesc, &myBlendStates[BlendState::BS_AlphaBlend]);
+	if (FAILED(result))
+	{
+		return false;
+	}
+
+	D3D11_BLEND_DESC additiveBlendDesc = {};
+	additiveBlendDesc.RenderTarget[0].BlendEnable = true;
+	additiveBlendDesc.RenderTarget[0].SrcBlend = D3D11_BLEND_SRC_ALPHA;
+	additiveBlendDesc.RenderTarget[0].DestBlend = D3D11_BLEND_ONE;
+	additiveBlendDesc.RenderTarget[0].BlendOp = D3D11_BLEND_OP_ADD;
+	additiveBlendDesc.RenderTarget[0].SrcBlendAlpha = D3D11_BLEND_ONE;
+	additiveBlendDesc.RenderTarget[0].DestBlendAlpha = D3D11_BLEND_ONE;
+	additiveBlendDesc.RenderTarget[0].BlendOpAlpha = D3D11_BLEND_OP_MAX;
+	additiveBlendDesc.RenderTarget[0].RenderTargetWriteMask = D3D11_COLOR_WRITE_ENABLE_ALL;
+	result = DX11::myDevice->CreateBlendState(&additiveBlendDesc, &myBlendStates[BlendState::BS_Additive]);
+	if (FAILED(result))
+	{
+		return false;
+	}
+
+	myBlendStates[BlendState::BS_None] = nullptr;
+
 	if (!InitializeScene())
 	{
 		return false;
@@ -141,7 +175,7 @@ void GraphicsEngine::RenderFrame()
 			model->AdjustRotation(0.f, 1.f, 0.f);
 		}
 
-		myForwardRenderer.Render(camera, modelsToRender, myDirectionalLight, myEnvironmentLight);
+		myForwardRenderer.RenderModels(camera, modelsToRender, myDirectionalLight, myEnvironmentLight);
 	}
 }
 
@@ -197,4 +231,9 @@ void GraphicsEngine::Controller()
 		}
 	}
 	prevFrame = myInputHandler.GetMousePosition();
+}
+
+void GraphicsEngine::SetBlendState(BlendState aState)
+{
+	DX11::Context->OMSetBlendState(myBlendStates[aState].Get(), nullptr, 0xffffffff);
 }

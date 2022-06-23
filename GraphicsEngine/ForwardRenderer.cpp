@@ -6,6 +6,7 @@
 #include "Material.h"
 #include "DirectionalLight.h"
 #include "EnvironmentLight.h"
+#include "ParticleSystem.h"
 
 bool ForwardRenderer::Initialize()
 {
@@ -48,7 +49,7 @@ bool ForwardRenderer::Initialize()
 	return true;
 }
 
-void ForwardRenderer::Render(const std::shared_ptr<Camera>& aCamera, const std::vector<std::shared_ptr<ModelInstance>>& aModelList, 
+void ForwardRenderer::RenderModels(const std::shared_ptr<Camera>& aCamera, const std::vector<std::shared_ptr<ModelInstance>>& aModelList,
 	const std::shared_ptr<DirectionalLight>& aDirectionalLight, const std::shared_ptr<EnvironmentLight>& aEnvironmentLight)
 {
 	HRESULT result = S_FALSE;
@@ -148,6 +149,42 @@ void ForwardRenderer::Render(const std::shared_ptr<Camera>& aCamera, const std::
 			DX11::myContext->PSSetConstantBuffers(2, 1, myMaterialBuffer.GetAddressOf());
 
 			DX11::myContext->DrawIndexed(modelData.myIndexCount, 0, 0);
+		}
+	}
+}
+
+void ForwardRenderer::RenderModels(const std::shared_ptr<Camera>& aCamera, const std::vector<std::shared_ptr<ParticleSystem>>& aParticleSystemList)
+{
+	HRESULT result = S_FALSE;
+
+	DX11::myContext->VSSetConstantBuffers(0, 1, myFrameBuffer.GetAddressOf());
+	DX11::myContext->GSSetConstantBuffers(0, 1, myFrameBuffer.GetAddressOf());
+	DX11::myContext->PSSetConstantBuffers(0, 1, myFrameBuffer.GetAddressOf());
+
+	for (auto& system : aParticleSystemList)
+	{
+		D3D11_MAPPED_SUBRESOURCE objBufferData;
+		ZeroMemory(&objBufferData, sizeof(objBufferData));
+		ZeroMemory(&myObjectBufferData.HasBones, 16);
+
+		myObjectBufferData.World = system->GetTransform().myMatrix;
+		myObjectBufferData.HasBones = false;
+
+		result = DX11::myContext->Map(myObjectBuffer.Get(), 0, D3D11_MAP_WRITE_DISCARD, 0, &objBufferData);
+		if (FAILED(result))
+		{
+			return;
+		}
+		memcpy(objBufferData.pData, &myObjectBufferData, sizeof(ObjectBufferData));
+
+		DX11::myContext->VSSetConstantBuffers(1, 1, myObjectBuffer.GetAddressOf());
+		DX11::myContext->GSSetConstantBuffers(1, 1, myObjectBuffer.GetAddressOf());
+		DX11::myContext->PSSetConstantBuffers(1, 1, myObjectBuffer.GetAddressOf());
+
+		for (auto& emitter : system->GetEmitters())
+		{
+			emitter.SetAsResource();
+			emitter.Draw();
 		}
 	}
 }

@@ -41,6 +41,9 @@ project "GraphicsEngine"
 
 	filter { "files:**PS.hlsl" }
 		shadertype "Pixel"
+		
+	filter { "files:**GS.hlsl" }
+		shadertype "Geometry"
 
 	filter "system:windows"
 		cppdialect "C++20"
