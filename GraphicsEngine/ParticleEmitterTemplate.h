@@ -13,8 +13,8 @@ struct EmitterSettingsData
 	Vector3f StartVelocity = { 0.f, 0.f, 0.f };
 	Vector3f EndVelocity = { 0.f, 0.f, 0.f };
 	float GravityScale = 0.f;
-	float StartSize = 10.f;
-	float EndSize = 20.f;
+	float StartSize = 5.f;
+	float EndSize = 5.f;
 	Vector4f StartColor = { 1.f, 1.f, 1.f, 1.f };
 	Vector4f EndColor = { 0.f, 0.f, 0.f, 1.f };
 };

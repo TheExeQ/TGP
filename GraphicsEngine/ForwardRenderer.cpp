@@ -185,6 +185,9 @@ void ForwardRenderer::RenderParticles(const std::shared_ptr<Camera>& aCamera, co
 		for (auto& emitter : system->GetEmitters())
 		{
 			emitter.SetAsResource();
+			DX11::myContext->IASetVertexBuffers(0, 1, emitter.myVertexBuffer.GetAddressOf(), &emitter.myStride, &emitter.myOffset);
+			DX11::myContext->IASetPrimitiveTopology(static_cast<D3D_PRIMITIVE_TOPOLOGY>(emitter.myPrimitiveTopology));
+			DX11::myContext->IASetInputLayout(emitter.myInputLayout.Get());
 			emitter.Draw();
 		}
 	}

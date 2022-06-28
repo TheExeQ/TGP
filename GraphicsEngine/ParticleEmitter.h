@@ -33,12 +33,12 @@ private:
 	std::vector<ParticleVertex> myParticles;
 
 	ComPtr<ID3D11Buffer> myVertexBuffer;
+	UINT myPrimitiveTopology;
 	UINT myStride;
 	UINT myOffset;
 	ComPtr<ID3D11VertexShader> myVertexShader;
 	ComPtr<ID3D11GeometryShader> myGeometryShader;
 	ComPtr<ID3D11PixelShader> myPixelShader;
-	UINT myPrimitiveTopology;
 	ComPtr<ID3D11InputLayout> myInputLayout;
 
 	std::shared_ptr<Texture> myTexture;

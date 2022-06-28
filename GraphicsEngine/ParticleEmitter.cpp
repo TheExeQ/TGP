@@ -17,7 +17,6 @@ bool ParticleEmitter::Init(const ParticleEmitterTemplate& aTemplate)
 	for (size_t p = 0; p < myParticles.size(); p++)
 	{
 		InitParticle(p);
-		myParticles[p].LifeTime = Random::GetRandomFloat(5.f, 20.f);
 	}
 
 	HRESULT result = S_FALSE;
@@ -94,6 +93,10 @@ bool ParticleEmitter::Init(const ParticleEmitterTemplate& aTemplate)
 
 	myTexture = TextureAssetHandler::GetTexture("ParticleStar.dds");
 
+	myStride = sizeof(ParticleVertex);
+	myOffset = 0;
+	myPrimitiveTopology = D3D11_PRIMITIVE_TOPOLOGY_POINTLIST;
+
 	return true;
 }
 
@@ -154,5 +157,5 @@ void ParticleEmitter::InitParticle(size_t aParticleIndex)
 		myEmitterSettings.StartVelocity.y, myEmitterSettings.StartVelocity.z);
 
 	myParticles[aParticleIndex].Scale = Vector3f(1.0f, 1.0f, 1.0f) * myEmitterSettings.StartSize;
-	myParticles[aParticleIndex].LifeTime = 0.1f;
+	myParticles[aParticleIndex].LifeTime = 0.f;
 }
