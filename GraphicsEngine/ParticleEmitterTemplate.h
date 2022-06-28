@@ -9,14 +9,14 @@ struct EmitterSettingsData
 {
 	float SpawnRate = 1.f;
 	float SpawnAngle = 0.f;
-	float LifeTime;
-	Vector3f StartVelocity;
-	Vector3f EndVelocity;
-	float GravityScale;
-	float StartSize;
-	float EndSize;
-	Vector4f StartColor;
-	Vector4f EndColor;
+	float LifeTime = 1.f;
+	Vector3f StartVelocity = { 0.f, 0.f, 0.f };
+	Vector3f EndVelocity = { 0.f, 0.f, 0.f };
+	float GravityScale = 0.f;
+	float StartSize = 10.f;
+	float EndSize = 20.f;
+	Vector4f StartColor = { 1.f, 1.f, 1.f, 1.f };
+	Vector4f EndColor = { 0.f, 0.f, 0.f, 1.f };
 };
 
 struct ParticleEmitterTemplate
@@ -28,6 +28,6 @@ struct ParticleEmitterTemplate
 struct ParticleSystemTemplate
 {
 	std::string Path;
-	std::vector<std::string> EmitterFiles;
+	std::vector<ParticleEmitterTemplate> EmitterTemplates;
 };
 

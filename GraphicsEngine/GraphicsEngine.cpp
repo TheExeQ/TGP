@@ -7,6 +7,7 @@
 #include "CU/Timer.hpp"
 #include "LightAssetHandler.h"
 #include "TextureAssetHandler.h"
+#include "ParticleAssetHandler.h"
 
 CommonUtilities::InputHandler GraphicsEngine::myInputHandler;
 CommonUtilities::Timer GraphicsEngine::myTimer;
@@ -88,6 +89,20 @@ bool GraphicsEngine::Initialize(unsigned someX, unsigned someY,
 
 	myBlendStates[BlendState::BS_None] = nullptr;
 
+	D3D11_DEPTH_STENCIL_DESC readOnlyDepthDesc = {};
+	readOnlyDepthDesc.DepthEnable = true;
+	readOnlyDepthDesc.DepthWriteMask = D3D11_DEPTH_WRITE_MASK_ZERO;
+	readOnlyDepthDesc.DepthFunc = D3D11_COMPARISON_LESS;
+	readOnlyDepthDesc.StencilEnable = false;
+
+	result = DX11::myDevice->CreateDepthStencilState(&readOnlyDepthDesc, &myDepthStencilStates[DepthStencilState::DSS_ReadOnly]);
+	if (FAILED(result))
+	{
+		return false;
+	}
+
+	myDepthStencilStates[DepthStencilState::DSS_ReadWrite] = nullptr;
+
 	if (!InitializeScene())
 	{
 		return false;
@@ -103,6 +118,12 @@ bool GraphicsEngine::InitializeScene()
 	camera->SetProjectionValues(90, 9.f/16.f, 0.1f, 10000.0f);
 	camera->SetPosition(0.0f, 25.0f, -500.0f);
 	myScene->SetMainCamera(camera);
+
+	ParticleAssetHandler::Init();
+	
+	std::shared_ptr<ParticleSystem> pSystem = ParticleAssetHandler::GetParticleSystem("Core");
+	pSystem->SetPosition(0.0f, 200.0f, 0.0f);
+	myScene->AddGameObject(pSystem);
 
 	TextureAssetHandler::LoadTexture("studio_cubemap.dds");
 	
@@ -169,6 +190,7 @@ void GraphicsEngine::RenderFrame()
 
 		const std::shared_ptr<Camera> camera = myScene->GetMainCamera();
 		const std::vector<std::shared_ptr<ModelInstance>> modelsToRender = myScene->CullModels(camera);
+		const std::vector<std::shared_ptr<ParticleSystem>> particlesToRender = myScene->CullParticles(camera);
 		
 		for (auto model : modelsToRender)
 		{
@@ -176,6 +198,12 @@ void GraphicsEngine::RenderFrame()
 		}
 
 		myForwardRenderer.RenderModels(camera, modelsToRender, myDirectionalLight, myEnvironmentLight);
+
+		SetBlendState(BlendState::BS_Additive);
+		SetDepthStencilState(DepthStencilState::DSS_ReadOnly);
+		myForwardRenderer.RenderParticles(camera, particlesToRender);
+		SetBlendState(BlendState::BS_None);
+		SetDepthStencilState(DepthStencilState::DSS_ReadWrite);
 	}
 }
 
@@ -235,5 +263,10 @@ void GraphicsEngine::Controller()
 
 void GraphicsEngine::SetBlendState(BlendState aState)
 {
-	DX11::Context->OMSetBlendState(myBlendStates[aState].Get(), nullptr, 0xffffffff);
+	DX11::myContext->OMSetBlendState(myBlendStates[aState].Get(), nullptr, 0xffffffff);
+}
+
+void GraphicsEngine::SetDepthStencilState(DepthStencilState aState)
+{
+	DX11::myContext->OMSetDepthStencilState(myDepthStencilStates[aState].Get(), 0);
 }

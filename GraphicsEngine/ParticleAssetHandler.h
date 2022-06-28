@@ -8,8 +8,7 @@
 class ParticleAssetHandler
 {
 public:
-	static bool LoadEmitterTemplate(const std::string& someFilepath);
-	static bool LoadSystemTemplate(const std::string& someFilepath);
+	static bool Init();
 	static std::shared_ptr<ParticleSystem> GetParticleSystem(const std::string& aSystemName);
 
 private:

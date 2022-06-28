@@ -18,6 +18,13 @@ enum BlendState
 	BS_Count,
 };
 
+enum DepthStencilState
+{
+	DSS_ReadWrite,
+	DSS_ReadOnly,
+	DSS_Count,
+};
+
 class GraphicsEngine
 {
 	SIZE myWindowSize{0,0};
@@ -41,6 +48,7 @@ public:
 	[[nodiscard]] SIZE FORCEINLINE GetWindowSize() const { return myWindowSize; }
 
 	void SetBlendState(BlendState aState);
+	void SetDepthStencilState(DepthStencilState aState);
 
 private:
 	void Controller();
@@ -54,6 +62,7 @@ private:
 	std::shared_ptr<EnvironmentLight> myEnvironmentLight;
 
 	std::array<ComPtr<ID3D11BlendState>, BlendState::BS_Count> myBlendStates;
+	std::array<ComPtr<ID3D11DepthStencilState>, DepthStencilState::DSS_Count> myDepthStencilStates;
 
 	static CommonUtilities::InputHandler myInputHandler;
 	static CommonUtilities::Timer myTimer;

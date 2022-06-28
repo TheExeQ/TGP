@@ -3,6 +3,7 @@
 #include "Scene.h"
 #include "ModelInstance.h"
 #include "GraphicsEngine.h"
+#include "ParticleSystem.h"
 
 #define PI 3.14f
 
@@ -135,6 +136,23 @@ const std::vector<std::shared_ptr<ModelInstance>> Scene::CullModels(const std::s
 	}
 
 	return visibleModels;
+}
+
+const std::vector<std::shared_ptr<ParticleSystem>> Scene::CullParticles(const std::shared_ptr<Camera>& camera) const
+{
+	std::vector<std::shared_ptr<ParticleSystem>> visibleParticles;
+
+	for (auto& sceneObject : mySceneObjects)
+	{
+		auto particleSystem = dynamic_pointer_cast<ParticleSystem>(sceneObject);
+		if (particleSystem)
+		{
+			particleSystem->Update(GraphicsEngine::GetTimer().GetDeltaTime());
+			visibleParticles.push_back(particleSystem);
+		}
+	}
+
+	return visibleParticles;
 }
 
 void Scene::SetMainCamera(const std::shared_ptr<Camera>& aCamera)

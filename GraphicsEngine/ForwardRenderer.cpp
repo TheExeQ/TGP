@@ -142,6 +142,7 @@ void ForwardRenderer::RenderModels(const std::shared_ptr<Camera>& aCamera, const
 			DX11::myContext->IASetInputLayout(modelData.myInputLayout.Get());
 
 			DX11::myContext->VSSetShader(modelData.myVS.Get(), nullptr, 0);
+			DX11::myContext->GSSetShader(nullptr, nullptr, 0);
 			DX11::myContext->PSSetShader(modelData.myPS.Get(), nullptr, 0);
 
 			DX11::myContext->VSSetConstantBuffers(1, 1, myObjectBuffer.GetAddressOf());
@@ -153,7 +154,7 @@ void ForwardRenderer::RenderModels(const std::shared_ptr<Camera>& aCamera, const
 	}
 }
 
-void ForwardRenderer::RenderModels(const std::shared_ptr<Camera>& aCamera, const std::vector<std::shared_ptr<ParticleSystem>>& aParticleSystemList)
+void ForwardRenderer::RenderParticles(const std::shared_ptr<Camera>& aCamera, const std::vector<std::shared_ptr<ParticleSystem>>& aParticleSystemList)
 {
 	HRESULT result = S_FALSE;
 
