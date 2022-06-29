@@ -3,11 +3,10 @@
 bool ParticleAssetHandler::Init()
 {
 	ParticleEmitterTemplate baseEmitterTemplate;
-	baseEmitterTemplate.EmitterSettings.SpawnRate = 100.0f;
+	baseEmitterTemplate.EmitterSettings.SpawnRate = 1000.0f;
 	baseEmitterTemplate.EmitterSettings.LifeTime = 5.0f;
-	baseEmitterTemplate.EmitterSettings.StartColor = { 1.0f,0.0f,0.0f,1.0f };
-	baseEmitterTemplate.EmitterSettings.StartSize = 10.0f;
-	baseEmitterTemplate.EmitterSettings.StartSize = 50.0f;
+	baseEmitterTemplate.EmitterSettings.StartColor = { 1.0f,1.0f,0.0f,1.0f };
+	baseEmitterTemplate.EmitterSettings.StartSize = 5.0f;
 	baseEmitterTemplate.EmitterSettings.StartVelocity = { 100.0f,500.0f,100.0f };
 
 	ParticleSystemTemplate baseSystemTemplate;
