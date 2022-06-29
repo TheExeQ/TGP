@@ -112,6 +112,9 @@ void ParticleEmitter::Update(float aDeltaTime)
 			InitParticle(p);
 		}
 		
+		particle.Color.x = Random::GetRandomFloat(0, 1);
+		particle.Color.y = Random::GetRandomFloat(0, 1);
+		particle.Color.z = Random::GetRandomFloat(0, 1);
 		particle.Color.w = std::clamp(myEmitterSettings.LifeTime - (myEmitterSettings.LifeTime * particle.LifeTime), 0.0f, 1.0f);
 
 		particle.Position += Vector4f(particle.Velocity.x, particle.Velocity.y, particle.Velocity.z, 0) * aDeltaTime;
@@ -156,11 +159,11 @@ void ParticleEmitter::InitParticle(size_t aParticleIndex)
 	myParticles[aParticleIndex].Position = { 0,0,0,1 };
 	myParticles[aParticleIndex].Color = myEmitterSettings.StartColor;
 
-	float randomFloat = Random::GetRandomFloat(-3.f, 3.f);
+	float randomFloat = Random::GetRandomFloat(-2.f, 2.f);
 
 	myParticles[aParticleIndex].Velocity = Vector3f(myEmitterSettings.StartVelocity.x * randomFloat,
 		myEmitterSettings.StartVelocity.y, myEmitterSettings.StartVelocity.z);
 
 	myParticles[aParticleIndex].Scale = Vector3f(1.0f, 1.0f, 1.0f) * myEmitterSettings.StartSize;
-	myParticles[aParticleIndex].LifeTime = Random::GetRandomFloat(0.f, 2.5f);;
+	myParticles[aParticleIndex].LifeTime = Random::GetRandomFloat(0.f, 2.5f);
 }
