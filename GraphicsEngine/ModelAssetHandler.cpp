@@ -413,6 +413,11 @@ bool ModelAssetHandler::InitUnitCube()
 	{
 		meshMaterial->SetNormalTexture(TextureAssetHandler::GetTexture("T_Default_N.dds"));
 	}
+
+	if (TextureAssetHandler::LoadTexture("T_Default_M.dds"))
+	{
+		meshMaterial->SetMaterialTexture(TextureAssetHandler::GetTexture("T_Default_M.dds"));
+	}
 	
 	myMaterialRegistry.insert({ "Cube", meshMaterial });
 	modelData.myMaterial = meshMaterial;

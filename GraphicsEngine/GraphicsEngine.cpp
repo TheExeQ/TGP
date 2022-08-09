@@ -124,7 +124,7 @@ bool GraphicsEngine::InitializeScene()
 	std::shared_ptr<ParticleSystem> pSystem = ParticleAssetHandler::GetParticleSystem("Core");
 	pSystem->SetPosition(0.0f, 200.0f, 0.0f);
 	myScene->AddGameObject(pSystem);
-
+	
 	TextureAssetHandler::LoadTexture("studio_cubemap.dds");
 	
 	myDirectionalLight = LightAssetHandler::CreateDirectionalLight({ 1.0f,1.0f,1.0f }, 1.f, { 0,0,0 });
