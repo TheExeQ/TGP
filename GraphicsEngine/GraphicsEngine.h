@@ -9,6 +9,7 @@
 #include "CU/InputHandler.hpp"
 #include "DirectionalLight.h"
 #include "EnvironmentLight.h"
+#include "GBuffer.h"
 
 enum BlendState
 {
@@ -58,6 +59,7 @@ private:
 	std::shared_ptr<Scene> myScene;
 	ModelAssetHandler myModelAssetHandler;
 	
+	std::unique_ptr<GBuffer> myGBuffer;
 	std::shared_ptr<DirectionalLight> myDirectionalLight;
 	std::shared_ptr<EnvironmentLight> myEnvironmentLight;
 

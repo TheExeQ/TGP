@@ -30,3 +30,9 @@ bool TextureAssetHandler::LoadTexture(const std::string& aFileName)
 	return false;
 }
 
+std::unique_ptr<GBuffer> TextureAssetHandler::CreateGBuffer(int aWidth, int aHeight)
+{
+
+	return std::unique_ptr<GBuffer>();
+}
+

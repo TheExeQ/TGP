@@ -103,6 +103,13 @@ bool GraphicsEngine::Initialize(unsigned someX, unsigned someY,
 
 	myDepthStencilStates[DepthStencilState::DSS_ReadWrite] = nullptr;
 
+	RECT clientRect;
+	GetClientRect(GetWindowHandle(), &clientRect);
+
+	myGBuffer = TextureAssetHandler::CreateGBuffer(
+		clientRect.right - clientRect.left, 
+		clientRect.bottom - clientRect.top);
+
 	if (!InitializeScene())
 	{
 		return false;
