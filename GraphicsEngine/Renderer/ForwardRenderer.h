@@ -1,10 +1,8 @@
 #pragma once
+#include "ConstantBufferTypes.h"
 #include <d3d11.h>
 #include <wrl/client.h>
 #include <memory>
-#include <vector>
-#include "Math/Matrix4x4.hpp"
-#include "Math/Vector.hpp"
 
 class Camera;
 class ModelInstance;
@@ -12,7 +10,6 @@ class DirectionalLight;
 class EnvironmentLight;
 class ParticleSystem;
 
-using namespace CommonUtilities;
 using namespace Microsoft::WRL;
 
 class ForwardRenderer
@@ -25,26 +22,9 @@ public:
 
 private:
 	
-	struct FrameBufferData
-	{
-		Matrix4x4<float> View;
-		Matrix4x4<float> Projection;
-		Vector3<float> CamTranslation;
-		unsigned int RenderMode = 0;
-	} myFrameBufferData;
-	
-	struct ObjectBufferData
-	{
-		Matrix4x4<float> World;
-		Matrix4x4<float> BoneData[128];
-		alignas(16) bool HasBones = false;
-	} myObjectBufferData;
-	
-	struct MaterialBufferData
-	{
-		Vector3<float> Albedo;
-		float padding;
-	} myMaterialBufferData;
+	FrameBufferData myFrameBufferData;
+	ObjectBufferData myObjectBufferData;
+	MaterialBufferData myMaterialBufferData;
 
 	ComPtr<ID3D11Buffer> myFrameBuffer;
 	ComPtr<ID3D11Buffer> myObjectBuffer;

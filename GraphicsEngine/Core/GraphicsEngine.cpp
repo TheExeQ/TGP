@@ -199,10 +199,6 @@ void GraphicsEngine::BeginFrame()
 	// F1 - This is where we clear our buffers and start the DX frame.
 	myFramework.BeginFrame();
 	myImGuiLayer.Begin();
-
-	ImGui::Begin("Test Window");
-	ImGui::Text("august is kinda cringe");
-	ImGui::End();
 }
 
 void GraphicsEngine::RenderFrame()
@@ -237,10 +233,7 @@ void GraphicsEngine::EndFrame()
 {
 	// F1 - This is where we finish our rendering and tell the framework
 	// to present our result to the screen.
-	if (GetActiveWindow())
-	{
-		myImGuiLayer.End();
-	}
+	myImGuiLayer.End();
 	myFramework.EndFrame();
 }
 
