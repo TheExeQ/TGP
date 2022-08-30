@@ -1,5 +1,5 @@
 #pragma once
-#include "Scene.h"
+#include "Scene/Scene.h"
 #include "Math/Vector3.hpp"
 #include "Math/Vector4.hpp"
 #include "Math/Matrix4x4.hpp"

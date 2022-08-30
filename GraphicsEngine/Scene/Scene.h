@@ -3,7 +3,7 @@
 #include <memory>
 #include "Math/Vector3.hpp"
 #include "Math/Matrix4x4.hpp"
-#include "ModelAssetHandler.h"
+#include "Renderer/ModelAssetHandler.h"
 
 using namespace CommonUtilities;
 

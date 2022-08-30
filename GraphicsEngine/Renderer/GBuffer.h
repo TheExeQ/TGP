@@ -1,5 +1,5 @@
 #pragma once
-#include "DX11.h"
+#include "Core/DX11.h"
 #include <array>
 
 class GBuffer

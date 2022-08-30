@@ -4,7 +4,7 @@
 #include <string>
 #include <vector>
 #include <array>
-#include "Scene.h"
+#include "Scene/Scene.h"
 #include "Skeleton.h"
 
 class Material;

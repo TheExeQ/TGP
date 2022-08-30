@@ -1,5 +1,5 @@
 #include "DirectionalLight.h"
-#include "DX11.h"
+#include "Core/DX11.h"
 
 void DirectionalLight::SetAsResource(ComPtr<ID3D11Buffer> aLightBuffer)
 {

@@ -1,5 +1,5 @@
 #pragma once
-#include "Scene.h"
+#include "Scene/Scene.h"
 #include "Model.h"
 #include <memory>
 #include "Math/Matrix4x4.hpp"

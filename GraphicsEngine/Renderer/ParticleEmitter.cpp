@@ -3,8 +3,8 @@
 #include <fstream>
 #include "TextureAssetHandler.h"
 #include "CU/Timer.hpp"
-#include "DX11.h"
-#include "Random.h"
+#include "Core/DX11.h"
+#include "Core/Random.h"
 
 bool ParticleEmitter::Init(const ParticleEmitterTemplate& aTemplate)
 {

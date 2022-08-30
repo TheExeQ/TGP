@@ -2,7 +2,7 @@
 #include <wrl/client.h>
 #include <d3d11.h>
 #include "Math/Vector.hpp"
-#include "Scene.h"
+#include "Scene/Scene.h"
 
 using namespace CommonUtilities;
 using namespace Microsoft::WRL;

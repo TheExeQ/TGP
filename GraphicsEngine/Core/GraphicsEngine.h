@@ -1,15 +1,16 @@
 #pragma once
 #include <vector>
 #include <memory>
-#include "DX11.h"
-#include "ForwardRenderer.h"
-#include "Scene.h"
-#include "ModelAssetHandler.h"
+#include "Core/DX11.h"
+#include "Renderer/ForwardRenderer.h"
+#include "Scene/Scene.h"
+#include "Renderer/ModelAssetHandler.h"
 #include "CU/Timer.hpp"
 #include "CU/InputHandler.hpp"
-#include "DirectionalLight.h"
-#include "EnvironmentLight.h"
-#include "GBuffer.h"
+#include "Renderer/DirectionalLight.h"
+#include "Renderer/EnvironmentLight.h"
+#include "ImGui/ImGuiLayer.h"
+#include "Renderer/GBuffer.h"
 
 enum BlendState
 {
@@ -38,6 +39,7 @@ public:
 
 	bool Initialize(unsigned someX, unsigned someY, unsigned someWidth, unsigned someHeight, bool enableDeviceDebug);
 	bool InitializeScene();
+	bool CleanUp();
 
 	void BeginFrame();
 	void EndFrame();
@@ -68,5 +70,6 @@ private:
 
 	static CommonUtilities::InputHandler myInputHandler;
 	static CommonUtilities::Timer myTimer;
+	ImGuiLayer myImGuiLayer;
 };
 

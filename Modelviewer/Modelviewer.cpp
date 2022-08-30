@@ -4,7 +4,7 @@
 #include "Windows.h"
 
 #include "Modelviewer.h"
-#include "GraphicsEngine.h"
+#include "Core/GraphicsEngine.h"
 
 int APIENTRY wWinMain(_In_ HINSTANCE hInstance,
                       _In_opt_ HINSTANCE hPrevInstance,
@@ -56,6 +56,7 @@ int APIENTRY wWinMain(_In_ HINSTANCE hInstance,
 
         graphicsEngine.EndFrame();
     }
+    graphicsEngine.CleanUp();
 
     return 0;
 }

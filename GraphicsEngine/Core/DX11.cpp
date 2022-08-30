@@ -1,5 +1,5 @@
-#include "GraphicsEngine.pch.h"
-#include "DX11.h"
+#include "Core/GraphicsEngine.pch.h"
+#include "Core/DX11.h"
 
 ComPtr<ID3D11Device> DX11::myDevice = nullptr;
 ComPtr<ID3D11DeviceContext> DX11::myContext = nullptr;

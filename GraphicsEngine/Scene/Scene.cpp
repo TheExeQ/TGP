@@ -1,9 +1,9 @@
-#include "GraphicsEngine.pch.h"
-#include "Camera.h"
-#include "Scene.h"
-#include "ModelInstance.h"
-#include "GraphicsEngine.h"
-#include "ParticleSystem.h"
+#include "Core/GraphicsEngine.pch.h"
+#include "Core/GraphicsEngine.h"
+#include "Renderer/Camera.h"
+#include "Scene/Scene.h"
+#include "Renderer/ModelInstance.h"
+#include "Renderer/ParticleSystem.h"
 
 #define PI 3.14f
 

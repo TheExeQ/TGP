@@ -2,11 +2,11 @@
 #include <filesystem>
 #include <fstream>
 #include "Vertex.h"
-#include "DX11.h"
+#include "Core/DX11.h"
 #include "Model.h"
 #include "ModelInstance.h"
 #include "FBXImporter/FBXImporter.h"
-#include "Random.h"
+#include "Core/Random.h"
 #include "Material.h"
 #include "TextureAssetHandler.h"
 

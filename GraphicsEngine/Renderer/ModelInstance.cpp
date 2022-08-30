@@ -1,5 +1,5 @@
 #include "ModelInstance.h"
-#include "GraphicsEngine.h"
+#include "Core/GraphicsEngine.h"
 #include <iostream>
 
 void ModelInstance::Init(std::shared_ptr<Model> aModel)

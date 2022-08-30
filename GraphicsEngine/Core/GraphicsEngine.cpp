@@ -1,13 +1,13 @@
-#include "GraphicsEngine.pch.h"
+#include "Core/GraphicsEngine.pch.h"
 #include "GraphicsEngine.h"
 #include <fstream>
-#include "Vertex.h"
-#include "Camera.h"
-#include "ModelInstance.h"
+#include "Renderer/Vertex.h"
+#include "Renderer/Camera.h"
+#include "Renderer/ModelInstance.h"
 #include "CU/Timer.hpp"
-#include "LightAssetHandler.h"
-#include "TextureAssetHandler.h"
-#include "ParticleAssetHandler.h"
+#include "Renderer/LightAssetHandler.h"
+#include "Renderer/TextureAssetHandler.h"
+#include "Renderer/ParticleAssetHandler.h"
 
 CommonUtilities::InputHandler GraphicsEngine::myInputHandler;
 CommonUtilities::Timer GraphicsEngine::myTimer;
@@ -110,6 +110,8 @@ bool GraphicsEngine::Initialize(unsigned someX, unsigned someY,
 		clientRect.right - clientRect.left, 
 		clientRect.bottom - clientRect.top);
 
+	myImGuiLayer.OnAttach(GetWindowHandle());
+
 	if (!InitializeScene())
 	{
 		return false;
@@ -160,8 +162,20 @@ bool GraphicsEngine::InitializeScene()
 	return true;
 }
 
+bool GraphicsEngine::CleanUp()
+{
+	myImGuiLayer.OnDetach();
+	return false;
+}
+
+// Forward declare message handler from imgui_impl_win32.cpp
+extern IMGUI_IMPL_API LRESULT ImGui_ImplWin32_WndProcHandler(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam);
+
 LRESULT CALLBACK GraphicsEngine::WinProc(_In_ HWND hWnd, _In_ UINT uMsg, _In_ WPARAM wParam, _In_ LPARAM lParam)
 {
+	if (::ImGui_ImplWin32_WndProcHandler(hWnd, uMsg, wParam, lParam))
+		return true;
+
 	myInputHandler.UpdateEvents(uMsg, wParam, lParam);
 	
 	// We want to be able to access the Graphics Engine instance from inside this function.
@@ -184,6 +198,11 @@ void GraphicsEngine::BeginFrame()
 {
 	// F1 - This is where we clear our buffers and start the DX frame.
 	myFramework.BeginFrame();
+	myImGuiLayer.Begin();
+
+	ImGui::Begin("Test Window");
+	ImGui::Text("august is kinda cringe");
+	ImGui::End();
 }
 
 void GraphicsEngine::RenderFrame()
@@ -218,6 +237,10 @@ void GraphicsEngine::EndFrame()
 {
 	// F1 - This is where we finish our rendering and tell the framework
 	// to present our result to the screen.
+	if (GetActiveWindow())
+	{
+		myImGuiLayer.End();
+	}
 	myFramework.EndFrame();
 }
 

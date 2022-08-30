@@ -18,6 +18,7 @@ project "Modelviewer"
 	{
 		"./",
 		"../GraphicsEngine/",
+		"../ThirdParty/",
 	}
 	
 	libdirs

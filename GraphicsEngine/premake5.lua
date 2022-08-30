@@ -17,7 +17,8 @@ project "GraphicsEngine"
 		"./**.hpp",
 		"./**.cpp",
 		"./**.hlsl",
-		"./**.hlsli"
+		"./**.hlsli",
+		"../ThirdParty/**.cpp",
 	}
 	
 	includedirs
