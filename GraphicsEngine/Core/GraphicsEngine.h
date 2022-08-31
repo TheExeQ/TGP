@@ -3,6 +3,7 @@
 #include <memory>
 #include "Core/DX11.h"
 #include "Renderer/ForwardRenderer.h"
+#include "Renderer/DeferredRenderer.h"
 #include "Scene/Scene.h"
 #include "Renderer/ModelAssetHandler.h"
 #include "CU/Timer.hpp"
@@ -53,11 +54,16 @@ public:
 	void SetBlendState(BlendState aState);
 	void SetDepthStencilState(DepthStencilState aState);
 
+	std::unique_ptr<GBuffer>& GetGBuffer() { return myGBuffer; };
+
+	static GraphicsEngine& Get() { return *myInstance; };
+
 private:
 	void Controller();
 	
 	DX11 myFramework;
 	ForwardRenderer myForwardRenderer;
+	DeferredRenderer myDeferredRenderer;
 	std::shared_ptr<Scene> myScene;
 	ModelAssetHandler myModelAssetHandler;
 	
@@ -71,5 +77,7 @@ private:
 	static CommonUtilities::InputHandler myInputHandler;
 	static CommonUtilities::Timer myTimer;
 	ImGuiLayer myImGuiLayer;
+
+	inline static GraphicsEngine* myInstance = nullptr;
 };
 

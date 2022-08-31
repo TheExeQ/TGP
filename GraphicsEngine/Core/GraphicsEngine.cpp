@@ -24,6 +24,15 @@ bool GraphicsEngine::Initialize(unsigned someX, unsigned someY,
 	freopen("conout$", "w", stderr);
 #endif // DEBUG
 
+	if (!myInstance)
+	{
+		myInstance = this;
+	}
+	else
+	{
+		return false;
+	}
+
 	// Initialize our window:
 	WNDCLASS windowClass = {};
 	windowClass.style = CS_VREDRAW | CS_HREDRAW | CS_OWNDC;
@@ -110,6 +119,7 @@ bool GraphicsEngine::Initialize(unsigned someX, unsigned someY,
 		clientRect.right - clientRect.left, 
 		clientRect.bottom - clientRect.top);
 
+	myDeferredRenderer.Init();
 	myImGuiLayer.OnAttach(GetWindowHandle());
 
 	if (!InitializeScene())
@@ -198,6 +208,7 @@ void GraphicsEngine::BeginFrame()
 {
 	// F1 - This is where we clear our buffers and start the DX frame.
 	myFramework.BeginFrame();
+	myGBuffer->ClearTarget();
 	myImGuiLayer.Begin();
 }
 
@@ -219,7 +230,11 @@ void GraphicsEngine::RenderFrame()
 			model->AdjustRotation(0.f, 1.f, 0.f);
 		}
 
-		myForwardRenderer.RenderModels(camera, modelsToRender, myDirectionalLight, myEnvironmentLight);
+		myGBuffer->SetAsTarget();
+		myDeferredRenderer.GenereteGBuffer(camera, modelsToRender, myTimer.GetDeltaTime(), myTimer.GetTotalTime());
+		myDeferredRenderer.Render(camera, myDirectionalLight, myEnvironmentLight, myTimer.GetDeltaTime(), myTimer.GetTotalTime());
+
+		//myForwardRenderer.RenderModels(camera, modelsToRender, myDirectionalLight, myEnvironmentLight);
 
 		SetBlendState(BlendState::BS_Additive);
 		SetDepthStencilState(DepthStencilState::DSS_ReadOnly);

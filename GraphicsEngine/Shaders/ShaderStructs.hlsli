@@ -38,6 +38,22 @@ struct PixelOutput
     float4 myColor : SV_TARGET;
 };
 
+struct DeferredVertexInput
+{
+    unsigned int myIndex : SV_VertexID;
+};
+
+struct DeferredVertexToPixel
+{
+    float4 myPosition : SV_POSITION;
+    float2 myUV : TEXCOORD;
+};
+
+struct DeferredPixelOutput
+{
+    float4 myColor : SV_TARGET;
+};
+
 cbuffer FrameBuffer : register(b0)
 {
     float4x4 FB_ToView;
@@ -81,4 +97,7 @@ SamplerState defaultSampler : register(s0);
 Texture2D albedoTexture : register(t0);
 Texture2D normalTexture : register(t1);
 Texture2D materialTexture : register(t2);
+Texture2D vertexNormalTexture : register(t3);
+Texture2D worldPositionTexture : register(t4);
+Texture2D ambientOcclusionTexture : register(t5);
 TextureCube environmentTexture : register(t10);
