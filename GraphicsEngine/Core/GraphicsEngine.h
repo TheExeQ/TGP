@@ -25,6 +25,7 @@ enum DepthStencilState
 {
 	DSS_ReadWrite,
 	DSS_ReadOnly,
+	DSS_Off,
 	DSS_Count,
 };
 

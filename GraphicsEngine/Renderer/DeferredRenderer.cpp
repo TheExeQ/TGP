@@ -181,8 +181,6 @@ void DeferredRenderer::Render(const std::shared_ptr<Camera>& aCamera, const std:
         aEnvironmentLight->SetAsResource(nullptr);
     }
 
-    DX11::myContext->OMSetRenderTargets(1, DX11::myRenderTarget.GetAddressOf(), nullptr);
-
     DX11::myContext->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
     DX11::myContext->IASetIndexBuffer(nullptr, DXGI_FORMAT_UNKNOWN, 0);
     DX11::myContext->IASetVertexBuffers(0, 0, nullptr, nullptr, nullptr);
@@ -190,7 +188,6 @@ void DeferredRenderer::Render(const std::shared_ptr<Camera>& aCamera, const std:
     DX11::myContext->GSSetShader(nullptr, nullptr, 0);
     DX11::myContext->VSSetShader(myFullscreenVS.Get(), nullptr, 0);
     DX11::myContext->PSSetShader(myEnvironmentPS.Get(), nullptr, 0);
-    GraphicsEngine::Get().GetGBuffer()->SetAsResource(0);
 
     DX11::myContext->Draw(3, 0);
 }

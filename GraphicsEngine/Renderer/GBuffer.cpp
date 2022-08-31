@@ -8,12 +8,12 @@ void GBuffer::SetAsTarget() const
 		rtvList[i] = myRTVs[i].Get();
 	}
 
-	DX11::myContext->OMSetRenderTargets(GBufferTexture::GB_COUNT, &rtvList[0], nullptr);
+	DX11::myContext->OMSetRenderTargets(GBufferTexture::GB_COUNT, &rtvList[0], DX11::myDepthStencil.Get());
 }
 
 void GBuffer::ClearTarget() const
 {
-	std::array<float, 4> color{ 0.5f, 0.5f, 0.5f, 1.f };
+	std::array<float, 4> color{ 0.0f, 0.0f, 0.0f, 0.f };
 	for (uint8_t t = 0; t < myRTVs.size(); ++t)
 	{
 		DX11::myContext->ClearRenderTargetView(myRTVs[t].Get(), &color[0]);

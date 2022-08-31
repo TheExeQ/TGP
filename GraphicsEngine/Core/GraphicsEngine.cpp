@@ -110,6 +110,18 @@ bool GraphicsEngine::Initialize(unsigned someX, unsigned someY,
 		return false;
 	}
 
+	D3D11_DEPTH_STENCIL_DESC offDepthDesc = {};
+	offDepthDesc.DepthEnable = false;
+	offDepthDesc.DepthWriteMask = D3D11_DEPTH_WRITE_MASK_ZERO;
+	offDepthDesc.DepthFunc = D3D11_COMPARISON_LESS;
+	offDepthDesc.StencilEnable = false;
+
+	result = DX11::myDevice->CreateDepthStencilState(&offDepthDesc, &myDepthStencilStates[DepthStencilState::DSS_Off]);
+	if (FAILED(result))
+	{
+		return false;
+	}
+
 	myDepthStencilStates[DepthStencilState::DSS_ReadWrite] = nullptr;
 
 	RECT clientRect;
@@ -232,15 +244,18 @@ void GraphicsEngine::RenderFrame()
 
 		myGBuffer->SetAsTarget();
 		myDeferredRenderer.GenereteGBuffer(camera, modelsToRender, myTimer.GetDeltaTime(), myTimer.GetTotalTime());
+		SetDepthStencilState(DepthStencilState::DSS_Off);
+		myGBuffer->SetAsResource(0);
+		DX11::myContext->OMSetRenderTargets(1, DX11::myRenderTarget.GetAddressOf(), DX11::myDepthStencil.Get());
 		myDeferredRenderer.Render(camera, myDirectionalLight, myEnvironmentLight, myTimer.GetDeltaTime(), myTimer.GetTotalTime());
 
 		//myForwardRenderer.RenderModels(camera, modelsToRender, myDirectionalLight, myEnvironmentLight);
 
-		SetBlendState(BlendState::BS_Additive);
-		SetDepthStencilState(DepthStencilState::DSS_ReadOnly);
-		myForwardRenderer.RenderParticles(camera, particlesToRender);
-		SetBlendState(BlendState::BS_None);
-		SetDepthStencilState(DepthStencilState::DSS_ReadWrite);
+		//SetBlendState(BlendState::BS_Additive);
+		//SetDepthStencilState(DepthStencilState::DSS_ReadOnly);
+		//myForwardRenderer.RenderParticles(camera, particlesToRender);
+		//SetBlendState(BlendState::BS_None);
+		//SetDepthStencilState(DepthStencilState::DSS_ReadWrite);
 	}
 }
 
