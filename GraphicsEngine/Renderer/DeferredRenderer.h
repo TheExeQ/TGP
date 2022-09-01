@@ -1,5 +1,8 @@
 #pragma once
+#include "Core/Base.h"
 #include "ConstantBufferTypes.h"
+#include "Scene/Entity.h"
+
 #include <d3d11.h>
 #include <wrl/client.h>
 #include <memory>
@@ -17,13 +20,13 @@ class DeferredRenderer
 public:
 	bool Init();
 	void GenereteGBuffer(
-		const std::shared_ptr<Camera>& aCamera,
-		const std::vector<std::shared_ptr<ModelInstance>>& aModelList,
+		Entity aCamera,
+		std::vector<Entity>& aModelList,
 		float aDeltaTime, float aTotalTime);
 	void Render(
-		const std::shared_ptr<Camera>& aCamera,
-		const std::shared_ptr<DirectionalLight>& aDirectionalLight, 
-		const std::shared_ptr<EnvironmentLight>& aEnvironmentLight,
+		Entity aCamera,
+		const Ref<DirectionalLight>& aDirectionalLight, 
+		const Ref<EnvironmentLight>& aEnvironmentLight,
 		float aDeltaTime, float aTotalTime);
 
 private:

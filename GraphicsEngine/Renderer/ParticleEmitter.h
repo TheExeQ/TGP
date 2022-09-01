@@ -1,11 +1,13 @@
 #pragma once
+#include "Core/Base.h"
+#include "ParticleEmitterTemplate.h"
+#include "ParticleVertex.h"
+#include "Texture.h"
+
 #include <d3d11.h>
 #include <wrl/client.h>
 #include <vector>
 #include <memory>
-#include "ParticleEmitterTemplate.h"
-#include "ParticleVertex.h"
-#include "Texture.h"
 
 using namespace Microsoft::WRL;
 
@@ -41,6 +43,6 @@ private:
 	ComPtr<ID3D11PixelShader> myPixelShader;
 	ComPtr<ID3D11InputLayout> myInputLayout;
 
-	std::shared_ptr<Texture> myTexture;
+	Ref<Texture> myTexture;
 };
 

@@ -2,9 +2,9 @@
 #include "TextureAssetHandler.h"
 #include "DDSTextureLoader11.h"
 
-std::unordered_map<std::string, std::shared_ptr<Texture>> TextureAssetHandler::myRegistry;
+std::unordered_map<std::string, Ref<Texture>> TextureAssetHandler::myRegistry;
 
-std::shared_ptr<Texture> TextureAssetHandler::GetTexture(const std::string& aTextureName)
+Ref<Texture> TextureAssetHandler::GetTexture(const std::string& aTextureName)
 {
 	return myRegistry[aTextureName];
 }
@@ -23,14 +23,14 @@ bool TextureAssetHandler::LoadTexture(const std::string& aFileName)
 		}
 		else
 		{
-			myRegistry.insert({ aFileName, std::make_shared<Texture>(result) });
+			myRegistry.insert({ aFileName, CreateRef<Texture>(result) });
 			return true;
 		}
 	}
 	return false;
 }
 
-std::unique_ptr<GBuffer> TextureAssetHandler::CreateGBuffer(int aWidth, int aHeight)
+Scope<GBuffer> TextureAssetHandler::CreateGBuffer(int aWidth, int aHeight)
 {
 	GBuffer gbuffer;
 	for (int i = 0; i < GBuffer::GBufferTexture::GB_COUNT; i++)
@@ -86,6 +86,6 @@ std::unique_ptr<GBuffer> TextureAssetHandler::CreateGBuffer(int aWidth, int aHei
 		DX11::myDevice->CreateRenderTargetView(bufferTexture.Get(), nullptr, gbuffer.myRTVs[i].GetAddressOf());
 		DX11::myDevice->CreateShaderResourceView(bufferTexture.Get(), nullptr, gbuffer.mySRVs[i].GetAddressOf());
 	}
-	return std::make_unique<GBuffer>(gbuffer);
+	return CreateScope<GBuffer>(gbuffer);
 }
 

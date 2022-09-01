@@ -1,74 +1,45 @@
 #pragma once
-#include <vector>
-#include <memory>
-#include "Math/Vector3.hpp"
-#include "Math/Matrix4x4.hpp"
 #include "Renderer/ModelAssetHandler.h"
+#include "Core/Base.h"
+#include "Core/UUID.h"
 
-using namespace CommonUtilities;
+#include <entt/entt.hpp>
+#include <unordered_map>
+#include <memory>
+#include <vector>
+
+using EntityMap = std::unordered_map<TGA::UUID, entt::entity>;
 
 class Camera;
 class ParticleSystem;
-
-struct Transform
-{
-	Vector3<float> myPosition;
-	Vector3<float> myRotation;
-	Vector3<float> myScale;
-	Matrix4x4<float> myMatrix;
-};
-
-class SceneObject
-{
-public:
-	SceneObject() = default;
-	virtual ~SceneObject() = default;
-
-	void SetTransform(Transform someTransform);
-
-	void SetPosition(Vector3<float> somePosition);
-	void SetRotation(Vector3<float> someRotation);
-	void SetScale(Vector3<float> someScale);
-
-	void SetPosition(float someX, float someY, float someZ);
-	void AdjustPosition(float someX, float someY, float someZ);
-	void SetRotation(float someX, float someY, float someZ);
-	void AdjustRotation(float someX, float someY, float someZ);
-	void SetScale(float someX, float someY, float someZ);
-	void AdjustScale(float someX, float someY, float someZ);
-
-	void MoveForward(float someSpeed);
-	void MoveUp(float someSpeed);
-	void MoveRight(float someSpeed);
-
-	inline const Transform& GetTransform() const { 
-		return myTransform; };
-
-protected:
-	Transform myTransform;
-};
+class Entity;
 
 class Scene
 {
 public:
-
 	Scene();
 	~Scene() = default;
-	
-	template<typename T>
-	void AddGameObject(std::shared_ptr<T> aSceneObject)
-	{
-		mySceneObjects.push_back(std::move(aSceneObject));
-	}
-	
-	const std::vector<std::shared_ptr<ModelInstance>> CullModels(const std::shared_ptr<Camera>& camera) const;
-	const std::vector<std::shared_ptr<ParticleSystem>> CullParticles(const std::shared_ptr<Camera>& camera) const;
 
-	void SetMainCamera(const std::shared_ptr<Camera>& aCamera);
-	const std::shared_ptr<Camera>& GetMainCamera() const { return myMainCamera; };
+	Entity CreateEntity(const char* aName, Ref<Scene> aScene);
+	Entity CreateEntityWithID(TGA::UUID aID, const char* aName, Ref<Scene> aScene);
+	Entity GetEntityFromUUID(TGA::UUID aID);
+	
+	std::vector<Entity> CullModels(Entity camera) const;
+	std::vector<Entity> CullParticles(Entity camera) const;
+
+	void SetMainCamera(Entity aCamera);
+	Entity GetMainCamera() const;
+
+	static void SetActiveScene(Ref<Scene> aScene) { myActiveScene = aScene; };
+	static Ref<Scene> GetActiveScene() { return myActiveScene; };
 
 private:
-	std::vector<std::shared_ptr<SceneObject>> mySceneObjects;
-	std::shared_ptr<Camera> myMainCamera;
+	friend class Entity;
+
+	entt::registry myRegistry;
+	EntityMap myEnttMap;
+	entt::entity myMainCameraEntity;
+
+	inline static Ref<Scene> myActiveScene;
 };
 

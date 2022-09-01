@@ -6,7 +6,7 @@
 
 using namespace CommonUtilities;
 
-class Camera : public SceneObject
+class Camera
 {
 public:
 	Camera() = default;

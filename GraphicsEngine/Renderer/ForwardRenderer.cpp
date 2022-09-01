@@ -49,16 +49,20 @@ bool ForwardRenderer::Initialize()
 	return true;
 }
 
-void ForwardRenderer::RenderModels(const std::shared_ptr<Camera>& aCamera, const std::vector<std::shared_ptr<ModelInstance>>& aModelList,
-	const std::shared_ptr<DirectionalLight>& aDirectionalLight, const std::shared_ptr<EnvironmentLight>& aEnvironmentLight)
+void ForwardRenderer::RenderModels(Entity aCamera, std::vector<Entity>& aModelList,
+	const Ref<DirectionalLight>& aDirectionalLight, const Ref<EnvironmentLight>& aEnvironmentLight)
 {
 	HRESULT result = S_FALSE;
-
 	D3D11_MAPPED_SUBRESOURCE frameBufferData;
 
-	myFrameBufferData.View = Matrix4x4<float>::GetFastInverse(aCamera->GetTransform().myMatrix);
-	myFrameBufferData.Projection = aCamera->GetProjectionMatrix();
-	myFrameBufferData.CamTranslation = aCamera->GetTransform().myPosition;
+	if (!aCamera.IsValid()) { return; }
+
+	auto& cameraComponent = aCamera.GetComponent<CameraComponent>();
+	auto& cameraTransform = aCamera.GetComponent<TransformComponent>();
+
+	myFrameBufferData.View = Matrix4x4<float>::GetFastInverse(cameraTransform.myMatrix);
+	myFrameBufferData.Projection = cameraComponent.camera.GetProjectionMatrix();
+	myFrameBufferData.CamTranslation = cameraTransform.myPosition;
 
 	result = DX11::myContext->Map(myFrameBuffer.Get(), 0, D3D11_MAP_WRITE_DISCARD, 0, &frameBufferData);
 	if (FAILED(result))
@@ -79,24 +83,23 @@ void ForwardRenderer::RenderModels(const std::shared_ptr<Camera>& aCamera, const
 		aEnvironmentLight->SetAsResource(myLightBuffer);
 	}
 	
-	for (const std::shared_ptr<ModelInstance>& modelInst : aModelList)
+	for (auto& model : aModelList)
 	{
-		auto model = modelInst->GetModel();
-		model->SetPosition(modelInst->GetTransform().myPosition);
-		model->SetRotation(modelInst->GetTransform().myRotation);
-		model->SetScale(modelInst->GetTransform().myScale);
+		auto& modelInst = model.GetComponent<ModelComponent>().mdlInstance;
+		auto& modelTransform = model.GetComponent<TransformComponent>();
+		auto modelRef = modelInst.GetModel();
 
 		D3D11_MAPPED_SUBRESOURCE objBufferData;
 		ZeroMemory(&objBufferData, sizeof(objBufferData));
 
 		ZeroMemory(&myObjectBufferData.HasBones, 16);
 
-		myObjectBufferData.World = model->GetTransform().myMatrix;
-		myObjectBufferData.HasBones = model->HasBones();
+		myObjectBufferData.World = modelTransform.myMatrix;
+		myObjectBufferData.HasBones = modelRef->HasBones();
 		if (myObjectBufferData.HasBones)
 		{
 			memcpy_s(&myObjectBufferData.BoneData[0], sizeof(Matrix4x4<float>) * 128,
-				&model->GetBoneTransforms()[0], sizeof(Matrix4x4<float>) * 128);
+				&modelRef->GetBoneTransforms()[0], sizeof(Matrix4x4<float>) * 128);
 		}
 		
 		result = DX11::myContext->Map(myObjectBuffer.Get(), 0, D3D11_MAP_WRITE_DISCARD, 0, &objBufferData);
@@ -108,9 +111,9 @@ void ForwardRenderer::RenderModels(const std::shared_ptr<Camera>& aCamera, const
 
 		DX11::myContext->Unmap(myObjectBuffer.Get(), 0);
 
-		for (uint16_t i = 0; i < model->GetNumMeshes(); ++i)
+		for (uint16_t i = 0; i < modelRef->GetNumMeshes(); ++i)
 		{
-			const Model::ModelData& modelData = model->GetModelData(i);
+			const Model::ModelData& modelData = modelRef->GetModelData(i);
 
 			if (modelData.myMaterial)
 			{
@@ -154,21 +157,26 @@ void ForwardRenderer::RenderModels(const std::shared_ptr<Camera>& aCamera, const
 	}
 }
 
-void ForwardRenderer::RenderParticles(const std::shared_ptr<Camera>& aCamera, const std::vector<std::shared_ptr<ParticleSystem>>& aParticleSystemList)
+void ForwardRenderer::RenderParticles(Entity aCamera, std::vector<Entity>& aParticleSystemList)
 {
 	HRESULT result = S_FALSE;
+
+	if (!aCamera.IsValid()) { return; }
 
 	DX11::myContext->VSSetConstantBuffers(0, 1, myFrameBuffer.GetAddressOf());
 	DX11::myContext->GSSetConstantBuffers(0, 1, myFrameBuffer.GetAddressOf());
 	DX11::myContext->PSSetConstantBuffers(0, 1, myFrameBuffer.GetAddressOf());
 
-	for (auto& system : aParticleSystemList)
+	for (auto& entity : aParticleSystemList)
 	{
+		auto& emitterComponent = entity.GetComponent<ParticleSystemComponent>();
+		auto& transformComponent = entity.GetComponent<TransformComponent>();
+
 		D3D11_MAPPED_SUBRESOURCE objBufferData;
 		ZeroMemory(&objBufferData, sizeof(objBufferData));
 		ZeroMemory(&myObjectBufferData.HasBones, 16);
 
-		myObjectBufferData.World = system->GetTransform().myMatrix;
+		myObjectBufferData.World = transformComponent.myMatrix;
 		myObjectBufferData.HasBones = false;
 
 		result = DX11::myContext->Map(myObjectBuffer.Get(), 0, D3D11_MAP_WRITE_DISCARD, 0, &objBufferData);
@@ -182,7 +190,7 @@ void ForwardRenderer::RenderParticles(const std::shared_ptr<Camera>& aCamera, co
 		DX11::myContext->GSSetConstantBuffers(1, 1, myObjectBuffer.GetAddressOf());
 		DX11::myContext->PSSetConstantBuffers(1, 1, myObjectBuffer.GetAddressOf());
 
-		for (auto& emitter : system->GetEmitters())
+		for (auto& emitter : emitterComponent.system.GetEmitters())
 		{
 			emitter.SetAsResource();
 			DX11::myContext->IASetVertexBuffers(0, 1, emitter.myVertexBuffer.GetAddressOf(), &emitter.myStride, &emitter.myOffset);

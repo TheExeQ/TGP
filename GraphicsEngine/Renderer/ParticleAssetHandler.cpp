@@ -15,11 +15,11 @@ bool ParticleAssetHandler::Init()
 	return true;
 }
 
-std::shared_ptr<ParticleSystem> ParticleAssetHandler::GetParticleSystem(const std::string& aSystemName)
+Ref<ParticleSystem> ParticleAssetHandler::GetParticleSystem(const std::string& aSystemName)
 {
 	if (mySystemTemplates.find(aSystemName) != mySystemTemplates.end())
 	{
-		std::shared_ptr<ParticleSystem> system = std::make_shared<ParticleSystem>();
+		Ref<ParticleSystem> system = CreateRef<ParticleSystem>();
 		for (size_t templ = 0; templ < mySystemTemplates[aSystemName].EmitterTemplates.size(); templ++)
 		{
 			ParticleEmitter emitter;

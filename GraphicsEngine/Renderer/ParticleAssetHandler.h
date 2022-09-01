@@ -9,7 +9,7 @@ class ParticleAssetHandler
 {
 public:
 	static bool Init();
-	static std::shared_ptr<ParticleSystem> GetParticleSystem(const std::string& aSystemName);
+	static Ref<ParticleSystem> GetParticleSystem(const std::string& aSystemName);
 
 private:
 	typedef std::unordered_map<std::string, ParticleEmitterTemplate> EmitterTemplateMap;

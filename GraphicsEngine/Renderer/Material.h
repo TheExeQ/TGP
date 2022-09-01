@@ -1,9 +1,11 @@
 #pragma once
+#include "Core/Base.h"
+#include "Math/Vector3.hpp"
+#include "Texture.h"
+
 #include <string>
 #include <array>
 #include <memory>
-#include "Math/Vector3.hpp"
-#include "Texture.h"
 
 namespace MaterialTextureChannel
 {
@@ -27,9 +29,9 @@ public:
 	_inline const std::string& GetName() const { return myName; };
 	_inline const CommonUtilities::Vector3<float>& GetAlbedo() const { return myMaterialData.Albedo; };
 
-	void SetAlbedoTexture(std::shared_ptr<Texture> aTexture);
-	void SetNormalTexture(std::shared_ptr<Texture> aTexture);
-	void SetMaterialTexture(std::shared_ptr<Texture> aTexture);
+	void SetAlbedoTexture(Ref<Texture> aTexture);
+	void SetNormalTexture(Ref<Texture> aTexture);
+	void SetMaterialTexture(Ref<Texture> aTexture);
 	
 	void SetAsResource(ComPtr<ID3D11Resource> aMaterialBuffer) const;
 
@@ -43,5 +45,5 @@ private:
 	std::string myName;
 	MaterialData myMaterialData;
 
-	std::array<std::shared_ptr<Texture>, MaterialTextureChannel::COUNT> myTextures;
+	std::array<Ref<Texture>, MaterialTextureChannel::COUNT> myTextures;
 };

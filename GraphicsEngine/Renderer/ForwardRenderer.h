@@ -1,5 +1,8 @@
 #pragma once
 #include "ConstantBufferTypes.h"
+#include "Core/Base.h"
+#include "Scene/Entity.h"
+
 #include <d3d11.h>
 #include <wrl/client.h>
 #include <memory>
@@ -16,9 +19,9 @@ class ForwardRenderer
 {
 public:
 	bool Initialize();
-	void RenderModels(const std::shared_ptr<Camera>& aCamera, const std::vector<std::shared_ptr<ModelInstance>>& aModelList,
-		const std::shared_ptr<DirectionalLight>& aDirectionalLight, const std::shared_ptr<EnvironmentLight>& aEnvironmentLight);
-	void RenderParticles(const std::shared_ptr<Camera>& aCamera, const std::vector<std::shared_ptr<ParticleSystem>>& aParticleSystemList);
+	void RenderModels(Entity aCamera, std::vector<Entity>& aModelList,
+		const Ref<DirectionalLight>& aDirectionalLight, const Ref<EnvironmentLight>& aEnvironmentLight);
+	void RenderParticles(Entity aCamera, std::vector<Entity>& aParticleSystemList);
 
 private:
 	

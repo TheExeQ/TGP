@@ -144,43 +144,57 @@ bool GraphicsEngine::Initialize(unsigned someX, unsigned someY,
 
 bool GraphicsEngine::InitializeScene()
 {	
-	myScene = std::make_shared<Scene>();
-	auto camera = std::make_shared<Camera>();
-	camera->SetProjectionValues(90, 9.f/16.f, 0.1f, 10000.0f);
-	camera->SetPosition(0.0f, 25.0f, -500.0f);
-	myScene->SetMainCamera(camera);
+	myScene = CreateRef<Scene>();
+	Scene::SetActiveScene(myScene);
 
-	ParticleAssetHandler::Init();
-	
-	std::shared_ptr<ParticleSystem> pSystem = ParticleAssetHandler::GetParticleSystem("Core");
-	pSystem->SetPosition(0.0f, 200.0f, 0.0f);
-	myScene->AddGameObject(pSystem);
-	
-	TextureAssetHandler::LoadTexture("studio_cubemap.dds");
-	
-	myDirectionalLight = LightAssetHandler::CreateDirectionalLight({ 1.0f,1.0f,1.0f }, 1.f, { 0,0,0 });
-	myEnvironmentLight = LightAssetHandler::CreateEnvironmentLight("studio_cubemap.dds");
+	myCamera = myScene->CreateEntity("Test", myScene);
+	auto cube = myScene->CreateEntity("Cube", myScene);
+	auto chest = myScene->CreateEntity("Chest", myScene);
+	auto gremlin = myScene->CreateEntity("Gremlin", myScene);
+
+	auto& cameraComp = myCamera.AddComponent<CameraComponent>();
+	auto& cameraTransformComp = myCamera.GetComponent<TransformComponent>();
+
+	auto& cubeModelComp = cube.AddComponent<ModelComponent>();
+	auto& cubeTransformComp = myCamera.GetComponent<TransformComponent>();
+
+	auto& chestModelComp = chest.AddComponent<ModelComponent>();
+	auto& chestTransformComp = myCamera.GetComponent<TransformComponent>();
+
+	auto& gremlinModelComp = gremlin.AddComponent<ModelComponent>();
+	auto& gremlinTransformComp = myCamera.GetComponent<TransformComponent>();
+
+	myScene->SetMainCamera(myCamera);
+	cameraComp.camera.SetProjectionValues(90, 9.f/16.f, 0.1f, 10000.0f);
+	cameraTransformComp.myPosition = { 0.0f, 25.0f, -500.0f };
+
+	//ParticleAssetHandler::Init();
+	//
+	//Ref<ParticleSystem> pSystem = ParticleAssetHandler::GetParticleSystem("Core");
+	//pSystem->SetPosition(0.0f, 200.0f, 0.0f);
+	//myScene->AddGameObject(pSystem);
+	//
+	//TextureAssetHandler::LoadTexture("studio_cubemap.dds");
+	//
+	//myDirectionalLight = LightAssetHandler::CreateDirectionalLight({ 1.0f,1.0f,1.0f }, 1.f, { 0,0,0 });
+	//myEnvironmentLight = LightAssetHandler::CreateEnvironmentLight("studio_cubemap.dds");
 
 	myModelAssetHandler.Init();
 	myModelAssetHandler.LoadModel("Models/SM/Particle_Chest.fbx");
-	auto mdlCube = myModelAssetHandler.GetModelInstance("Cube");
-	auto mdlChest = myModelAssetHandler.GetModelInstance("Models/SM/Particle_Chest.fbx");
+	cubeModelComp.mdlInstance = *myModelAssetHandler.GetModelInstance("Cube").get();
+	chestModelComp.mdlInstance = *myModelAssetHandler.GetModelInstance("Models/SM/Particle_Chest.fbx").get();
 
 	myModelAssetHandler.LoadModel("Models/SK/gremlin.fbx");
 	myModelAssetHandler.LoadAnimation("Models/SK/gremlin.fbx", "Models/Animations/gremlin@run.fbx");
 	myModelAssetHandler.LoadAnimation("Models/SK/gremlin.fbx", "Models/Animations/gremlin@walk.fbx");
-	std::shared_ptr<ModelInstance> gremlin = myModelAssetHandler.GetModelInstance("Models/SK/gremlin.fbx");
-	gremlin->SetAnimation("Models/Animations/gremlin@walk.fbx");
-	gremlin->SetAnimationState(eAnimationState::Playing);
+	gremlinModelComp.mdlInstance = *myModelAssetHandler.GetModelInstance("Models/SK/gremlin.fbx").get();
+	gremlinModelComp.mdlInstance.SetAnimation("Models/Animations/gremlin@walk.fbx");
+	gremlinModelComp.mdlInstance.SetAnimationState(eAnimationState::Playing);
 
-	gremlin->SetPosition(200.f, 0.f, 0.f);
-	gremlin->SetRotation(0.f, 160.f, 0.f);
-	mdlChest->SetPosition(-200.f, 0.f, 0.f);
-	mdlChest->SetRotation(0.f, 160.f, 0.f);
-
-	myScene->AddGameObject(gremlin);
-	myScene->AddGameObject(mdlChest);
-	myScene->AddGameObject(mdlCube);
+	gremlinTransformComp.myPosition = { 200.f, 0.f, 0.f };
+	gremlinTransformComp.myRotation = { 0.f, 160.f, 0.f };
+	chestTransformComp.myPosition = { -200.f, 0.f, 0.f };
+	chestTransformComp.myRotation = { 0.f, 160.f, 0.f };
 	return true;
 }
 
@@ -235,17 +249,12 @@ void GraphicsEngine::RenderFrame()
 	{
 		Controller();
 
-		const std::shared_ptr<Camera> camera = myScene->GetMainCamera();
-		const std::vector<std::shared_ptr<ModelInstance>> modelsToRender = myScene->CullModels(camera);
-		const std::vector<std::shared_ptr<ParticleSystem>> particlesToRender = myScene->CullParticles(camera);
+		Entity camera = myScene->GetMainCamera();
+		std::vector<Entity> modelEntitiesToRender = myScene->CullModels(camera);
+		std::vector<Entity> particlesEntitiesToRender = myScene->CullParticles(camera);
 		
-		for (auto model : modelsToRender)
-		{
-			model->AdjustRotation(0.f, 1.f, 0.f);
-		}
-
 		myGBuffer->SetAsTarget();
-		myDeferredRenderer.GenereteGBuffer(camera, modelsToRender, myTimer.GetDeltaTime(), myTimer.GetTotalTime());
+		myDeferredRenderer.GenereteGBuffer(camera, modelEntitiesToRender, myTimer.GetDeltaTime(), myTimer.GetTotalTime());
 		myGBuffer->ClearTarget();
 		myGBuffer->SetAsResource(0);
 		DX11::myContext->OMSetRenderTargets(1, DX11::myRenderTarget.GetAddressOf(), DX11::myDepthStencil.Get());
@@ -256,7 +265,7 @@ void GraphicsEngine::RenderFrame()
 
 		SetBlendState(BlendState::BS_Additive);
 		SetDepthStencilState(DepthStencilState::DSS_ReadOnly);
-		myForwardRenderer.RenderParticles(camera, particlesToRender);
+		myForwardRenderer.RenderParticles(camera, particlesEntitiesToRender);
 	}
 }
 
@@ -273,46 +282,48 @@ void GraphicsEngine::Controller()
 	static float moveSpeed = 100.f;
 	static float mouseSens = 10.f;
 
+	auto& transform = myCamera.GetComponent<TransformComponent>();
+
 	if (myInputHandler.IsKeyDown(KeyCode::W))
 	{
-		myScene->GetMainCamera()->MoveForward(moveSpeed * myTimer.GetDeltaTime());
+		transform.myPosition.z += (moveSpeed * myTimer.GetDeltaTime());
 	}
 	if (myInputHandler.IsKeyDown(KeyCode::A))
 	{
-		myScene->GetMainCamera()->MoveRight(-moveSpeed * myTimer.GetDeltaTime());
+		transform.myPosition.x += (-moveSpeed * myTimer.GetDeltaTime());
 	}
 	if (myInputHandler.IsKeyDown(KeyCode::S))
 	{
-		myScene->GetMainCamera()->MoveForward(-moveSpeed * myTimer.GetDeltaTime());
+		transform.myPosition.z += (-moveSpeed * myTimer.GetDeltaTime());
 	}
 	if (myInputHandler.IsKeyDown(KeyCode::D))
 	{
-		myScene->GetMainCamera()->MoveRight(moveSpeed * myTimer.GetDeltaTime());
+		transform.myPosition.x += (moveSpeed * myTimer.GetDeltaTime());
 	}
 
 	if (myInputHandler.IsKeyDown(KeyCode::E))
 	{
-		myScene->GetMainCamera()->AdjustPosition(0.f, moveSpeed * myTimer.GetDeltaTime(), 0.f);
+		transform.myPosition.y += (moveSpeed * myTimer.GetDeltaTime());
 	}
 	if (myInputHandler.IsKeyDown(KeyCode::Q))
 	{
-		myScene->GetMainCamera()->AdjustPosition(0.f, -moveSpeed * myTimer.GetDeltaTime(), 0.f);
+		transform.myPosition.y += (-moveSpeed * myTimer.GetDeltaTime());
 	}
 
-	static POINT prevFrame = myInputHandler.GetMousePosition();
-	static POINT currFrame = myInputHandler.GetMousePosition();
-	if (myInputHandler.IsKeyDown(KeyCode::MOUSERBUTTON))
-	{
-		currFrame = myInputHandler.GetMousePosition();
-		auto deltaX = currFrame.x - prevFrame.x;
-		auto deltaY = currFrame.y - prevFrame.y;
-		if (deltaX != 0 || deltaY != 0)
-		{
-			myScene->GetMainCamera()->AdjustRotation(deltaY * mouseSens * myTimer.GetDeltaTime(),
-				deltaX * mouseSens * myTimer.GetDeltaTime(), 0.f);
-		}
-	}
-	prevFrame = myInputHandler.GetMousePosition();
+	//static POINT prevFrame = myInputHandler.GetMousePosition();
+	//static POINT currFrame = myInputHandler.GetMousePosition();
+	//if (myInputHandler.IsKeyDown(KeyCode::MOUSERBUTTON))
+	//{
+	//	currFrame = myInputHandler.GetMousePosition();
+	//	auto deltaX = currFrame.x - prevFrame.x;
+	//	auto deltaY = currFrame.y - prevFrame.y;
+	//	if (deltaX != 0 || deltaY != 0)
+	//	{
+	//		myScene->GetMainCamera()->AdjustRotation(deltaY * mouseSens * myTimer.GetDeltaTime(),
+	//			deltaX * mouseSens * myTimer.GetDeltaTime(), 0.f);
+	//	}
+	//}
+	//prevFrame = myInputHandler.GetMousePosition();
 }
 
 void GraphicsEngine::SetBlendState(BlendState aState)

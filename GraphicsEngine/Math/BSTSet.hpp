@@ -11,15 +11,15 @@ namespace CommonUtilities
 	{
 		friend BSTSet<T>;
 		void SetValue(const T& aValue);
-		std::shared_ptr<BSTNode<T>> GetValue(const T& aValue);
+		Ref<BSTNode<T>> GetValue(const T& aValue);
 
 		T myValue;
-		std::shared_ptr<BSTNode<T>> myMinValue;
-		std::shared_ptr<BSTNode<T>> myMaxValue;
+		Ref<BSTNode<T>> myMinValue;
+		Ref<BSTNode<T>> myMaxValue;
 	};
 
 	template <class T>
-	std::shared_ptr<BSTNode<T>> BSTNode<T>::GetValue(const T& aValue)
+	Ref<BSTNode<T>> BSTNode<T>::GetValue(const T& aValue)
 	{
 		if (myValue == aValue) 
 			return this->shared_from_this();
@@ -27,12 +27,12 @@ namespace CommonUtilities
 		{
 			if (aValue < myValue)
 			{
-				if (!myMinValue) return std::make_shared<BSTNode<T>>();
+				if (!myMinValue) return CreateRef<BSTNode<T>>();
 				return myMinValue->GetValue(aValue);
 			}
 			else
 			{
-				if (!myMaxValue) return std::make_shared<BSTNode<T>>();
+				if (!myMaxValue) return CreateRef<BSTNode<T>>();
 				return myMaxValue->GetValue(aValue);
 			}
 		}
@@ -46,7 +46,7 @@ namespace CommonUtilities
 		{
 			if (!myMinValue)
 			{
-				myMinValue = std::make_shared<BSTNode<T>>();
+				myMinValue = CreateRef<BSTNode<T>>();
 				myMinValue->myValue = aValue;
 			}
 			else
@@ -58,7 +58,7 @@ namespace CommonUtilities
 		{
 			if (!myMaxValue)
 			{
-				myMaxValue = std::make_shared<BSTNode<T>>();
+				myMaxValue = CreateRef<BSTNode<T>>();
 				myMaxValue->myValue = aValue;
 			}
 			else
@@ -80,10 +80,10 @@ namespace CommonUtilities
 		void Remove(const T& aValue);
 
 	private:
-		void deleteByMerging(std::shared_ptr<BSTNode<T>>& aNode);
+		void deleteByMerging(Ref<BSTNode<T>>& aNode);
 		void findAndDeleteByMerging(const T& aValue);
 
-		std::shared_ptr<BSTNode<T>> myRootNode;
+		Ref<BSTNode<T>> myRootNode;
 	};
 
 	template <class T>
@@ -92,7 +92,7 @@ namespace CommonUtilities
 		findAndDeleteByMerging(aValue);
 		if (!myRootNode) 
 		{
-			myRootNode = std::make_shared<BSTNode<T>>();
+			myRootNode = CreateRef<BSTNode<T>>();
 			myRootNode->myValue = 0;
 		}
 	}
@@ -127,14 +127,14 @@ namespace CommonUtilities
 	template <class T>
 	BSTSet<T>::BSTSet()
 	{
-		myRootNode = std::make_shared<BSTNode<T>>();
+		myRootNode = CreateRef<BSTNode<T>>();
 		myRootNode->myValue = 0;
 	}
 
 	template<class T>
-	void BSTSet<T>::deleteByMerging(std::shared_ptr<BSTNode<T>>& aNode)
+	void BSTSet<T>::deleteByMerging(Ref<BSTNode<T>>& aNode)
 	{
-		std::shared_ptr<BSTNode<T>> tmp = aNode;
+		Ref<BSTNode<T>> tmp = aNode;
 		if (aNode) 
 		{
 			if (!aNode->myMaxValue)
@@ -161,8 +161,8 @@ namespace CommonUtilities
 	template<class T>
 	void BSTSet<T>::findAndDeleteByMerging(const T& aValue) 
 	{
-		std::shared_ptr<BSTNode<T>> node = myRootNode;
-		std::shared_ptr<BSTNode<T>> prev;
+		Ref<BSTNode<T>> node = myRootNode;
+		Ref<BSTNode<T>> prev;
 
 		while (node) 
 		{

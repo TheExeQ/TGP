@@ -4,6 +4,8 @@
 #include <string>
 #include <vector>
 #include <array>
+
+#include "Math/Matrix4x4.hpp"
 #include "Scene/Scene.h"
 #include "Skeleton.h"
 
@@ -11,7 +13,7 @@ class Material;
 
 using namespace Microsoft::WRL;
 
-class Model : public SceneObject
+class Model
 {
 public:
 	struct ModelData
@@ -29,7 +31,7 @@ public:
 		UINT myStride;
 		UINT myOffset;
 
-		std::shared_ptr<Material> myMaterial;
+		Ref<Material> myMaterial;
 	};
 	
 	void Init(std::vector<ModelData>& someModelData, const std::string& aName);

@@ -10,5 +10,5 @@ public:
 private:
 	friend class LightAssetHandler;
 	
-	std::shared_ptr<Texture> myTexture;
+	Ref<Texture> myTexture;
 };

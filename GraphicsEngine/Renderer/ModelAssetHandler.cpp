@@ -10,8 +10,8 @@
 #include "Material.h"
 #include "TextureAssetHandler.h"
 
-std::unordered_map<std::string, std::shared_ptr<Model>> ModelAssetHandler::myModelRegistry;
-std::unordered_map<std::string, std::shared_ptr<Material>> ModelAssetHandler::myMaterialRegistry;
+std::unordered_map<std::string, Ref<Model>> ModelAssetHandler::myModelRegistry;
+std::unordered_map<std::string, Ref<Material>> ModelAssetHandler::myMaterialRegistry;
 
 bool ModelAssetHandler::Init()
 {
@@ -19,9 +19,9 @@ bool ModelAssetHandler::Init()
 	return true;
 }
 
-std::shared_ptr<ModelInstance> ModelAssetHandler::GetModelInstance(const std::string& name) const
+Ref<ModelInstance> ModelAssetHandler::GetModelInstance(const std::string& name) const
 {
-	std::shared_ptr<ModelInstance> modelInstance = std::make_shared<ModelInstance>();
+	Ref<ModelInstance> modelInstance = CreateRef<ModelInstance>();
 	modelInstance->Init(myModelRegistry[name]);
 
 	return modelInstance;
@@ -80,14 +80,14 @@ bool ModelAssetHandler::LoadModel(const std::string& someFilePath)
 			TGA::FBXModel::FBXMesh& mesh = tgaModel.Meshes[i];
 
 			const std::string matName = mesh.MaterialName;
-			std::shared_ptr<Material> meshMaterial;
+			Ref<Material> meshMaterial;
 			if (myMaterialRegistry.find(matName) != myMaterialRegistry.end())
 			{
 				meshMaterial = myMaterialRegistry[matName];
 			}
 			else
 			{
-				meshMaterial = std::make_shared<Material>();
+				meshMaterial = CreateRef<Material>();
 				CommonUtilities::Vector3<float> albedo;
 				albedo.x = Random::GetRandomFloat(0.f, 1.f);
 				albedo.y = Random::GetRandomFloat(0.f, 1.f);
@@ -262,7 +262,7 @@ bool ModelAssetHandler::LoadModel(const std::string& someFilePath)
 
 			modelDataVector.push_back(modelData);
 		}
-		auto mdl = std::make_shared<Model>();
+		auto mdl = CreateRef<Model>();
 
 		if (hasSkeleton)
 		{
@@ -400,9 +400,9 @@ bool ModelAssetHandler::InitUnitCube()
 		22,23,20,
 	};
 
-	std::shared_ptr<Material> meshMaterial;
+	Ref<Material> meshMaterial;
 	
-	meshMaterial = std::make_shared<Material>();
+	meshMaterial = CreateRef<Material>();
 
 	if (TextureAssetHandler::LoadTexture("T_Default_C.dds"))
 	{
@@ -508,7 +508,7 @@ bool ModelAssetHandler::InitUnitCube()
 	modelData.myStride = sizeof(Vertex);
 	modelData.myOffset = 0;
 
-	auto mdl = std::make_shared<Model>();
+	auto mdl = CreateRef<Model>();
 	
 	modelDataVector.push_back(modelData);
 

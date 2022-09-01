@@ -7,7 +7,7 @@
 using namespace CommonUtilities;
 using namespace Microsoft::WRL;
 
-class Light : public SceneObject
+class Light
 {
 public:
 	struct LightBufferData
@@ -18,7 +18,7 @@ public:
 		float padding;
 	};
 
-	virtual ~Light() override = default;
+	virtual ~Light() = default;
 	virtual void Init(Vector3<float> aColor, float anIntensity);
 
 	virtual void SetAsResource(ComPtr<ID3D11Buffer> aLightBuffer) = 0;

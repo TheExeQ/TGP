@@ -1,4 +1,5 @@
 #pragma once
+#include "Core/Base.h"
 #include <unordered_map>
 #include <memory>
 #include <string>
@@ -12,14 +13,14 @@ class ModelAssetHandler
 public:
 	bool Init();
 	
-	std::shared_ptr<ModelInstance> GetModelInstance(const std::string& name) const;
+	Ref<ModelInstance> GetModelInstance(const std::string& name) const;
 	bool LoadModel(const std::string& someFilePath);
 	bool LoadAnimation(const std::string& aModelName, const std::string& someFilePath) const;
 	
 private:
 	bool InitUnitCube();
 	
-	static std::unordered_map<std::string, std::shared_ptr<Model>> myModelRegistry;
-	static std::unordered_map<std::string, std::shared_ptr<Material>> myMaterialRegistry;
+	static std::unordered_map<std::string, Ref<Model>> myModelRegistry;
+	static std::unordered_map<std::string, Ref<Material>> myMaterialRegistry;
 };
 

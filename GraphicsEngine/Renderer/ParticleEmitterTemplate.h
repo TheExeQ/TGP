@@ -1,5 +1,6 @@
 #pragma once
 #include <string>
+#include <vector>
 #include "Math/Vector.hpp"
 
 typedef CommonUtilities::Vector3<float> Vector3f;

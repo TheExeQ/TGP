@@ -12,6 +12,7 @@
 #include "Renderer/EnvironmentLight.h"
 #include "ImGui/ImGuiLayer.h"
 #include "Renderer/GBuffer.h"
+#include "Scene/Entity.h"
 
 enum BlendState
 {
@@ -55,22 +56,24 @@ public:
 	void SetBlendState(BlendState aState);
 	void SetDepthStencilState(DepthStencilState aState);
 
-	std::unique_ptr<GBuffer>& GetGBuffer() { return myGBuffer; };
+	Scope<GBuffer>& GetGBuffer() { return myGBuffer; };
 
 	static GraphicsEngine& Get() { return *myInstance; };
 
 private:
 	void Controller();
 	
+	Entity myCamera;
+
 	DX11 myFramework;
 	ForwardRenderer myForwardRenderer;
 	DeferredRenderer myDeferredRenderer;
-	std::shared_ptr<Scene> myScene;
+	Ref<Scene> myScene;
 	ModelAssetHandler myModelAssetHandler;
 	
-	std::unique_ptr<GBuffer> myGBuffer;
-	std::shared_ptr<DirectionalLight> myDirectionalLight;
-	std::shared_ptr<EnvironmentLight> myEnvironmentLight;
+	Scope<GBuffer> myGBuffer;
+	Ref<DirectionalLight> myDirectionalLight;
+	Ref<EnvironmentLight> myEnvironmentLight;
 
 	std::array<ComPtr<ID3D11BlendState>, BlendState::BS_Count> myBlendStates;
 	std::array<ComPtr<ID3D11DepthStencilState>, DepthStencilState::DSS_Count> myDepthStencilStates;

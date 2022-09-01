@@ -2,9 +2,9 @@
 #include "Math/Matrix.hpp"
 #include "TextureAssetHandler.h"
 
-std::shared_ptr<DirectionalLight> LightAssetHandler::CreateDirectionalLight(Vector3<float> aColor, float aIntensity, Vector3<float> aRotation)
+Ref<DirectionalLight> LightAssetHandler::CreateDirectionalLight(Vector3<float> aColor, float aIntensity, Vector3<float> aRotation)
 {
-	myDirectionalLight = std::make_shared<DirectionalLight>();
+	myDirectionalLight = CreateRef<DirectionalLight>();
 	myDirectionalLight->Init(aColor, aIntensity);
 	
 	Matrix4x4<float> lightRotation = 
@@ -17,9 +17,9 @@ std::shared_ptr<DirectionalLight> LightAssetHandler::CreateDirectionalLight(Vect
 	return myDirectionalLight;
 }
 
-std::shared_ptr<EnvironmentLight> LightAssetHandler::CreateEnvironmentLight(const std::string& aTextureName)
+Ref<EnvironmentLight> LightAssetHandler::CreateEnvironmentLight(const std::string& aTextureName)
 {
-	myEnvironmentLight = std::make_shared<EnvironmentLight>();
+	myEnvironmentLight = CreateRef<EnvironmentLight>();
 	myEnvironmentLight->myTexture = TextureAssetHandler::GetTexture(aTextureName);
 
 	return myEnvironmentLight;

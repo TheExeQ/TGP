@@ -74,14 +74,19 @@ bool DeferredRenderer::Init()
     return true;
 }
 
-void DeferredRenderer::GenereteGBuffer(const std::shared_ptr<Camera>& aCamera, const std::vector<std::shared_ptr<ModelInstance>>& aModelList, float aDeltaTime, float aTotalTime)
+void DeferredRenderer::GenereteGBuffer(Entity aCamera, std::vector<Entity>& aModelList, float aDeltaTime, float aTotalTime)
 {
     HRESULT result = S_FALSE;
     D3D11_MAPPED_SUBRESOURCE frameBufferData;
 
-    myFrameBufferData.View = Matrix4x4<float>::GetFastInverse(aCamera->GetTransform().myMatrix);
-    myFrameBufferData.Projection = aCamera->GetProjectionMatrix();
-    myFrameBufferData.CamTranslation = aCamera->GetTransform().myPosition;
+    if (!aCamera.IsValid()) { return; }
+
+    auto& cameraComponent = aCamera.GetComponent<CameraComponent>();
+    auto& cameraTransform = aCamera.GetComponent<TransformComponent>();
+
+    myFrameBufferData.View = Matrix4x4<float>::GetFastInverse(cameraTransform.myMatrix);
+    myFrameBufferData.Projection = cameraComponent.camera.GetProjectionMatrix();
+    myFrameBufferData.CamTranslation = cameraTransform.myPosition;
 
     result = DX11::myContext->Map(myFrameBuffer.Get(), 0, D3D11_MAP_WRITE_DISCARD, 0, &frameBufferData);
     if (FAILED(result))
@@ -95,19 +100,18 @@ void DeferredRenderer::GenereteGBuffer(const std::shared_ptr<Camera>& aCamera, c
     DX11::myContext->VSSetConstantBuffers(0, 1, myFrameBuffer.GetAddressOf());
     DX11::myContext->PSSetConstantBuffers(0, 1, myFrameBuffer.GetAddressOf());
 
-    for (const std::shared_ptr<ModelInstance>& model : aModelList)
+    for (auto& model : aModelList)
     {
-        auto modelRef = model->GetModel();
-        modelRef->SetPosition(model->GetTransform().myPosition);
-        modelRef->SetRotation(model->GetTransform().myRotation);
-        modelRef->SetScale(model->GetTransform().myScale);
+        auto& modelInst = model.GetComponent<ModelComponent>().mdlInstance;
+        auto& modelTransform = model.GetComponent<TransformComponent>();
+        auto modelRef = modelInst.GetModel();
 
         D3D11_MAPPED_SUBRESOURCE objBufferData;
         ZeroMemory(&objBufferData, sizeof(objBufferData));
 
         ZeroMemory(&myObjectBufferData.HasBones, 16);
 
-        myObjectBufferData.World = modelRef->GetTransform().myMatrix;
+        myObjectBufferData.World = modelTransform.myMatrix;
         myObjectBufferData.HasBones = modelRef->HasBones();
         if (myObjectBufferData.HasBones)
         {
@@ -124,9 +128,9 @@ void DeferredRenderer::GenereteGBuffer(const std::shared_ptr<Camera>& aCamera, c
 
         DX11::myContext->Unmap(myObjectBuffer.Get(), 0);
 
-        for (unsigned int m = 0; m < model->GetNumMeshes(); m++)
+        for (unsigned int m = 0; m < modelRef->GetNumMeshes(); m++)
         {
-            const Model::ModelData& meshData = model->GetModelData(m);
+            const Model::ModelData& meshData = modelRef->GetModelData(m);
 
             DX11::myContext->VSSetConstantBuffers(1, 1, myObjectBuffer.GetAddressOf());
             DX11::myContext->PSSetConstantBuffers(1, 1, myObjectBuffer.GetAddressOf());
@@ -170,7 +174,7 @@ void DeferredRenderer::GenereteGBuffer(const std::shared_ptr<Camera>& aCamera, c
     }
 }
 
-void DeferredRenderer::Render(const std::shared_ptr<Camera>& aCamera, const std::shared_ptr<DirectionalLight>& aDirectionalLight, const std::shared_ptr<EnvironmentLight>& aEnvironmentLight, float aDeltaTime, float aTotalTime)
+void DeferredRenderer::Render(Entity aCamera, const Ref<DirectionalLight>& aDirectionalLight, const Ref<EnvironmentLight>& aEnvironmentLight, float aDeltaTime, float aTotalTime)
 {
     if (aDirectionalLight)
     {

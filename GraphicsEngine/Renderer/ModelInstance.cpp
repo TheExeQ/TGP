@@ -2,7 +2,7 @@
 #include "Core/GraphicsEngine.h"
 #include <iostream>
 
-void ModelInstance::Init(std::shared_ptr<Model> aModel)
+void ModelInstance::Init(Ref<Model> aModel)
 {
 	myModel = aModel;
 }

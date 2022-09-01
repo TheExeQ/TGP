@@ -1,15 +1,13 @@
 #pragma once
-#include "Scene/Scene.h"
 #include "ParticleEmitter.h"
 
 struct ParticleSystemEmitter
 {
 	ParticleEmitter Emitter;
 	EmitterSettingsData Settings;
-	Transform Transform;
 };
 
-class ParticleSystem : public SceneObject
+class ParticleSystem
 {
 public:
 	void Update(float aDeltaTime);

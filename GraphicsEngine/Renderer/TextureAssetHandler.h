@@ -1,16 +1,18 @@
 #pragma once
-#include <unordered_map>
-#include <memory>
+#include "Core/Base.h"
 #include "Texture.h"
 #include "GBuffer.h"
+
+#include <memory>
+#include <unordered_map>
 
 class TextureAssetHandler
 {
 public:
-	static std::shared_ptr<Texture> GetTexture(const std::string& aTextureName);
+	static Ref<Texture> GetTexture(const std::string& aTextureName);
 	static bool LoadTexture(const std::string& aFileName);
-	static std::unique_ptr<GBuffer> CreateGBuffer(int aWidth, int aHeight);
+	static Scope<GBuffer> CreateGBuffer(int aWidth, int aHeight);
 
 private:
-	static std::unordered_map<std::string, std::shared_ptr<Texture>> myRegistry;
+	static std::unordered_map<std::string, Ref<Texture>> myRegistry;
 };

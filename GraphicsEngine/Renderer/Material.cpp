@@ -12,17 +12,17 @@ void Material::Init(std::string aName, const CommonUtilities::Vector3<float>& an
 	myMaterialData.Albedo = anAlbedo;
 }
 
-void Material::SetAlbedoTexture(std::shared_ptr<Texture> aTexture)
+void Material::SetAlbedoTexture(Ref<Texture> aTexture)
 {
 	myTextures[MaterialTextureChannel::Albedo] = aTexture;
 }
 
-void Material::SetNormalTexture(std::shared_ptr<Texture> aTexture)
+void Material::SetNormalTexture(Ref<Texture> aTexture)
 {
 	myTextures[MaterialTextureChannel::Normal] = aTexture;
 }
 
-void Material::SetMaterialTexture(std::shared_ptr<Texture> aTexture)
+void Material::SetMaterialTexture(Ref<Texture> aTexture)
 {
 	myTextures[MaterialTextureChannel::Material] = aTexture;
 }
