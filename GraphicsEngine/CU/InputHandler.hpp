@@ -233,6 +233,15 @@ namespace CommonUtilities
 		GAMEPAD_RIGHT_THUMBSTICK_RIGHT = 0xD9, // reserved
 		GAMEPAD_RIGHT_THUMBSTICK_LEFT = 0xDA, // reserved
 	};
+
+	template<typename T>
+	void InputHandler::TrimBuffer(std::queue<T>& aBuffer)
+	{
+		while (aBuffer.size() > myBufferSize)
+		{
+			aBuffer.pop();
+		}
+	}
 }
 
 

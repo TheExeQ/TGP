@@ -24,8 +24,8 @@ public:
 	Entity CreateEntityWithID(TGA::UUID aID, const char* aName, Ref<Scene> aScene);
 	Entity GetEntityFromUUID(TGA::UUID aID);
 	
-	std::vector<Entity> CullModels(Entity camera) const;
-	std::vector<Entity> CullParticles(Entity camera) const;
+	std::vector<Entity> CullModels(Entity camera);
+	std::vector<Entity> CullParticles(Entity camera);
 
 	void SetMainCamera(Entity aCamera);
 	Entity GetMainCamera() const;

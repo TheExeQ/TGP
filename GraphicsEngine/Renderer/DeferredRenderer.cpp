@@ -84,7 +84,7 @@ void DeferredRenderer::GenereteGBuffer(Entity aCamera, std::vector<Entity>& aMod
     auto& cameraComponent = aCamera.GetComponent<CameraComponent>();
     auto& cameraTransform = aCamera.GetComponent<TransformComponent>();
 
-    myFrameBufferData.View = Matrix4x4<float>::GetFastInverse(cameraTransform.myMatrix);
+    myFrameBufferData.View = Matrix4x4<float>::GetFastInverse(cameraTransform.GetTransform());
     myFrameBufferData.Projection = cameraComponent.camera.GetProjectionMatrix();
     myFrameBufferData.CamTranslation = cameraTransform.myPosition;
 
@@ -111,7 +111,7 @@ void DeferredRenderer::GenereteGBuffer(Entity aCamera, std::vector<Entity>& aMod
 
         ZeroMemory(&myObjectBufferData.HasBones, 16);
 
-        myObjectBufferData.World = modelTransform.myMatrix;
+        myObjectBufferData.World = modelTransform.GetTransform();
         myObjectBufferData.HasBones = modelRef->HasBones();
         if (myObjectBufferData.HasBones)
         {

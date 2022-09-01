@@ -43,7 +43,7 @@ Scene::Scene()
 	myRegistry.clear();
 }
 
-std::vector<Entity> Scene::CullModels(Entity camera) const
+std::vector<Entity> Scene::CullModels(Entity camera)
 {
 	std::vector<Entity> visibleEntity;
 
@@ -51,29 +51,28 @@ std::vector<Entity> Scene::CullModels(Entity camera) const
 
 	for (auto& entity : view)
 	{
-		auto mdlInst = myRegistry.get<ModelComponent>(entity).mdlInstance;
-		mdlInst.Update();
+		ModelComponent& mdl = myRegistry.get<ModelComponent>(entity);
+		mdl.mdlInstance.Update();
 		visibleEntity.push_back(Entity(entity, myActiveScene));
 	}
 
 	return visibleEntity;
 }
 
-std::vector<Entity> Scene::CullParticles(Entity camera) const
+std::vector<Entity> Scene::CullParticles(Entity camera)
 {
-	std::vector<Entity> visibleParticles;
+	std::vector<Entity> visibleEntity;
 
-	//for (auto& sceneObject : mySceneObjects)
-	//{
-	//	auto particleSystem = dynamic_pointer_cast<ParticleSystem>(sceneObject);
-	//	if (particleSystem)
-	//	{
-	//		particleSystem->Update(GraphicsEngine::GetTimer().GetDeltaTime());
-	//		visibleParticles.push_back(particleSystem);
-	//	}
-	//}
+	const auto& view = myRegistry.view<ParticleSystemComponent>();
 
-	return visibleParticles;
+	for (auto& entity : view)
+	{
+		ParticleSystemComponent& particleSystem = myRegistry.get<ParticleSystemComponent>(entity);
+		particleSystem.system.Update(GraphicsEngine::GetTimer().GetDeltaTime());
+		visibleEntity.push_back(Entity(entity, myActiveScene));
+	}
+
+	return visibleEntity;
 }
 
 void Scene::SetMainCamera(Entity aCamera)

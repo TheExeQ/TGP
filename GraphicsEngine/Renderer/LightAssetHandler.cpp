@@ -7,10 +7,7 @@ Ref<DirectionalLight> LightAssetHandler::CreateDirectionalLight(Vector3<float> a
 	myDirectionalLight = CreateRef<DirectionalLight>();
 	myDirectionalLight->Init(aColor, aIntensity);
 	
-	Matrix4x4<float> lightRotation = 
-		Matrix4x4<float>::CreateRotationAroundX(aRotation.x) *
-		Matrix4x4<float>::CreateRotationAroundY(aRotation.y) *
-		Matrix4x4<float>::CreateRotationAroundZ(aRotation.z);
+	Matrix4x4<float> lightRotation = Matrix4::Rotate(lightRotation, aRotation);
 
 	myDirectionalLight->ourlightBuffer.Direction = Vector3<float>(lightRotation(3, 1), lightRotation(3, 2), lightRotation(3, 3));
 

@@ -60,7 +60,7 @@ void ForwardRenderer::RenderModels(Entity aCamera, std::vector<Entity>& aModelLi
 	auto& cameraComponent = aCamera.GetComponent<CameraComponent>();
 	auto& cameraTransform = aCamera.GetComponent<TransformComponent>();
 
-	myFrameBufferData.View = Matrix4x4<float>::GetFastInverse(cameraTransform.myMatrix);
+	myFrameBufferData.View = Matrix4x4<float>::GetFastInverse(cameraTransform.GetTransform());
 	myFrameBufferData.Projection = cameraComponent.camera.GetProjectionMatrix();
 	myFrameBufferData.CamTranslation = cameraTransform.myPosition;
 
@@ -94,7 +94,7 @@ void ForwardRenderer::RenderModels(Entity aCamera, std::vector<Entity>& aModelLi
 
 		ZeroMemory(&myObjectBufferData.HasBones, 16);
 
-		myObjectBufferData.World = modelTransform.myMatrix;
+		myObjectBufferData.World = modelTransform.GetTransform();
 		myObjectBufferData.HasBones = modelRef->HasBones();
 		if (myObjectBufferData.HasBones)
 		{
@@ -176,7 +176,7 @@ void ForwardRenderer::RenderParticles(Entity aCamera, std::vector<Entity>& aPart
 		ZeroMemory(&objBufferData, sizeof(objBufferData));
 		ZeroMemory(&myObjectBufferData.HasBones, 16);
 
-		myObjectBufferData.World = transformComponent.myMatrix;
+		myObjectBufferData.World = transformComponent.GetTransform();
 		myObjectBufferData.HasBones = false;
 
 		result = DX11::myContext->Map(myObjectBuffer.Get(), 0, D3D11_MAP_WRITE_DISCARD, 0, &objBufferData);

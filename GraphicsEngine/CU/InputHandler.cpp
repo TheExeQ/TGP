@@ -1,5 +1,5 @@
 #include "Core/GraphicsEngine.pch.h"
-#include "../CU/InputHandler.hpp"
+#include "CU/InputHandler.hpp"
 #include <iostream>
 
 CommonUtilities::InputHandler::InputHandler()
@@ -197,13 +197,4 @@ void CommonUtilities::InputHandler::ClearState()
 {
 	myKeystates.reset();
 	myKeystatesHold.reset();
-}
-
-template<typename T>
-void CommonUtilities::InputHandler::TrimBuffer(std::queue<T>& aBuffer)
-{
-	while (aBuffer.size() > myBufferSize)
-	{
-		aBuffer.pop();
-	}
 }

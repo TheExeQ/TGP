@@ -1,5 +1,5 @@
 #pragma once
-#include "Vector4.hpp"
+#include "Vector.hpp"
 #include <array>
 #include <cassert>
 
@@ -19,20 +19,57 @@ namespace CommonUtilities
 		T& operator()(const int aRow, const int aColumn);
 		const T& operator()(const int aRow, const int aColumn) const;
 
-		// Static functions for creating rotation matrices.
-		static Matrix4x4<T> CreateRotationAroundX(T aAngleInRadians);
-		static Matrix4x4<T> CreateRotationAroundY(T aAngleInRadians);
-		static Matrix4x4<T> CreateRotationAroundZ(T aAngleInRadians);
+		// Static function for translating a matrix.
+		static Matrix4x4<T> Translate(Matrix4x4<T> aMatrix, const Vector3<T>& aTranslation);
 
+		// Static funtion for scaling a matrix.
+		static Matrix4x4<T> Rotate(Matrix4x4<T> aMatrix, const Vector3<T>& aRotation);
+
+		// Static funtion for scaling a matrix.
+		static Matrix4x4<T> Scale(Matrix4x4<T> aMatrix, const Vector3<T>& aScale);
+			
 		// Static function for creating a transpose of a matrix.
 		static Matrix4x4<T> Transpose(const Matrix4x4<T>& aMatrixToTranspose);
 
 		// Assumes aTransform is made up of nothing but rotations and translations.
 		static Matrix4x4<T> GetFastInverse(const Matrix4x4<T>& aTransform);
 
+
 	private:
+		// Static functions for creating rotation matrices.
+		static Matrix4x4<T> CreateRotationAroundX(T aAngleInRadians);
+		static Matrix4x4<T> CreateRotationAroundY(T aAngleInRadians);
+		static Matrix4x4<T> CreateRotationAroundZ(T aAngleInRadians);
+
 		std::array<std::array<T, 4>, 4> myMatrix;
 	};
+
+	template<typename T>
+	CommonUtilities::Matrix4x4<T> CommonUtilities::Matrix4x4<T>::Rotate(Matrix4x4<T> aMatrix, const Vector3<T>& aRotation)
+	{
+		aMatrix *= CreateRotationAroundX(aRotation.x);
+		aMatrix *= CreateRotationAroundY(aRotation.y);
+		aMatrix *= CreateRotationAroundZ(aRotation.z);
+		return aMatrix;
+	}
+
+	template<typename T>
+	CommonUtilities::Matrix4x4<T> CommonUtilities::Matrix4x4<T>::Scale(Matrix4x4<T> aMatrix, const Vector3<T>& aScale)
+	{
+		aMatrix(1, 1) *= aScale.x;
+		aMatrix(2, 2) *= aScale.y;
+		aMatrix(3, 3) *= aScale.z;
+		return aMatrix;
+	}
+
+	template<typename T>
+	CommonUtilities::Matrix4x4<T> CommonUtilities::Matrix4x4<T>::Translate(Matrix4x4<T> aMatrix, const Vector3<T>& aTranslation)
+	{
+		aMatrix(4, 1) += aTranslation.x;
+		aMatrix(4, 2) += aTranslation.y;
+		aMatrix(4, 3) += aTranslation.z;
+		return aMatrix;
+	}
 
 	template<typename T>
 	inline Matrix4x4<T>::Matrix4x4()

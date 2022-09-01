@@ -29,12 +29,34 @@ namespace CommonUtilities
 		static Matrix3x3<T> CreateRotationAroundY(T aAngleInRadians);
 		static Matrix3x3<T> CreateRotationAroundZ(T aAngleInRadians);
 
+		// Static function for translating a matrix.
+		static Matrix3x3<T> Translate(Matrix3x3<T> aMatrix, const Vector2<T>& aTranslation);
+
+		// Static funtion for scaling a matrix.
+		static Matrix3x3<T> Scale(Matrix3x3<T> aMatrix, const Vector2<T>& aScale);
+
 		// Static function for creating a transpose of a matrix.
 		static Matrix3x3<T> Transpose(const Matrix3x3<T>& aMatrixToTranspose);
 
 	private:
 		std::array<std::array<T, 3>, 3> myMatrix;
 	};
+
+	template<typename T>
+	CommonUtilities::Matrix3x3<T> CommonUtilities::Matrix3x3<T>::Scale(Matrix3x3<T> aMatrix, const Vector2<T>& aScale)
+	{
+		aMatrix(1, 1) *= aScale.x;
+		aMatrix(2, 2) *= aScale.y;
+		return aMatrix;
+	}
+
+	template<typename T>
+	CommonUtilities::Matrix3x3<T> CommonUtilities::Matrix3x3<T>::Translate(Matrix3x3<T> aMatrix, const Vector2<T>& aTranslation)
+	{
+		aMatrix(4, 1) += aTranslation.x;
+		aMatrix(4, 2) += aTranslation.y;
+		return aMatrix;
+	}
 
 	template<typename T>
 	inline Matrix3x3<T>::Matrix3x3()
