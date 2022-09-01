@@ -147,11 +147,11 @@ bool GraphicsEngine::InitializeScene()
 	myScene = CreateRef<Scene>();
 	Scene::SetActiveScene(myScene);
 
-	myCamera = myScene->CreateEntity("Test", myScene);
+	myCamera = myScene->CreateEntity("EditorCamera", myScene);
 	auto cube = myScene->CreateEntity("Cube", myScene);
 	auto chest = myScene->CreateEntity("Chest", myScene);
 	auto gremlin = myScene->CreateEntity("Gremlin", myScene);
-	auto particleSystem = myScene->CreateEntity("particleSystem", myScene);
+	auto particleSystem = myScene->CreateEntity("ParticleSystem", myScene);
 
 	auto& cameraComp = myCamera.AddComponent<CameraComponent>();
 	auto& cameraTransformComp = myCamera.GetComponent<TransformComponent>();
@@ -170,12 +170,12 @@ bool GraphicsEngine::InitializeScene()
 
 	myScene->SetMainCamera(myCamera);
 	cameraComp.camera.SetProjectionValues(90, 9.f/16.f, 0.1f, 10000.0f);
-	cameraTransformComp.myPosition = { 0.0f, 25.0f, -500.0f };
+	cameraTransformComp.position = { 0.0f, 25.0f, -500.0f };
 
 	ParticleAssetHandler::Init();
 
 	particleSystemComp.system = *ParticleAssetHandler::GetParticleSystem("Core").get();
-	particleSystemTransformComp.myPosition = { 0.0f, 200.0f, 0.0f };
+	particleSystemTransformComp.position = { 0.0f, 200.0f, 0.0f };
 	
 	TextureAssetHandler::LoadTexture("studio_cubemap.dds");
 
@@ -184,20 +184,20 @@ bool GraphicsEngine::InitializeScene()
 
 	myModelAssetHandler.Init();
 	myModelAssetHandler.LoadModel("Models/SM/Particle_Chest.fbx");
-	cubeModelComp.mdlInstance = *myModelAssetHandler.GetModelInstance("Cube").get();
-	chestModelComp.mdlInstance = *myModelAssetHandler.GetModelInstance("Models/SM/Particle_Chest.fbx").get();
+	cubeModelComp.modelInstance = *myModelAssetHandler.GetModelInstance("Cube").get();
+	chestModelComp.modelInstance = *myModelAssetHandler.GetModelInstance("Models/SM/Particle_Chest.fbx").get();
 
 	myModelAssetHandler.LoadModel("Models/SK/gremlin.fbx");
 	myModelAssetHandler.LoadAnimation("Models/SK/gremlin.fbx", "Models/Animations/gremlin@run.fbx");
 	myModelAssetHandler.LoadAnimation("Models/SK/gremlin.fbx", "Models/Animations/gremlin@walk.fbx");
-	gremlinModelComp.mdlInstance = *myModelAssetHandler.GetModelInstance("Models/SK/gremlin.fbx").get();
-	gremlinModelComp.mdlInstance.SetAnimation("Models/Animations/gremlin@walk.fbx");
-	gremlinModelComp.mdlInstance.SetAnimationState(eAnimationState::Playing);
+	gremlinModelComp.modelInstance = *myModelAssetHandler.GetModelInstance("Models/SK/gremlin.fbx").get();
+	gremlinModelComp.modelInstance.SetAnimation("Models/Animations/gremlin@walk.fbx");
+	gremlinModelComp.modelInstance.SetAnimationState(eAnimationState::Playing);
 
-	gremlinTransformComp.myPosition = { 200.f, 0.f, 0.f };
-	gremlinTransformComp.myRotation = { 0.f, 160.f, 0.f };
-	chestTransformComp.myPosition = { -200.f, 0.f, 0.f };
-	chestTransformComp.myRotation = { 0.f, 160.f, 0.f };
+	gremlinTransformComp.position = { 200.f, 0.f, 0.f };
+	gremlinTransformComp.rotation = { 0.f, 160.f, 0.f };
+	chestTransformComp.position = { -200.f, 0.f, 0.f };
+	chestTransformComp.rotation = { 0.f, 160.f, 0.f };
 	return true;
 }
 
@@ -251,6 +251,7 @@ void GraphicsEngine::RenderFrame()
 	if (myScene)
 	{
 		Controller();
+		myEditorLayer.OnRender();
 
 		Entity camera = myScene->GetMainCamera();
 		std::vector<Entity> modelEntitiesToRender = myScene->CullModels(camera);
@@ -258,29 +259,23 @@ void GraphicsEngine::RenderFrame()
 
 		for (auto& entity : modelEntitiesToRender)
 		{
-			entity.GetComponent<TransformComponent>().myRotation.y += 1.f * myTimer.GetDeltaTime();
+			entity.GetComponent<TransformComponent>().rotation.y += 1.f * myTimer.GetDeltaTime();
 		}
 		
 		myGBuffer->SetAsTarget();
-		//myDeferredRenderer.GenereteGBuffer(camera, modelEntitiesToRender, myTimer.GetDeltaTime(), myTimer.GetTotalTime());
+		myDeferredRenderer.GenereteGBuffer(camera, modelEntitiesToRender, myTimer.GetDeltaTime(), myTimer.GetTotalTime());
 		myGBuffer->ClearTarget();
 		myGBuffer->SetAsResource(0);
 		DX11::myContext->OMSetRenderTargets(1, DX11::myRenderTarget.GetAddressOf(), DX11::myDepthStencil.Get());
-		//SetDepthStencilState(DepthStencilState::DSS_Off);
+		SetDepthStencilState(DepthStencilState::DSS_Off);
 		myDeferredRenderer.Render(camera, myDirectionalLight, myEnvironmentLight, myTimer.GetDeltaTime(), myTimer.GetTotalTime());
 
-		myForwardRenderer.RenderModels(camera, modelEntitiesToRender, myDirectionalLight, myEnvironmentLight);
+		//myForwardRenderer.RenderModels(camera, modelEntitiesToRender, myDirectionalLight, myEnvironmentLight);
 
 		SetBlendState(BlendState::BS_Additive);
 		SetDepthStencilState(DepthStencilState::DSS_ReadOnly);
 		myForwardRenderer.RenderParticles(camera, particlesEntitiesToRender);
 	}
-	
-	auto& transform = myCamera.GetComponent<TransformComponent>();
-
-	ImGui::Begin("Camera");
-	ImGui::Text("Position: %f, %f, %f", transform.myPosition.x, transform.myPosition.y, transform.myPosition.z);
-	ImGui::End();
 }
 
 void GraphicsEngine::EndFrame()
@@ -294,34 +289,34 @@ void GraphicsEngine::EndFrame()
 void GraphicsEngine::Controller()
 {
 	static float moveSpeed = 100.f;
-	static float mouseSens = 1.f;
+	static float mouseSens = 0.25f;
 
 	auto& transform = myCamera.GetComponent<TransformComponent>();
 
 	if (myInputHandler.IsKeyDown(KeyCode::W))
 	{
-		transform.myPosition.z += (moveSpeed * myTimer.GetDeltaTime());
+		transform.position.z += (moveSpeed * myTimer.GetDeltaTime());
 	}
 	if (myInputHandler.IsKeyDown(KeyCode::A))
 	{
-		transform.myPosition.x += (-moveSpeed * myTimer.GetDeltaTime());
+		transform.position.x += (-moveSpeed * myTimer.GetDeltaTime());
 	}
 	if (myInputHandler.IsKeyDown(KeyCode::S))
 	{
-		transform.myPosition.z += (-moveSpeed * myTimer.GetDeltaTime());
+		transform.position.z += (-moveSpeed * myTimer.GetDeltaTime());
 	}
 	if (myInputHandler.IsKeyDown(KeyCode::D))
 	{
-		transform.myPosition.x += (moveSpeed * myTimer.GetDeltaTime());
+		transform.position.x += (moveSpeed * myTimer.GetDeltaTime());
 	}
 
 	if (myInputHandler.IsKeyDown(KeyCode::E))
 	{
-		transform.myPosition.y += (moveSpeed * myTimer.GetDeltaTime());
+		transform.position.y += (moveSpeed * myTimer.GetDeltaTime());
 	}
 	if (myInputHandler.IsKeyDown(KeyCode::Q))
 	{
-		transform.myPosition.y += (-moveSpeed * myTimer.GetDeltaTime());
+		transform.position.y += (-moveSpeed * myTimer.GetDeltaTime());
 	}
 
 	static POINT prevFrame = myInputHandler.GetMousePosition();
@@ -333,7 +328,7 @@ void GraphicsEngine::Controller()
 		auto deltaY = currFrame.y - prevFrame.y;
 		if (deltaX != 0 || deltaY != 0)
 		{
-			transform.myRotation = Vector3f(
+			transform.rotation += Vector3f(
 				deltaY * mouseSens * myTimer.GetDeltaTime(),
 				deltaX * mouseSens * myTimer.GetDeltaTime(), 
 				0.f);

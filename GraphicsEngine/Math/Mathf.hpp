@@ -7,21 +7,21 @@ namespace CommonUtilities
 	class Math
 	{
 	public:
-		inline static T ConvertToRadians(T aDegrees);
-		inline static T ConvertToDegrees(T aRadians);
+		inline static T Radians(T aDegrees);
+		inline static T Degrees(T aRadians);
 
 	private:
 		inline static const float myPi = 3.1415f;
 	};
 
 	template<typename T>
-	T Math<T>::ConvertToDegrees(T aRadians)
+	T Math<T>::Degrees(T aRadians)
 	{
 		return 180 * (aRadians / myPi);
 	}
 
 	template<typename T>
-	T Math<T>::ConvertToRadians(T aDegrees)
+	T Math<T>::Radians(T aDegrees)
 	{
 		return aDegrees * (myPi / 180);
 	}

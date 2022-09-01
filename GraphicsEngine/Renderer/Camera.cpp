@@ -7,6 +7,7 @@ void Camera::SetProjectionValues(float fovDegrees, float aspectRatio, float near
 	assert(nearZ < farZ);
 	assert(nearZ >= 0.01f);
 
+	myFov = fovDegrees;
 	myNear = nearZ;
 	myFar = farZ;
 	

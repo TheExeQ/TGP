@@ -17,8 +17,10 @@ public:
 	const float& GetFar() const { return myFar; };
 
 private:
+	friend class SceneHierarchyPanel;
 	Matrix4x4<float> myProjectionMatrix;
 	
+	float myFov;
 	float myNear;
 	float myFar;
 };

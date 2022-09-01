@@ -23,6 +23,8 @@ public:
 	Entity CreateEntity(const char* aName, Ref<Scene> aScene);
 	Entity CreateEntityWithID(TGA::UUID aID, const char* aName, Ref<Scene> aScene);
 	Entity GetEntityFromUUID(TGA::UUID aID);
+
+	void DestroyEntity(Entity aEntity);
 	
 	std::vector<Entity> CullModels(Entity camera);
 	std::vector<Entity> CullParticles(Entity camera);
@@ -35,11 +37,12 @@ public:
 
 private:
 	friend class Entity;
+	friend class SceneHierarchyPanel;
 
 	entt::registry myRegistry;
 	EntityMap myEnttMap;
 	entt::entity myMainCameraEntity;
 
-	inline static Ref<Scene> myActiveScene;
+	inline static Ref<Scene> myActiveScene = nullptr;
 };
 

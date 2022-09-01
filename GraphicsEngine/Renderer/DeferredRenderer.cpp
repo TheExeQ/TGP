@@ -86,7 +86,7 @@ void DeferredRenderer::GenereteGBuffer(Entity aCamera, std::vector<Entity>& aMod
 
     myFrameBufferData.View = Matrix4x4<float>::GetFastInverse(cameraTransform.GetTransform());
     myFrameBufferData.Projection = cameraComponent.camera.GetProjectionMatrix();
-    myFrameBufferData.CamTranslation = cameraTransform.myPosition;
+    myFrameBufferData.CamTranslation = cameraTransform.position;
 
     result = DX11::myContext->Map(myFrameBuffer.Get(), 0, D3D11_MAP_WRITE_DISCARD, 0, &frameBufferData);
     if (FAILED(result))
@@ -102,7 +102,7 @@ void DeferredRenderer::GenereteGBuffer(Entity aCamera, std::vector<Entity>& aMod
 
     for (auto& model : aModelList)
     {
-        auto& modelInst = model.GetComponent<ModelComponent>().mdlInstance;
+        auto& modelInst = model.GetComponent<ModelComponent>().modelInstance;
         auto& modelTransform = model.GetComponent<TransformComponent>();
         auto modelRef = modelInst.GetModel();
 

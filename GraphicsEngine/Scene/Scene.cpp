@@ -17,6 +17,11 @@ Entity Scene::GetEntityFromUUID(TGA::UUID aID)
 	return Entity();
 }
 
+void Scene::DestroyEntity(Entity aEntity)
+{
+	myRegistry.destroy(aEntity);
+}
+
 Entity Scene::CreateEntity(const char* aName, Ref<Scene> aScene)
 {
 	if (!aScene) { return Entity(); }
@@ -52,7 +57,7 @@ std::vector<Entity> Scene::CullModels(Entity camera)
 	for (auto& entity : view)
 	{
 		ModelComponent& mdl = myRegistry.get<ModelComponent>(entity);
-		mdl.mdlInstance.Update();
+		mdl.modelInstance.Update();
 		visibleEntity.push_back(Entity(entity, myActiveScene));
 	}
 

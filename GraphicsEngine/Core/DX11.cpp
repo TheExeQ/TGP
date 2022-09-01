@@ -9,6 +9,8 @@ ComPtr<ID3D11DepthStencilView> DX11::myDepthStencil = nullptr;
 
 bool DX11::Initialize(HWND aWindowHandle, bool aDebug)
 {
+	myClearColor = {0.5f, 0.5f, 0.5f, 1.f};
+
 	HRESULT result;
 
 	DXGI_SWAP_CHAIN_DESC swapChainDesc = {};
@@ -112,8 +114,7 @@ bool DX11::Initialize(HWND aWindowHandle, bool aDebug)
 
 void DX11::BeginFrame()
 {
-	float color[] = { 0.5f, 0.5f, 0.5f, 1.f };
-	myContext->ClearRenderTargetView(myRenderTarget.Get(), color);
+	myContext->ClearRenderTargetView(myRenderTarget.Get(), myClearColor.data());
 	myContext->ClearDepthStencilView(myDepthStencil.Get(), D3D11_CLEAR_DEPTH | D3D11_CLEAR_STENCIL, 1.0f, 0);
 }
 

@@ -14,6 +14,8 @@
 #include "Renderer/GBuffer.h"
 #include "Scene/Entity.h"
 
+#include "Editor/EditorLayer.h"
+
 enum BlendState
 {
 	BS_None,
@@ -61,6 +63,7 @@ public:
 	static GraphicsEngine& Get() { return *myInstance; };
 
 private:
+	friend class SceneHierarchyPanel;
 	void Controller();
 	
 	Entity myCamera;
@@ -80,6 +83,7 @@ private:
 
 	static CommonUtilities::InputHandler myInputHandler;
 	static CommonUtilities::Timer myTimer;
+	EditorLayer myEditorLayer;
 	ImGuiLayer myImGuiLayer;
 
 	inline static GraphicsEngine* myInstance = nullptr;

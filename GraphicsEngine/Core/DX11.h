@@ -2,6 +2,7 @@
 #include <windows.h>
 #include <d3d11.h>
 #include <wrl/client.h>
+#include <array>
 
 using namespace Microsoft::WRL;
 
@@ -17,5 +18,7 @@ public:
 	static ComPtr<IDXGISwapChain> mySwapchain;
 	static ComPtr<ID3D11RenderTargetView> myRenderTarget;
 	static ComPtr<ID3D11DepthStencilView> myDepthStencil;
+
+	inline static std::array<float, 4> myClearColor;
 };
 

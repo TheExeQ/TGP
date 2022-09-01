@@ -21,23 +21,23 @@ struct IDComponent
 
 struct TransformComponent
 {
-	Vector3f myPosition;
-	Vector3f myRotation;
-	Vector3f myScale = { 1.f, 1.f, 1.f };
+	Vector3f position;
+	Vector3f rotation;
+	Vector3f scale = { 1.f, 1.f, 1.f };
 
 	Matrix4 GetTransform() 
 	{
 		Matrix4 transform;
-		transform = Matrix4::Rotate(transform, myRotation);
-		transform = Matrix4::Scale(transform, myScale);
-		transform = Matrix4::Translate(transform, myPosition);
+		transform = Matrix4::Rotate(transform, rotation);
+		transform = Matrix4::Scale(transform, scale);
+		transform = Matrix4::Translate(transform, position);
 		return transform;
 	};
 };
 
 struct ModelComponent
 {
-	ModelInstance mdlInstance;
+	ModelInstance modelInstance;
 };
 
 struct CameraComponent
