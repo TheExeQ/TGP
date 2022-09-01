@@ -1,4 +1,4 @@
-project "GraphicsEngine"
+project "ThirdParty"
 	kind "StaticLib"
 	language "C++"
 	
@@ -6,24 +6,17 @@ project "GraphicsEngine"
 	targetname ("%{prj.name}-%{cfg.buildcfg}")
 	objdir ("../bin-int/" .. outputdir .. "/%{prj.name}")
 
-	postbuildcommands 
-	{
-		"{COPY} ../ThirdParty/FBXImporter/lib/libfbxsdk.dll ../bin/"
-	}
-
 	files
 	{
 		"./**.h",
 		"./**.hpp",
+		"./**.c",
 		"./**.cpp",
-		"./**.hlsl",
-		"./**.hlsli",
 	}
 	
 	includedirs
 	{
 		"./",
-		"../ThirdParty/"
 	}
 	
 	libdirs
@@ -31,24 +24,6 @@ project "GraphicsEngine"
 		"../libs",
 		"../ThirdParty/FBXImporter/lib"
 	}
-
-	links
-	{
-		"ThirdParty"
-	}
-	
-	filter { "files:**.hlsl" }
-		shadermodel "5.0"
-		shaderobjectfileoutput "../Assets/Shaders/%{file.basename}.cso"
-
-	filter { "files:**VS.hlsl" }
-		shadertype "Vertex"
-
-	filter { "files:**PS.hlsl" }
-		shadertype "Pixel"
-		
-	filter { "files:**GS.hlsl" }
-		shadertype "Geometry"
 
 	filter "system:windows"
 		cppdialect "C++20"
@@ -65,12 +40,30 @@ project "GraphicsEngine"
 		defines "DEBUG"
 		symbols "On"
 		runtime "Debug"
-
+		
+		links
+		{
+			"d3d11.lib",
+			"TGAFBXImporterd.lib"
+		}
+		
 	filter "configurations:Release"
 		defines "RELEASE"
 		symbols "On"
 		runtime "Release"
 		
+		links
+		{
+			"d3d11.lib",
+			"TGAFBXImporter.lib"
+		}
+		
 	filter "configurations:Retail"
 		defines "RETAIL"
 		symbols "On"
+		
+		links
+		{
+			"d3d11.lib",
+			"TGAFBXImporter.lib"
+		}

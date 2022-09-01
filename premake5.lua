@@ -12,4 +12,5 @@ workspace "TGP"
 outputdir = "%{cfg.buildcfg}-%{cfg.system}-%{cfg.architecture}"
 
 include "GraphicsEngine/"
+include "ThirdParty/"
 include "Modelviewer/"
