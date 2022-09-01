@@ -219,8 +219,10 @@ LRESULT CALLBACK GraphicsEngine::WinProc(_In_ HWND hWnd, _In_ UINT uMsg, _In_ WP
 void GraphicsEngine::BeginFrame()
 {
 	// F1 - This is where we clear our buffers and start the DX frame.
+	SetBlendState(BlendState::BS_None);
+	SetDepthStencilState(DepthStencilState::DSS_ReadWrite);
 	myFramework.BeginFrame();
-	myGBuffer->ClearTarget();
+	myGBuffer->Clear();
 	myImGuiLayer.Begin();
 }
 
@@ -244,18 +246,17 @@ void GraphicsEngine::RenderFrame()
 
 		myGBuffer->SetAsTarget();
 		myDeferredRenderer.GenereteGBuffer(camera, modelsToRender, myTimer.GetDeltaTime(), myTimer.GetTotalTime());
-		SetDepthStencilState(DepthStencilState::DSS_Off);
+		myGBuffer->ClearTarget();
 		myGBuffer->SetAsResource(0);
 		DX11::myContext->OMSetRenderTargets(1, DX11::myRenderTarget.GetAddressOf(), DX11::myDepthStencil.Get());
+		SetDepthStencilState(DepthStencilState::DSS_Off);
 		myDeferredRenderer.Render(camera, myDirectionalLight, myEnvironmentLight, myTimer.GetDeltaTime(), myTimer.GetTotalTime());
 
 		//myForwardRenderer.RenderModels(camera, modelsToRender, myDirectionalLight, myEnvironmentLight);
 
-		//SetBlendState(BlendState::BS_Additive);
-		//SetDepthStencilState(DepthStencilState::DSS_ReadOnly);
-		//myForwardRenderer.RenderParticles(camera, particlesToRender);
-		//SetBlendState(BlendState::BS_None);
-		//SetDepthStencilState(DepthStencilState::DSS_ReadWrite);
+		SetBlendState(BlendState::BS_Additive);
+		SetDepthStencilState(DepthStencilState::DSS_ReadOnly);
+		myForwardRenderer.RenderParticles(camera, particlesToRender);
 	}
 }
 

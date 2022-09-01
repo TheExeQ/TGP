@@ -10,7 +10,7 @@ GBufferOutput main(VertexToPixel input)
 			normalize(input.myTangent),
 			normalize(input.myBinormal),
 			normalize(input.myNormal)
-			);
+		);
 
 	const float3 albedo = albedoTexture.Sample(defaultSampler, input.myUV).rgb;
 	const float3 normalMap = normalTexture.Sample(defaultSampler, input.myUV).agb;
@@ -18,7 +18,7 @@ GBufferOutput main(VertexToPixel input)
 
 	const float ambientOcclusion = normalMap.b;
 
-	float3 pixelNormal = normalMap * 0.75f;
+	float3 pixelNormal = normalMap;
 
 	result.Albedo = float4(albedo, 1.f);
 	result.Normal = float4(pixelNormal, 1.f);
