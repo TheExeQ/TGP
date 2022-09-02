@@ -38,6 +38,7 @@ public:
 private:
 	friend class Entity;
 	friend class SceneHierarchyPanel;
+	friend class SceneSerializer;
 
 	entt::registry myRegistry;
 	EntityMap myEnttMap;

@@ -8,6 +8,7 @@
 #include "Renderer/LightAssetHandler.h"
 #include "Renderer/TextureAssetHandler.h"
 #include "Renderer/ParticleAssetHandler.h"
+#include "Scene/SceneSerializer.h"
 
 CommonUtilities::InputHandler GraphicsEngine::myInputHandler;
 CommonUtilities::Timer GraphicsEngine::myTimer;
@@ -198,6 +199,10 @@ bool GraphicsEngine::InitializeScene()
 	gremlinTransformComp.rotation = { 0.f, 160.f, 0.f };
 	chestTransformComp.position = { -200.f, 0.f, 0.f };
 	chestTransformComp.rotation = { 0.f, 160.f, 0.f };
+
+	SceneSerializer serializer(myScene);
+
+	serializer.Deserialize("../Assets/Scenes/Default.scene");
 	return true;
 }
 
