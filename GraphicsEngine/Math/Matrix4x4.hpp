@@ -19,6 +19,10 @@ namespace CommonUtilities
 		T& operator()(const int aRow, const int aColumn);
 		const T& operator()(const int aRow, const int aColumn) const;
 
+		static Vector3<T> Right(Matrix4x4<T> aMatrix);
+		static Vector3<T> Up(Matrix4x4<T> aMatrix);
+		static Vector3<T> Forward(Matrix4x4<T> aMatrix);
+
 		// Static function for translating a matrix.
 		static Matrix4x4<T> Translate(Matrix4x4<T> aMatrix, const Vector3<T>& aTranslation);
 
@@ -169,6 +173,30 @@ namespace CommonUtilities
 	{
 		assert((aRow > 0 && aRow < 5 && aColumn > 0 && aColumn < 5) && "Row or Column is not a valid index.");
 		return myMatrix[aRow - 1][aColumn - 1];
+	}
+
+	template<typename T>
+	inline Vector3<T> Matrix4x4<T>::Right(Matrix4x4<T> aMatrix)
+	{
+		Vector3<T> vec;
+		vec = { aMatrix(1, 1), aMatrix(1, 2), aMatrix(1, 3) };
+		return vec;
+	}
+
+	template<typename T>
+	inline Vector3<T> Matrix4x4<T>::Up(Matrix4x4<T> aMatrix)
+	{
+		Vector3<T> vec;
+		vec = { aMatrix(2, 1), aMatrix(2, 2), aMatrix(2, 3) };
+		return vec;
+	}
+
+	template<typename T>
+	inline Vector3<T> Matrix4x4<T>::Forward(Matrix4x4<T> aMatrix)
+	{
+		Vector3<T> vec;
+		vec = { aMatrix(3, 1), aMatrix(3, 2), aMatrix(3, 3) };
+		return vec;
 	}
 
 	template<typename T>

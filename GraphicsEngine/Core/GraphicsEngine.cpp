@@ -148,61 +148,63 @@ bool GraphicsEngine::InitializeScene()
 	myScene = CreateRef<Scene>();
 	Scene::SetActiveScene(myScene);
 
-	myCamera = myScene->CreateEntity("EditorCamera", myScene);
-	auto cube = myScene->CreateEntity("Cube", myScene);
-	auto chest = myScene->CreateEntity("Chest", myScene);
-	auto gremlin = myScene->CreateEntity("Gremlin", myScene);
-	auto particleSystem = myScene->CreateEntity("ParticleSystem", myScene);
-
-	auto& cameraComp = myCamera.AddComponent<CameraComponent>();
-	auto& cameraTransformComp = myCamera.GetComponent<TransformComponent>();
-
-	auto& cubeModelComp = cube.AddComponent<ModelComponent>();
-	auto& cubeTransformComp = cube.GetComponent<TransformComponent>();
-
-	auto& chestModelComp = chest.AddComponent<ModelComponent>();
-	auto& chestTransformComp = chest.GetComponent<TransformComponent>();
-
-	auto& gremlinModelComp = gremlin.AddComponent<ModelComponent>();
-	auto& gremlinTransformComp = gremlin.GetComponent<TransformComponent>();
-
-	auto& particleSystemComp = particleSystem.AddComponent<ParticleSystemComponent>();
-	auto& particleSystemTransformComp = particleSystem.GetComponent<TransformComponent>();
-
-	myScene->SetMainCamera(myCamera);
-	cameraComp.camera.SetProjectionValues(90, 9.f/16.f, 0.1f, 10000.0f);
-	cameraTransformComp.position = { 0.0f, 25.0f, -500.0f };
-
-	ParticleAssetHandler::Init();
-
-	particleSystemComp.system = *ParticleAssetHandler::GetParticleSystem("Core").get();
-	particleSystemTransformComp.position = { 0.0f, 200.0f, 0.0f };
+	SceneSerializer serializer(myScene);
+	serializer.Deserialize("../Assets/Scenes/Default.scene");
 	
-	TextureAssetHandler::LoadTexture("studio_cubemap.dds");
-
-	myDirectionalLight = LightAssetHandler::CreateDirectionalLight({ 1.0f, 1.0f, 1.0f }, 1.f, { 0, 0, 0 });
-	myEnvironmentLight = LightAssetHandler::CreateEnvironmentLight("studio_cubemap.dds");
+	myCamera = myScene->GetEntityFromUUID(7509847562195690);
+	myScene->SetMainCamera(myCamera);
 
 	myModelAssetHandler.Init();
-	myModelAssetHandler.LoadModel("Models/SM/Particle_Chest.fbx");
-	cubeModelComp.modelInstance = *myModelAssetHandler.GetModelInstance("Cube").get();
-	chestModelComp.modelInstance = *myModelAssetHandler.GetModelInstance("Models/SM/Particle_Chest.fbx").get();
+	ParticleAssetHandler::Init();
 
-	myModelAssetHandler.LoadModel("Models/SK/gremlin.fbx");
-	myModelAssetHandler.LoadAnimation("Models/SK/gremlin.fbx", "Models/Animations/gremlin@run.fbx");
-	myModelAssetHandler.LoadAnimation("Models/SK/gremlin.fbx", "Models/Animations/gremlin@walk.fbx");
-	gremlinModelComp.modelInstance = *myModelAssetHandler.GetModelInstance("Models/SK/gremlin.fbx").get();
-	gremlinModelComp.modelInstance.SetAnimation("Models/Animations/gremlin@walk.fbx");
-	gremlinModelComp.modelInstance.SetAnimationState(eAnimationState::Playing);
+	if (myCamera.IsValid())
+	{
+		auto& cameraComp = myCamera.GetComponent<CameraComponent>();
+		cameraComp.camera.SetProjectionValues(90, 9.f / 16.f, 0.1f, 10000.0f);
+	}
 
-	gremlinTransformComp.position = { 200.f, 0.f, 0.f };
-	gremlinTransformComp.rotation = { 0.f, 160.f, 0.f };
-	chestTransformComp.position = { -200.f, 0.f, 0.f };
-	chestTransformComp.rotation = { 0.f, 160.f, 0.f };
+	auto cube = myScene->GetEntityFromUUID(6057646693852787664);
+	if (cube.IsValid())
+	{
+		auto& cubeModelComp = cube.GetComponent<ModelComponent>();
+		cubeModelComp.modelInstance = *myModelAssetHandler.GetModelInstance("Cube").get();
+	}
 
-	SceneSerializer serializer(myScene);
+	auto chest = myScene->GetEntityFromUUID(3316484318424843108);
+	if (chest.IsValid())
+	{
+		auto& chestModelComp = chest.GetComponent<ModelComponent>();
 
-	serializer.Deserialize("../Assets/Scenes/Default.scene");
+		myModelAssetHandler.LoadModel("Models/SM/Particle_Chest.fbx");
+		chestModelComp.modelInstance = *myModelAssetHandler.GetModelInstance("Models/SM/Particle_Chest.fbx").get();
+	}
+
+	auto gremlin = myScene->GetEntityFromUUID(3446174191707793529);
+	if (gremlin.IsValid())
+	{
+		auto& gremlinModelComp = gremlin.GetComponent<ModelComponent>();
+
+		myModelAssetHandler.LoadModel("Models/SK/gremlin.fbx");
+		myModelAssetHandler.LoadAnimation("Models/SK/gremlin.fbx", "Models/Animations/gremlin@run.fbx");
+		myModelAssetHandler.LoadAnimation("Models/SK/gremlin.fbx", "Models/Animations/gremlin@walk.fbx");
+		gremlinModelComp.modelInstance = *myModelAssetHandler.GetModelInstance("Models/SK/gremlin.fbx").get();
+		gremlinModelComp.modelInstance.SetAnimation("Models/Animations/gremlin@walk.fbx");
+		gremlinModelComp.modelInstance.SetAnimationState(eAnimationState::Playing);
+	}
+
+	auto particleSystem = myScene->GetEntityFromUUID(3905982894324659577);
+	if (particleSystem.IsValid())
+	{
+		auto& particleSystemComp = particleSystem.GetComponent<ParticleSystemComponent>();
+
+		particleSystemComp.system = *ParticleAssetHandler::GetParticleSystem("Core").get();
+	}
+
+	TextureAssetHandler::LoadTexture("studio_cubemap.dds");
+
+	myDirectionalLight = LightAssetHandler::CreateDirectionalLight({ 1.0f, 1.0f, 1.0f }, 1.0f, { 1.f, 0.f, 0.f });
+	myEnvironmentLight = LightAssetHandler::CreateEnvironmentLight("studio_cubemap.dds");
+
 	return true;
 }
 
@@ -264,18 +266,18 @@ void GraphicsEngine::RenderFrame()
 
 		for (auto& entity : modelEntitiesToRender)
 		{
-			entity.GetComponent<TransformComponent>().rotation.y += 1.f * myTimer.GetDeltaTime();
+			//entity.GetComponent<TransformComponent>().rotation.y += 1.f * myTimer.GetDeltaTime();
 		}
 		
-		myGBuffer->SetAsTarget();
-		myDeferredRenderer.GenereteGBuffer(camera, modelEntitiesToRender, myTimer.GetDeltaTime(), myTimer.GetTotalTime());
-		myGBuffer->ClearTarget();
-		myGBuffer->SetAsResource(0);
-		DX11::myContext->OMSetRenderTargets(1, DX11::myRenderTarget.GetAddressOf(), DX11::myDepthStencil.Get());
-		SetDepthStencilState(DepthStencilState::DSS_Off);
-		myDeferredRenderer.Render(camera, myDirectionalLight, myEnvironmentLight, myTimer.GetDeltaTime(), myTimer.GetTotalTime());
+		//myGBuffer->SetAsTarget();
+		//myDeferredRenderer.GenereteGBuffer(camera, modelEntitiesToRender, myTimer.GetDeltaTime(), myTimer.GetTotalTime());
+		//myGBuffer->ClearTarget();
+		//myGBuffer->SetAsResource(0);
+		//DX11::myContext->OMSetRenderTargets(1, DX11::myRenderTarget.GetAddressOf(), DX11::myDepthStencil.Get());
+		//SetDepthStencilState(DepthStencilState::DSS_Off);
+		//myDeferredRenderer.Render(camera, myDirectionalLight, myEnvironmentLight, myTimer.GetDeltaTime(), myTimer.GetTotalTime());
 
-		//myForwardRenderer.RenderModels(camera, modelEntitiesToRender, myDirectionalLight, myEnvironmentLight);
+		myForwardRenderer.RenderModels(camera, modelEntitiesToRender, myDirectionalLight, myEnvironmentLight);
 
 		SetBlendState(BlendState::BS_Additive);
 		SetDepthStencilState(DepthStencilState::DSS_ReadOnly);
@@ -300,19 +302,19 @@ void GraphicsEngine::Controller()
 
 	if (myInputHandler.IsKeyDown(KeyCode::W))
 	{
-		transform.position.z += (moveSpeed * myTimer.GetDeltaTime());
+		transform.position += (Matrix4::Forward(transform.GetTransform()) * moveSpeed * myTimer.GetDeltaTime());
 	}
 	if (myInputHandler.IsKeyDown(KeyCode::A))
 	{
-		transform.position.x += (-moveSpeed * myTimer.GetDeltaTime());
+		transform.position += (Matrix4::Right(transform.GetTransform()) * -moveSpeed * myTimer.GetDeltaTime());
 	}
 	if (myInputHandler.IsKeyDown(KeyCode::S))
 	{
-		transform.position.z += (-moveSpeed * myTimer.GetDeltaTime());
+		transform.position += (Matrix4::Forward(transform.GetTransform()) * -moveSpeed * myTimer.GetDeltaTime());
 	}
 	if (myInputHandler.IsKeyDown(KeyCode::D))
 	{
-		transform.position.x += (moveSpeed * myTimer.GetDeltaTime());
+		transform.position += (Matrix4::Right(transform.GetTransform()) * moveSpeed * myTimer.GetDeltaTime());
 	}
 
 	if (myInputHandler.IsKeyDown(KeyCode::E))
