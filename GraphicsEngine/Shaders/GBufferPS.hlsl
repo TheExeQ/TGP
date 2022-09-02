@@ -19,6 +19,11 @@ GBufferOutput main(VertexToPixel input)
 	const float ambientOcclusion = normalMap.b;
 
 	float3 pixelNormal = normalMap;
+	pixelNormal.z = 0;
+	pixelNormal = 2.0f * pixelNormal - 1;
+	pixelNormal.z = sqrt(1 - saturate(pixelNormal.x + pixelNormal.x + pixelNormal.y + pixelNormal.y));
+	pixelNormal = normalize(pixelNormal);
+	pixelNormal = normalize(mul(pixelNormal, TBN));
 
 	result.Albedo = float4(albedo, 1.f);
 	result.Normal = float4(pixelNormal, 1.f);

@@ -25,7 +25,7 @@ DeferredPixelOutput main(DeferredVertexToPixel input)
     const float emissive = material.b;
     const float emissiveStr = material.a;
 
-    const float3 toEye = normalize(FB_CamTranslation.xyz - vertexNormal.xyz);
+    const float3 toEye = normalize(FB_CamTranslation.xyz - worldPosition.xyz);
     const float3 specularColor = lerp((float3) 0.04f, albedo.xyz, metalness);
     const float3 diffuseColor = lerp((float3) 0.00f, albedo.xyz, 1 - metalness);
 

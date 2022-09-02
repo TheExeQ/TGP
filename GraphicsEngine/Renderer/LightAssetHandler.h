@@ -8,7 +8,7 @@
 class LightAssetHandler
 {
 public:
-	static Ref<DirectionalLight> CreateDirectionalLight(Vector3<float> aColor, float aIntensity, Vector3<float> aRotation);
+	static Ref<DirectionalLight> CreateDirectionalLight(Vector3<float> aColor, float aIntensity, Vector3<float> aDirection);
 	static Ref<EnvironmentLight> CreateEnvironmentLight(const std::string& aTextureName);
 
 private:

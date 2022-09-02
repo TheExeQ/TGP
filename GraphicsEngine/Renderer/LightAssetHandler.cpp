@@ -2,14 +2,11 @@
 #include "Math/Matrix.hpp"
 #include "TextureAssetHandler.h"
 
-Ref<DirectionalLight> LightAssetHandler::CreateDirectionalLight(Vector3<float> aColor, float aIntensity, Vector3<float> aRotation)
+Ref<DirectionalLight> LightAssetHandler::CreateDirectionalLight(Vector3<float> aColor, float aIntensity, Vector3<float> aDirection)
 {
 	myDirectionalLight = CreateRef<DirectionalLight>();
 	myDirectionalLight->Init(aColor, aIntensity);
-	
-	Matrix4x4<float> lightRotation = Matrix4::Rotate(lightRotation, aRotation);
-
-	myDirectionalLight->ourlightBuffer.Direction = Vector3<float>(lightRotation(3, 1), lightRotation(3, 2), lightRotation(3, 3));
+	myDirectionalLight->ourlightBuffer.Direction = aDirection;
 
 	return myDirectionalLight;
 }

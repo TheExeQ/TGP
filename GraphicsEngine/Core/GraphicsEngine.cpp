@@ -202,7 +202,7 @@ bool GraphicsEngine::InitializeScene()
 
 	TextureAssetHandler::LoadTexture("studio_cubemap.dds");
 
-	myDirectionalLight = LightAssetHandler::CreateDirectionalLight({ 1.0f, 1.0f, 1.0f }, 1.0f, { 1.f, 0.f, 0.f });
+	myDirectionalLight = LightAssetHandler::CreateDirectionalLight({ 1.0f, 1.0f, 1.0f }, 0.5f, { 0.f, 0.f, 0.f });
 	myEnvironmentLight = LightAssetHandler::CreateEnvironmentLight("studio_cubemap.dds");
 
 	return true;
@@ -269,19 +269,32 @@ void GraphicsEngine::RenderFrame()
 			//entity.GetComponent<TransformComponent>().rotation.y += 1.f * myTimer.GetDeltaTime();
 		}
 		
-		//myGBuffer->SetAsTarget();
-		//myDeferredRenderer.GenereteGBuffer(camera, modelEntitiesToRender, myTimer.GetDeltaTime(), myTimer.GetTotalTime());
-		//myGBuffer->ClearTarget();
-		//myGBuffer->SetAsResource(0);
-		//DX11::myContext->OMSetRenderTargets(1, DX11::myRenderTarget.GetAddressOf(), DX11::myDepthStencil.Get());
-		//SetDepthStencilState(DepthStencilState::DSS_Off);
-		//myDeferredRenderer.Render(camera, myDirectionalLight, myEnvironmentLight, myTimer.GetDeltaTime(), myTimer.GetTotalTime());
+		myGBuffer->SetAsTarget();
+		myDeferredRenderer.GenereteGBuffer(camera, modelEntitiesToRender, myTimer.GetDeltaTime(), myTimer.GetTotalTime());
+		myGBuffer->ClearTarget();
+		myGBuffer->SetAsResource(0);
+		DX11::myContext->OMSetRenderTargets(1, DX11::myRenderTarget.GetAddressOf(), DX11::myDepthStencil.Get());
+		SetDepthStencilState(DepthStencilState::DSS_Off);
+		myDeferredRenderer.Render(camera, myDirectionalLight, myEnvironmentLight, myTimer.GetDeltaTime(), myTimer.GetTotalTime());
 
-		myForwardRenderer.RenderModels(camera, modelEntitiesToRender, myDirectionalLight, myEnvironmentLight);
+		//myForwardRenderer.RenderModels(camera, modelEntitiesToRender, myDirectionalLight, myEnvironmentLight);
 
 		SetBlendState(BlendState::BS_Additive);
 		SetDepthStencilState(DepthStencilState::DSS_ReadOnly);
 		myForwardRenderer.RenderParticles(camera, particlesEntitiesToRender);
+
+
+		auto intencity = myDirectionalLight->GetIntensity();
+		auto direction = myDirectionalLight->GetDirection();
+		ImGui::Begin("Directional Light");
+		ImGui::InputFloat("Intencity", &intencity);
+		ImGui::DragFloat("X", &direction.x, 0.01f, -1.f, 1.f);
+		ImGui::DragFloat("Y", &direction.y, 0.01f, -1.f, 1.f);
+		ImGui::DragFloat("Z", &direction.z, 0.01f, -1.f, 1.f);
+		ImGui::End();
+
+		myDirectionalLight->SetIntensity(intencity);
+		myDirectionalLight->SetDirection(direction);
 	}
 }
 
