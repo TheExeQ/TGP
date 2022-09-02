@@ -266,7 +266,7 @@ void GraphicsEngine::RenderFrame()
 
 		for (auto& entity : modelEntitiesToRender)
 		{
-			//entity.GetComponent<TransformComponent>().rotation.y += 1.f * myTimer.GetDeltaTime();
+			entity.GetComponent<TransformComponent>().rotation.y += 1.f * myTimer.GetDeltaTime();
 		}
 		
 		myGBuffer->SetAsTarget();
@@ -282,19 +282,6 @@ void GraphicsEngine::RenderFrame()
 		SetBlendState(BlendState::BS_Additive);
 		SetDepthStencilState(DepthStencilState::DSS_ReadOnly);
 		myForwardRenderer.RenderParticles(camera, particlesEntitiesToRender);
-
-
-		auto intencity = myDirectionalLight->GetIntensity();
-		auto direction = myDirectionalLight->GetDirection();
-		ImGui::Begin("Directional Light");
-		ImGui::InputFloat("Intencity", &intencity);
-		ImGui::DragFloat("X", &direction.x, 0.01f, -1.f, 1.f);
-		ImGui::DragFloat("Y", &direction.y, 0.01f, -1.f, 1.f);
-		ImGui::DragFloat("Z", &direction.z, 0.01f, -1.f, 1.f);
-		ImGui::End();
-
-		myDirectionalLight->SetIntensity(intencity);
-		myDirectionalLight->SetDirection(direction);
 	}
 }
 

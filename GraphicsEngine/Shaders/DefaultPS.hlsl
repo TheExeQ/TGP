@@ -23,7 +23,7 @@ PixelOutput main(VertexToPixel input)
     const float emissive = material.b;
     const float emissiveStr = material.a;
     
-    float3 pixelNormal = normalMap;
+    float3 pixelNormal = normalMap * 0.75f;
     pixelNormal.z = 0;
     pixelNormal = 2.0f * pixelNormal - 1;
     pixelNormal.z = sqrt(1 - saturate(pixelNormal.x + pixelNormal.x + pixelNormal.y + pixelNormal.y));
