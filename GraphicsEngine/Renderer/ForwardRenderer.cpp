@@ -160,8 +160,25 @@ void ForwardRenderer::RenderModels(Entity aCamera, std::vector<Entity>& aModelLi
 void ForwardRenderer::RenderParticles(Entity aCamera, std::vector<Entity>& aParticleSystemList)
 {
 	HRESULT result = S_FALSE;
+	D3D11_MAPPED_SUBRESOURCE frameBufferData;
 
 	if (!aCamera.IsValid()) { return; }
+
+	auto& cameraComponent = aCamera.GetComponent<CameraComponent>();
+	auto& cameraTransform = aCamera.GetComponent<TransformComponent>();
+
+	myFrameBufferData.View = Matrix4x4<float>::GetFastInverse(cameraTransform.GetTransform());
+	myFrameBufferData.Projection = cameraComponent.camera.GetProjectionMatrix();
+	myFrameBufferData.CamTranslation = cameraTransform.position;
+
+	result = DX11::myContext->Map(myFrameBuffer.Get(), 0, D3D11_MAP_WRITE_DISCARD, 0, &frameBufferData);
+	if (FAILED(result))
+	{
+		return;
+	}
+	memcpy(frameBufferData.pData, &myFrameBufferData, sizeof(FrameBufferData));
+
+	DX11::myContext->Unmap(myFrameBuffer.Get(), 0);
 
 	DX11::myContext->VSSetConstantBuffers(0, 1, myFrameBuffer.GetAddressOf());
 	DX11::myContext->GSSetConstantBuffers(0, 1, myFrameBuffer.GetAddressOf());
