@@ -33,9 +33,10 @@ namespace YAML
 	};
 }
 
-void SceneSerializer::Serialize(const char* aFileName)
+void SceneSerializer::SerializeSettings(const char* aFileName)
 {
 	YAML::Emitter out;
+
 	out << YAML::BeginMap;
 	out << YAML::Key << "ClearColor" << YAML::Value
 		<< YAML::Flow
@@ -45,6 +46,16 @@ void SceneSerializer::Serialize(const char* aFileName)
 		<< DX11::myClearColor[2]
 		<< DX11::myClearColor[3]
 		<< YAML::EndSeq;
+	out << YAML::EndMap;
+
+	std::ofstream fout(aFileName);
+	fout << out.c_str();
+}
+
+void SceneSerializer::Serialize(const char* aFileName)
+{
+	YAML::Emitter out;
+	out << YAML::BeginMap;
 	out << YAML::Key << "Entities";
 	out << YAML::Value << YAML::BeginSeq;
 	myScene->myRegistry.each([&](entt::entity aEntity)
@@ -59,7 +70,7 @@ void SceneSerializer::Serialize(const char* aFileName)
 	fout << out.c_str();
 }
 
-bool SceneSerializer::Deserialize(const char* aFileName)
+bool SceneSerializer::DeserializeSettings(const char* aFileName)
 {
 	std::ifstream stream(aFileName);
 	std::stringstream strStream;
@@ -72,6 +83,20 @@ bool SceneSerializer::Deserialize(const char* aFileName)
 	}
 
 	DX11::myClearColor = data["ClearColor"].as<std::array<float, 4>>();
+	return true;
+}
+
+bool SceneSerializer::Deserialize(const char* aFileName)
+{
+	std::ifstream stream(aFileName);
+	std::stringstream strStream;
+	strStream << stream.rdbuf();
+
+	YAML::Node data = YAML::Load(strStream.str());
+	if (!data["Entities"])
+	{
+		return false;
+	}
 
 	auto entities = data["Entities"];
 	if (entities)

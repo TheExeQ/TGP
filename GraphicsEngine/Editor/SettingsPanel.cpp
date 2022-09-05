@@ -8,7 +8,13 @@ void SettingsPanel::OnImGuiRender()
 {
 	ImGui::Begin("Settings");
 	ImGui::ColorEdit3("Clear Color", &DX11::myClearColor[0]);
-	if (ImGui::Button("Save"))
+	if (ImGui::Button("Save Settings"))
+	{
+		SceneSerializer serializer(Scene::GetActiveScene());
+
+		serializer.SerializeSettings("../Assets/Scenes/default.settings");
+	}
+	if (ImGui::Button("Save Scene"))
 	{
 		SceneSerializer serializer(Scene::GetActiveScene());
 

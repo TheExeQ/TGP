@@ -149,7 +149,8 @@ bool GraphicsEngine::InitializeScene()
 	Scene::SetActiveScene(myScene);
 
 	SceneSerializer serializer(myScene);
-	serializer.Deserialize("../Assets/Scenes/Default.scene");
+	serializer.Deserialize("../Assets/Scenes/default.scene");
+	serializer.DeserializeSettings("../Assets/Scenes/default.settings");
 	
 	myCamera = myScene->GetEntityFromUUID(7509847562195690);
 	myScene->SetMainCamera(myCamera);

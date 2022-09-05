@@ -11,7 +11,9 @@ public:
 	SceneSerializer(Ref<Scene> aScene) { myScene = aScene; };
 	~SceneSerializer() = default;
 
+	void SerializeSettings(const char* aFileName);
 	void Serialize(const char* aFileName);
+	bool DeserializeSettings(const char* aFileName);
 	bool Deserialize(const char* aFileName);
 
 private:
