@@ -149,8 +149,8 @@ bool GraphicsEngine::InitializeScene()
 	Scene::SetActiveScene(myScene);
 
 	SceneSerializer serializer(myScene);
-	serializer.Deserialize("../Assets/Scenes/default.scene");
-	serializer.DeserializeSettings("../Assets/Scenes/default.settings");
+	serializer.Deserialize("../Assets/Scenes/default");
+	serializer.DeserializeSettings("../Assets/Settings/default");
 	
 	myCamera = myScene->GetEntityFromUUID(7509847562195690);
 	myScene->SetMainCamera(myCamera);
@@ -264,11 +264,6 @@ void GraphicsEngine::RenderFrame()
 		Entity camera = myScene->GetMainCamera();
 		std::vector<Entity> modelEntitiesToRender = myScene->CullModels(camera);
 		std::vector<Entity> particlesEntitiesToRender = myScene->CullParticles(camera);
-
-		for (auto& entity : modelEntitiesToRender)
-		{
-			entity.GetComponent<TransformComponent>().rotation.y += 1.f * myTimer.GetDeltaTime();
-		}
 		
 		myGBuffer->SetAsTarget();
 		myDeferredRenderer.GenereteGBuffer(camera, modelEntitiesToRender, myTimer.GetDeltaTime(), myTimer.GetTotalTime());
@@ -296,6 +291,8 @@ void GraphicsEngine::EndFrame()
 
 void GraphicsEngine::Controller()
 {
+	if (!movementActive) { return; }
+
 	static float moveSpeed = 100.f;
 	static float mouseSens = 0.25f;
 

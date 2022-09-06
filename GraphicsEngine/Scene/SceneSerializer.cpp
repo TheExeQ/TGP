@@ -48,7 +48,7 @@ void SceneSerializer::SerializeSettings(const char* aFileName)
 		<< YAML::EndSeq;
 	out << YAML::EndMap;
 
-	std::ofstream fout(aFileName);
+	std::ofstream fout((std::string(aFileName) + ".settings").c_str());
 	fout << out.c_str();
 }
 
@@ -66,13 +66,13 @@ void SceneSerializer::Serialize(const char* aFileName)
 	out << YAML::EndSeq;
 	out << YAML::EndMap;
 
-	std::ofstream fout(aFileName);
+	std::ofstream fout((std::string(aFileName) + ".scene").c_str());
 	fout << out.c_str();
 }
 
 bool SceneSerializer::DeserializeSettings(const char* aFileName)
 {
-	std::ifstream stream(aFileName);
+	std::ifstream stream((std::string(aFileName) + ".settings").c_str());
 	std::stringstream strStream;
 	strStream << stream.rdbuf();
 
@@ -88,7 +88,7 @@ bool SceneSerializer::DeserializeSettings(const char* aFileName)
 
 bool SceneSerializer::Deserialize(const char* aFileName)
 {
-	std::ifstream stream(aFileName);
+	std::ifstream stream((std::string(aFileName) + ".scene").c_str());
 	std::stringstream strStream;
 	strStream << stream.rdbuf();
 

@@ -64,6 +64,7 @@ public:
 
 private:
 	friend class SceneHierarchyPanel;
+	friend class SettingsPanel;
 	void Controller();
 	
 	Entity myCamera;
@@ -85,6 +86,8 @@ private:
 	static CommonUtilities::Timer myTimer;
 	EditorLayer myEditorLayer;
 	ImGuiLayer myImGuiLayer;
+
+	inline static bool movementActive = true;
 
 	inline static GraphicsEngine* myInstance = nullptr;
 };
