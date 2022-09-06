@@ -2,6 +2,7 @@
 #include "Math/Vector.hpp"
 #include "Core/DX11.h"
 #include "Components.h"
+#include "Editor/SettingsPanel.h"
 
 #include <fstream>
 
@@ -38,6 +39,19 @@ void SceneSerializer::SerializeSettings(const char* aFileName)
 	YAML::Emitter out;
 
 	out << YAML::BeginMap;
+	out << YAML::Key << "Preset1" << YAML::Value << SettingsPanel::preset1;
+	out << YAML::Key << "Preset2" << YAML::Value << SettingsPanel::preset2;
+	out << YAML::EndMap;
+
+	std::ofstream fout((std::string(aFileName) + ".settings").c_str());
+	fout << out.c_str();
+}
+
+void SceneSerializer::SerializePreset(const char* aFileName)
+{
+	YAML::Emitter out;
+
+	out << YAML::BeginMap;
 	out << YAML::Key << "ClearColor" << YAML::Value
 		<< YAML::Flow
 		<< YAML::BeginSeq
@@ -48,7 +62,7 @@ void SceneSerializer::SerializeSettings(const char* aFileName)
 		<< YAML::EndSeq;
 	out << YAML::EndMap;
 
-	std::ofstream fout((std::string(aFileName) + ".settings").c_str());
+	std::ofstream fout((std::string(aFileName) + ".preset").c_str());
 	fout << out.c_str();
 }
 
@@ -77,6 +91,27 @@ bool SceneSerializer::DeserializeSettings(const char* aFileName)
 	strStream << stream.rdbuf();
 
 	YAML::Node data = YAML::Load(strStream.str());
+
+	if (data["Preset1"])
+	{
+		SettingsPanel::preset1 = data["Preset1"].as<std::string>();
+	}
+	if (data["Preset2"])
+	{
+		SettingsPanel::preset2 = data["Preset2"].as<std::string>();
+	}
+
+	return true;
+}
+
+bool SceneSerializer::DeserializePreset(const char* aFileName)
+{
+	std::ifstream stream((std::string(aFileName) + ".preset").c_str());
+	std::stringstream strStream;
+	strStream << stream.rdbuf();
+
+	YAML::Node data = YAML::Load(strStream.str());
+
 	if (!data["ClearColor"])
 	{
 		return false;

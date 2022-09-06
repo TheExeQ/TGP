@@ -9,6 +9,7 @@
 #include "Renderer/TextureAssetHandler.h"
 #include "Renderer/ParticleAssetHandler.h"
 #include "Scene/SceneSerializer.h"
+#include "Editor/SettingsPanel.h"
 
 CommonUtilities::InputHandler GraphicsEngine::myInputHandler;
 CommonUtilities::Timer GraphicsEngine::myTimer;
@@ -151,7 +152,13 @@ bool GraphicsEngine::InitializeScene()
 	SceneSerializer serializer(myScene);
 	serializer.Deserialize("../Assets/Scenes/default");
 	serializer.DeserializeSettings("../Assets/Settings/default");
+	serializer.DeserializePreset((std::string("../Assets/Settings/") + SettingsPanel::preset1).c_str());
+	SettingsPanel::preset1Color = DX11::myClearColor;
+	serializer.DeserializePreset((std::string("../Assets/Settings/") + SettingsPanel::preset2).c_str());
+	SettingsPanel::preset2Color = DX11::myClearColor;
 	
+	SettingsPanel::colorSlider = SettingsPanel::preset1Color;
+
 	myCamera = myScene->GetEntityFromUUID(7509847562195690);
 	myScene->SetMainCamera(myCamera);
 

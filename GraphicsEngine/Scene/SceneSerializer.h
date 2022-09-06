@@ -12,8 +12,10 @@ public:
 	~SceneSerializer() = default;
 
 	void SerializeSettings(const char* aFileName);
+	void SerializePreset(const char* aFileName);
 	void Serialize(const char* aFileName);
 	bool DeserializeSettings(const char* aFileName);
+	bool DeserializePreset(const char* aFileName);
 	bool Deserialize(const char* aFileName);
 
 private:

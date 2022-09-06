@@ -8,14 +8,6 @@
 
 void SettingsPanel::OnImGuiRender()
 {
-	static std::string preset1;
-	static std::string preset2;
-	static std::string savefilename;
-
-	static std::array<float, 4> colorSlider = DX11::myClearColor;
-	static std::array<float, 4> preset1Color = DX11::myClearColor;
-	static std::array<float, 4> preset2Color;
-
 	ImGui::Begin("Settings");
 	ImGui::ColorEdit3("Clear Color", &colorSlider[0]);
 
@@ -31,16 +23,35 @@ void SettingsPanel::OnImGuiRender()
 	char buffer[256];
 	memset(buffer, 0, sizeof(buffer));
 	std::strncpy(buffer, preset1.c_str(), sizeof(buffer));
-	if (ImGui::InputText("First preset filename", buffer, sizeof(buffer)))
+	if (ImGui::InputText("##Fpreset", buffer, sizeof(buffer)))
 	{
 		preset1 = std::string(buffer);
 	}
+	ImGui::SameLine();
+	if (ImGui::Button("First Preset"))
+	{
+		auto temp = DX11::myClearColor;
+		SceneSerializer serializer(Scene::GetActiveScene());
+		serializer.DeserializePreset((std::string("../Assets/Settings/") + preset1).c_str());
+		preset1Color = DX11::myClearColor;
+		DX11::myClearColor = temp;
+	}
+
 	char buffer2[256];
 	memset(buffer2, 0, sizeof(buffer2));
 	std::strncpy(buffer2, preset2.c_str(), sizeof(buffer2));
-	if (ImGui::InputText("Second preset filename", buffer2, sizeof(buffer2)))
+	if (ImGui::InputText("##Spreset", buffer2, sizeof(buffer2)))
 	{
 		preset2 = std::string(buffer2);
+	}
+	ImGui::SameLine();
+	if (ImGui::Button("Second Preset"))
+	{
+		auto temp = DX11::myClearColor;
+		SceneSerializer serializer(Scene::GetActiveScene());
+		serializer.DeserializePreset((std::string("../Assets/Settings/") + preset2).c_str());
+		preset2Color = DX11::myClearColor;
+		DX11::myClearColor = temp;
 	}
 
 	static float blend = 0.f;
@@ -73,28 +84,23 @@ void SettingsPanel::OnImGuiRender()
 		savefilename = std::string(buffer3);
 	}
 
-	if (ImGui::Button("Load presets"))
-	{
-		SceneSerializer serializer(Scene::GetActiveScene());
-
-		serializer.DeserializeSettings((std::string("../Assets/Settings/") + preset2).c_str());
-		preset2Color = DX11::myClearColor;
-
-		serializer.DeserializeSettings((std::string("../Assets/Settings/") + preset1).c_str());
-		preset1Color = DX11::myClearColor; 
-	}
 	if (ImGui::Button("Save Preset"))
 	{
 		SceneSerializer serializer(Scene::GetActiveScene());
 
-		auto temp = DX11::myClearColor;
 		DX11::myClearColor = colorSlider;
-		serializer.SerializeSettings((std::string("../Assets/Settings/") + savefilename).c_str());
-		DX11::myClearColor = temp;
+		serializer.SerializePreset((std::string("../Assets/Settings/") + savefilename).c_str());
+		DX11::myClearColor = preset1Color;
 	}
 	if (ImGui::Button("Delete Preset"))
 	{
-		std::remove((std::string("../Assets/Settings/") + savefilename + ".settings").c_str());
+		std::remove((std::string("../Assets/Settings/") + savefilename + ".preset").c_str());
+	}
+	if (ImGui::Button("Save Settings"))
+	{
+		SceneSerializer serializer(Scene::GetActiveScene());
+
+		serializer.SerializeSettings(std::string("../Assets/Settings/default").c_str());
 	}
 	if (ImGui::Button("Save Scene"))
 	{
