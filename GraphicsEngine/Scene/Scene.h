@@ -28,6 +28,7 @@ public:
 	
 	std::vector<Entity> CullModels(Entity camera);
 	std::vector<Entity> CullParticles(Entity camera);
+	std::vector<Entity> CullLights(Entity camera);
 
 	void SetMainCamera(Entity aCamera);
 	Entity GetMainCamera() const;

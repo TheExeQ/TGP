@@ -1,3 +1,5 @@
+#define MAX_LIGHTS 8u
+
 struct VertexInput
 {
     float4 myPosition : POSITION;
@@ -75,12 +77,27 @@ cbuffer MaterialBuffer : register(b2)
     float padding;
 }
 
+struct LightData
+{
+    float3 Color;
+    float Intensity;
+    float3 Direction;
+    float Range;
+    float3 Position;
+    float Attenuation;
+
+    float SpotInnerRadius;
+    float SpotOuterRadius;
+    int LightType;
+    float Padding;
+};
+
 cbuffer LightBuffer : register(b3)
 {
-    float3 LB_Color;
-    float LB_Intensity;
-    float3 LB_Direction;
-    float LB_Padding;
+    LightData LB_DirectionalLight;
+    LightData LB_Lights[MAX_LIGHTS];
+    uint LB_NumLights;
+    float3 LB_Padding;
 }
 
 struct GBufferOutput

@@ -9,6 +9,7 @@
 
 class Camera;
 class ModelInstance;
+class Light;
 class DirectionalLight;
 class EnvironmentLight;
 class ParticleSystem;
@@ -19,7 +20,7 @@ class ForwardRenderer
 {
 public:
 	bool Initialize();
-	void RenderModels(Entity aCamera, std::vector<Entity>& aModelList,
+	void RenderModels(Entity aCamera, std::vector<Entity>& aModelList, std::vector<Entity>& aLightList,
 		const Ref<DirectionalLight>& aDirectionalLight, const Ref<EnvironmentLight>& aEnvironmentLight);
 	void RenderParticles(Entity aCamera, std::vector<Entity>& aParticleSystemList);
 
@@ -28,10 +29,11 @@ private:
 	FrameBufferData myFrameBufferData;
 	ObjectBufferData myObjectBufferData;
 	MaterialBufferData myMaterialBufferData;
+	SceneLightBufferData mySceneLightBufferData;
 
 	ComPtr<ID3D11Buffer> myFrameBuffer;
 	ComPtr<ID3D11Buffer> myObjectBuffer;
 	ComPtr<ID3D11Buffer> myMaterialBuffer;
-	ComPtr<ID3D11Buffer> myLightBuffer;
+	ComPtr<ID3D11Buffer> mySceneLightBuffer;
 };
 

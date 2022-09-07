@@ -38,18 +38,43 @@ DeferredPixelOutput main(DeferredVertexToPixel input)
         ambientOcclusion,
         diffuseColor,
         specularColor);
-
-    const float3 directLighting = EvaluateDirectionalLight(
+    
+    float3 directLighting;
+    
+    float3 pointLight = 0;
+    float3 spotLight = 0;
+    
+    for (unsigned int l = 0; l < LB_NumLights; l++)
+    {
+        const LightData light = LB_Lights[l];
+        
+        directLighting = EvaluateDirectionalLight(
         diffuseColor,
         specularColor,
         pixelNormal,
         roughness,
-        LB_Color,
-        LB_Intensity,
-        -LB_Direction,
+        light.Color,
+        light.Intensity,
+        -light.Direction,
         toEye);
+        
+        switch (light.LightType)
+        {
+            case 0:
+                // Directional
+                break;
+            
+            case 1:
+                break;
+            
+            case 2:
+                break;
+                
+        }
 
-    result.myColor.rgb = LinearToGamma(directLighting + ambientLighting);
+    }
+    
+    result.myColor.rgb = LinearToGamma(directLighting + ambientLighting + pointLight + spotLight);
     result.myColor.a = 1.0f;
 
     return result;

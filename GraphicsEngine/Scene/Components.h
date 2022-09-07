@@ -5,6 +5,7 @@
 #include "Renderer/ModelInstance.h"
 #include "Renderer/Camera.h"
 #include "Renderer/ParticleSystem.h"
+#include "Renderer/Light.h"
 
 #include <entt/entt.hpp>
 
@@ -48,4 +49,9 @@ struct CameraComponent
 struct ParticleSystemComponent
 {
 	ParticleSystem system;
+};
+
+struct LightComponent
+{
+	Light light;
 };

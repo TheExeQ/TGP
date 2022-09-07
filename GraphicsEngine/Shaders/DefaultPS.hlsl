@@ -44,17 +44,69 @@ PixelOutput main(VertexToPixel input)
     diffuseColor,
     specularColor);
     
-    const float3 directLighting = EvaluateDirectionalLight(
-    diffuseColor, 
-    specularColor,
-    pixelNormal,
-    roughness,
-    LB_Color,
-    LB_Intensity,
-    -LB_Direction,
-    toEye);
+    float3 directLighting;
     
-    result.myColor.rgb = LinearToGamma(directLighting + ambientLighting);
+    float3 pointLight = 0;
+    float3 spotLight = 0;
+    
+    for (unsigned int l = 0; l < LB_NumLights; l++)
+    {
+        const LightData light = LB_Lights[l];
+        
+        directLighting = EvaluateDirectionalLight(
+        diffuseColor,
+        specularColor,
+        pixelNormal,
+        roughness,
+        light.Color,
+        light.Intensity,
+        -light.Direction,
+        toEye);
+        
+        switch (light.LightType)
+        {
+            case 0:
+                // Directional
+                break;
+            
+            case 1:
+                pointLight += EvaluatePointLight(
+            diffuseColor,
+            specularColor,
+            pixelNormal,
+            material.g,
+            light.Color,
+            light.Intensity,
+            light.Range,
+            light.Position,
+            toEye,
+            input.myVxPosition.xyz
+            );
+                break;
+            
+            case 2:
+                pointLight += EvaluateSpotLight(
+            diffuseColor,
+            specularColor,
+            pixelNormal,
+            material.g,
+            light.Color,
+            light.Intensity,
+            light.Range,
+            light.Position,
+            light.Direction,
+            light.SpotOuterRadius,
+            light.SpotInnerRadius,
+            toEye,
+            input.myVxPosition.xyz
+            );
+                break;
+                
+        }
+
+    }
+    
+    result.myColor.rgb = LinearToGamma(directLighting + ambientLighting + pointLight + spotLight);
     result.myColor.a = 1.0f;
 
     return result;

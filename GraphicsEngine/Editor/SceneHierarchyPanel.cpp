@@ -233,6 +233,7 @@ void SceneHierarchyPanel::DrawComponents(Entity aEntity)
 		DisplayAddComponentEntry<ModelComponent>("Model Component");
 		//DisplayAddComponentEntry<CameraComponent>("Camera Component");
 		DisplayAddComponentEntry<ParticleSystemComponent>("Particle System Component");
+		DisplayAddComponentEntry<LightComponent>("Light Component");
 
 		ImGui::EndPopup();
 	}
@@ -290,5 +291,18 @@ void SceneHierarchyPanel::DrawComponents(Entity aEntity)
 	DrawComponent<ParticleSystemComponent>("Particle System", aEntity, [](auto& component)
 		{
 			
+		});
+
+	DrawComponent<LightComponent>("Light", aEntity, [](auto& component)
+		{
+			DrawVec3Control("Color", component.light.ourlightBuffer.Color);
+			ImGui::InputFloat("Intensity", &component.light.ourlightBuffer.Intensity);
+			DrawVec3Control("Direction", component.light.ourlightBuffer.Direction);
+			ImGui::InputFloat("Range", &component.light.ourlightBuffer.Range);
+			DrawVec3Control("Position", component.light.ourlightBuffer.Position);
+			ImGui::InputFloat("Attenuation", &component.light.ourlightBuffer.Attenuation);
+			ImGui::InputFloat("SpotInnerRadius", &component.light.ourlightBuffer.SpotInnerRadius);
+			ImGui::InputFloat("SpotOuterRadius", &component.light.ourlightBuffer.SpotOuterRadius);
+			ImGui::InputInt("LightType", &component.light.ourlightBuffer.LightType);
 		});
 }

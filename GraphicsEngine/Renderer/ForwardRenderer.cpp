@@ -39,8 +39,8 @@ bool ForwardRenderer::Initialize()
 		return false;
 	}
 
-	bufferDesc.ByteWidth = sizeof(Light::LightBufferData);
-	result = DX11::myDevice->CreateBuffer(&bufferDesc, nullptr, myLightBuffer.GetAddressOf());
+	bufferDesc.ByteWidth = sizeof(SceneLightBufferData);
+	result = DX11::myDevice->CreateBuffer(&bufferDesc, nullptr, mySceneLightBuffer.GetAddressOf());
 	if (FAILED(result))
 	{
 		return false;
@@ -49,7 +49,7 @@ bool ForwardRenderer::Initialize()
 	return true;
 }
 
-void ForwardRenderer::RenderModels(Entity aCamera, std::vector<Entity>& aModelList,
+void ForwardRenderer::RenderModels(Entity aCamera, std::vector<Entity>& aModelList, std::vector<Entity>& aLightList,
 	const Ref<DirectionalLight>& aDirectionalLight, const Ref<EnvironmentLight>& aEnvironmentLight)
 {
 	HRESULT result = S_FALSE;
@@ -76,12 +76,30 @@ void ForwardRenderer::RenderModels(Entity aCamera, std::vector<Entity>& aModelLi
 
 	if (aDirectionalLight)
 	{
-		aDirectionalLight->SetAsResource(myLightBuffer);
+		mySceneLightBufferData.DirectionalLight = aDirectionalLight->GetLightBufferData();
 	}
 	if (aEnvironmentLight)
 	{
-		aEnvironmentLight->SetAsResource(myLightBuffer);
+		aEnvironmentLight->SetAsResource(mySceneLightBuffer);
 	}
+
+	mySceneLightBufferData.numLights = 0;
+	ZeroMemory(mySceneLightBufferData.Lights, sizeof(Light::LightBufferData) * MAX_FORWARD_LIGHTS);
+
+	for (size_t l = 0; l < aLightList.size() && l < MAX_FORWARD_LIGHTS; l++)
+	{
+		mySceneLightBufferData.Lights[l] = aLightList[l].GetComponent<LightComponent>().light.GetLightBufferData();
+		mySceneLightBufferData.numLights++;
+	}
+
+	D3D11_MAPPED_SUBRESOURCE lightBufferData;
+	result = DX11::myContext->Map(mySceneLightBuffer.Get(), 0, D3D11_MAP_WRITE_DISCARD, 0, &lightBufferData);
+	if (FAILED(result))
+	{
+		return;
+	}
+	memcpy(lightBufferData.pData, &mySceneLightBufferData, sizeof(SceneLightBufferData));
+	DX11::myContext->Unmap(mySceneLightBuffer.Get(), 0);
 	
 	for (auto& model : aModelList)
 	{

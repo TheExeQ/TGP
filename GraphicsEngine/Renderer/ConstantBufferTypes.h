@@ -2,8 +2,11 @@
 #include <vector>
 #include "Math/Matrix4x4.hpp"
 #include "Math/Vector.hpp"
+#include "Light.h"
 
 using namespace CommonUtilities;
+
+constexpr uint32_t MAX_FORWARD_LIGHTS = 8;
 
 struct FrameBufferData
 {
@@ -23,5 +26,13 @@ struct ObjectBufferData
 struct MaterialBufferData
 {
 	CommonUtilities::Vector3<float> Albedo;
-	float padding;
+	float Padding;
+};
+
+struct SceneLightBufferData
+{
+	Light::LightBufferData DirectionalLight;
+	Light::LightBufferData Lights[MAX_FORWARD_LIGHTS];
+	uint32_t numLights;
+	CommonUtilities::Vector3<float> Padding;
 };

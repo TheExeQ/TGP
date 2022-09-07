@@ -39,8 +39,25 @@ Entities:
     TagComponent:
       Tag: EditorCamera
     TransformComponent:
-      Position: [-39.2709732, 124.061295, -553.612244]
+      Position: [-49.7492867, 125.556389, -565.335266]
       Rotation: [0.121903554, 0.0471457839, 0]
       Scale: [1, 1, 1]
     CameraComponent:
       {}
+  - Entity: 1728503541188748087
+    TagComponent:
+      Tag: Light
+    TransformComponent:
+      Position: [0, 0, 0]
+      Rotation: [0, 0, 0]
+      Scale: [1, 1, 1]
+    LightComponent:
+      Color: [1, 0, 0]
+      Intensity: 100
+      Direction: [0, -1, 0]
+      Range: 100
+      Position: [0, 0, 0]
+      Attenuation: 100
+      SpotInnerRadius: 100
+      SpotOuterRadius: 100
+      LightType: 1

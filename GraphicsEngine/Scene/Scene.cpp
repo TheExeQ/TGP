@@ -80,6 +80,21 @@ std::vector<Entity> Scene::CullParticles(Entity camera)
 	return visibleEntity;
 }
 
+std::vector<Entity> Scene::CullLights(Entity camera)
+{
+	std::vector<Entity> visibleEntity;
+
+	const auto& view = myRegistry.view<LightComponent>();
+
+	for (auto& entity : view)
+	{
+		LightComponent& light = myRegistry.get<LightComponent>(entity);
+		visibleEntity.push_back(Entity(entity, myActiveScene));
+	}
+
+	return visibleEntity;
+}
+
 void Scene::SetMainCamera(Entity aCamera)
 {
 	myMainCameraEntity = (entt::entity)aCamera;
