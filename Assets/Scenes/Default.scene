@@ -8,10 +8,10 @@ Entities:
       Scale: [1, 1, 1]
     LightComponent:
       Color: [1, 0, 0]
-      Intensity: 100
+      Intensity: 100000
       Direction: [0, -1, 0]
       Range: 100
-      Position: [1568, 0, 0]
+      Position: [2, 123, 0]
       Attenuation: 100
       SpotInnerRadius: 100
       SpotOuterRadius: 100
@@ -20,8 +20,8 @@ Entities:
     TagComponent:
       Tag: EditorCamera
     TransformComponent:
-      Position: [-50.2520943, 126.863441, -575.992249]
-      Rotation: [0.121903554, 0.0471457839, 0]
+      Position: [41.1667213, 187.240601, -363.934814]
+      Rotation: [0.330850273, -0.0372032672, 0]
       Scale: [1, 1, 1]
     CameraComponent:
       {}

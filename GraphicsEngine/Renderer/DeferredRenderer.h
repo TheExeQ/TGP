@@ -25,6 +25,7 @@ public:
 		float aDeltaTime, float aTotalTime);
 	void Render(
 		Entity aCamera,
+		std::vector<Entity>& aLightList,
 		const Ref<DirectionalLight>& aDirectionalLight, 
 		const Ref<EnvironmentLight>& aEnvironmentLight,
 		float aDeltaTime, float aTotalTime);
@@ -33,11 +34,12 @@ private:
 	FrameBufferData myFrameBufferData;
 	ObjectBufferData myObjectBufferData;
 	MaterialBufferData myMaterialBufferData;
+	SceneLightBufferData mySceneLightBufferData;
 
 	ComPtr<ID3D11Buffer> myFrameBuffer;
 	ComPtr<ID3D11Buffer> myObjectBuffer;
 	ComPtr<ID3D11Buffer> myMaterialBuffer;
-	ComPtr<ID3D11Buffer> myLightBuffer;
+	ComPtr<ID3D11Buffer> mySceneLightBuffer;
 
 	ComPtr<ID3D11PixelShader> myGBufferPS;
 	ComPtr<ID3D11VertexShader> myFullscreenVS;

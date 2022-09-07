@@ -39,7 +39,15 @@ DeferredPixelOutput main(DeferredVertexToPixel input)
         diffuseColor,
         specularColor);
     
-    float3 directLighting;
+    float3 directLighting = EvaluateDirectionalLight(
+        diffuseColor,
+        specularColor,
+        pixelNormal,
+        roughness,
+        LB_DirectionalLight.Color,
+        LB_DirectionalLight.Intensity,
+        -LB_DirectionalLight.Direction,
+        toEye);
     
     float3 pointLight = 0;
     float3 spotLight = 0;
@@ -48,16 +56,6 @@ DeferredPixelOutput main(DeferredVertexToPixel input)
     {
         const LightData light = LB_Lights[l];
         
-        directLighting = EvaluateDirectionalLight(
-        diffuseColor,
-        specularColor,
-        pixelNormal,
-        roughness,
-        light.Color,
-        light.Intensity,
-        -light.Direction,
-        toEye);
-        
         switch (light.LightType)
         {
             case 0:
@@ -65,9 +63,36 @@ DeferredPixelOutput main(DeferredVertexToPixel input)
                 break;
             
             case 1:
+                pointLight += EvaluatePointLight(
+            diffuseColor,
+            specularColor,
+            pixelNormal,
+            material.g,
+            light.Color,
+            light.Intensity,
+            light.Range,
+            light.Position,
+            toEye,
+            worldPosition.xyz
+            );
                 break;
             
             case 2:
+                pointLight += EvaluateSpotLight(
+            diffuseColor,
+            specularColor,
+            pixelNormal,
+            material.g,
+            light.Color,
+            light.Intensity,
+            light.Range,
+            light.Position,
+            light.Direction,
+            light.SpotOuterRadius,
+            light.SpotInnerRadius,
+            toEye,
+            worldPosition.xyz
+            );
                 break;
                 
         }

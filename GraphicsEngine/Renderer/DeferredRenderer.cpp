@@ -65,7 +65,7 @@ bool DeferredRenderer::Init()
     }
 
     bufferDesc.ByteWidth = sizeof(Light::LightBufferData);
-    result = DX11::myDevice->CreateBuffer(&bufferDesc, nullptr, myLightBuffer.GetAddressOf());
+    result = DX11::myDevice->CreateBuffer(&bufferDesc, nullptr, mySceneLightBuffer.GetAddressOf());
     if (FAILED(result))
     {
         return false;
@@ -173,24 +173,43 @@ void DeferredRenderer::GenereteGBuffer(Entity aCamera, std::vector<Entity>& aMod
     }
 }
 
-void DeferredRenderer::Render(Entity aCamera, const Ref<DirectionalLight>& aDirectionalLight, const Ref<EnvironmentLight>& aEnvironmentLight, float aDeltaTime, float aTotalTime)
+void DeferredRenderer::Render(Entity aCamera, std::vector<Entity>& aLightList, const Ref<DirectionalLight>& aDirectionalLight, const Ref<EnvironmentLight>& aEnvironmentLight, float aDeltaTime, float aTotalTime)
 {
     if (aDirectionalLight)
     {
-        aDirectionalLight->SetAsResource(myLightBuffer);
+        mySceneLightBufferData.DirectionalLight = aDirectionalLight->GetLightBufferData();
     }
     if (aEnvironmentLight)
     {
         aEnvironmentLight->SetAsResource(nullptr);
     }
 
+    mySceneLightBufferData.numLights = 0;
+    ZeroMemory(mySceneLightBufferData.Lights, sizeof(Light::LightBufferData) * MAX_FORWARD_LIGHTS);
+
+    for (size_t l = 0; l < aLightList.size() && l < MAX_FORWARD_LIGHTS; l++)
+    {
+        mySceneLightBufferData.Lights[l] = aLightList[l].GetComponent<LightComponent>().light.GetLightBufferData();
+        mySceneLightBufferData.numLights++;
+    }
+
+    D3D11_MAPPED_SUBRESOURCE lightBufferData;
+    auto result = DX11::myContext->Map(mySceneLightBuffer.Get(), 0, D3D11_MAP_WRITE_DISCARD, 0, &lightBufferData);
+    if (FAILED(result))
+    {
+        return;
+    }
+    memcpy(lightBufferData.pData, &mySceneLightBufferData, sizeof(SceneLightBufferData));
+    DX11::myContext->Unmap(mySceneLightBuffer.Get(), 0);
+
     DX11::myContext->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
     DX11::myContext->IASetIndexBuffer(nullptr, DXGI_FORMAT_UNKNOWN, 0);
     DX11::myContext->IASetVertexBuffers(0, 0, nullptr, nullptr, nullptr);
     DX11::myContext->IASetInputLayout(nullptr);
-    DX11::myContext->GSSetShader(nullptr, nullptr, 0);
-    DX11::myContext->VSSetShader(myFullscreenVS.Get(), nullptr, 0);
-    DX11::myContext->PSSetShader(myEnvironmentPS.Get(), nullptr, 0);
+	DX11::myContext->GSSetShader(nullptr, nullptr, 0);
+	DX11::myContext->VSSetShader(myFullscreenVS.Get(), nullptr, 0);
+	DX11::myContext->PSSetShader(myEnvironmentPS.Get(), nullptr, 0);
+    DX11::myContext->PSSetConstantBuffers(3, 1, mySceneLightBuffer.GetAddressOf());
 
     DX11::myContext->Draw(3, 0);
 }
