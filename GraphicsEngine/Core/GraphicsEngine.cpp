@@ -283,9 +283,9 @@ void GraphicsEngine::RenderFrame()
 
 		myForwardRenderer.RenderModels(camera, modelEntitiesToRender, lightEntitiesToRender, myDirectionalLight, myEnvironmentLight);
 
-		SetBlendState(BlendState::BS_Additive);
-		SetDepthStencilState(DepthStencilState::DSS_ReadOnly);
-		myForwardRenderer.RenderParticles(camera, particlesEntitiesToRender);
+		//SetBlendState(BlendState::BS_Additive);
+		//SetDepthStencilState(DepthStencilState::DSS_ReadOnly);
+		//myForwardRenderer.RenderParticles(camera, particlesEntitiesToRender);
 	}
 }
 

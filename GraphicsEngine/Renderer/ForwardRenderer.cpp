@@ -73,6 +73,7 @@ void ForwardRenderer::RenderModels(Entity aCamera, std::vector<Entity>& aModelLi
 
 	DX11::myContext->Unmap(myFrameBuffer.Get(), 0);
 	DX11::myContext->VSSetConstantBuffers(0, 1, myFrameBuffer.GetAddressOf());
+	DX11::myContext->PSSetConstantBuffers(0, 1, myFrameBuffer.GetAddressOf());
 
 	if (aDirectionalLight)
 	{
@@ -100,6 +101,8 @@ void ForwardRenderer::RenderModels(Entity aCamera, std::vector<Entity>& aModelLi
 	}
 	memcpy(lightBufferData.pData, &mySceneLightBufferData, sizeof(SceneLightBufferData));
 	DX11::myContext->Unmap(mySceneLightBuffer.Get(), 0);
+
+	DX11::myContext->PSSetConstantBuffers(3, 1, mySceneLightBuffer.GetAddressOf());
 	
 	for (auto& model : aModelList)
 	{

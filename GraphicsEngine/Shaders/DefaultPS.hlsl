@@ -44,7 +44,15 @@ PixelOutput main(VertexToPixel input)
     diffuseColor,
     specularColor);
     
-    float3 directLighting;
+    float3 directLighting = EvaluateDirectionalLight(
+        diffuseColor,
+        specularColor,
+        pixelNormal,
+        roughness,
+        LB_DirectionalLight.Color,
+        LB_DirectionalLight.Intensity,
+        -LB_DirectionalLight.Direction,
+        toEye);
     
     float3 pointLight = 0;
     float3 spotLight = 0;
@@ -52,16 +60,6 @@ PixelOutput main(VertexToPixel input)
     for (unsigned int l = 0; l < LB_NumLights; l++)
     {
         const LightData light = LB_Lights[l];
-        
-        directLighting = EvaluateDirectionalLight(
-        diffuseColor,
-        specularColor,
-        pixelNormal,
-        roughness,
-        light.Color,
-        light.Intensity,
-        -light.Direction,
-        toEye);
         
         switch (light.LightType)
         {

@@ -1,49 +1,4 @@
 Entities:
-  - Entity: 3905982894324659577
-    TagComponent:
-      Tag: ParticleSystem
-    TransformComponent:
-      Position: [0, 0, 0]
-      Rotation: [0, 0, 0]
-      Scale: [1, 1, 1]
-    ParticleSystemComponent:
-      {}
-  - Entity: 3446174191707793529
-    TagComponent:
-      Tag: Gremlin
-    TransformComponent:
-      Position: [200, 0, 0]
-      Rotation: [0, 69.8821716, 0]
-      Scale: [1, 1, 1]
-    ModelComponent:
-      {}
-  - Entity: 3316484318424843108
-    TagComponent:
-      Tag: Chest
-    TransformComponent:
-      Position: [-200, 0, 0]
-      Rotation: [0, 69.8812714, 0]
-      Scale: [1, 1, 1]
-    ModelComponent:
-      {}
-  - Entity: 6057646693852787664
-    TagComponent:
-      Tag: Cube
-    TransformComponent:
-      Position: [0, 0, 0]
-      Rotation: [0, 66.7397766, 0]
-      Scale: [1, 1, 1]
-    ModelComponent:
-      {}
-  - Entity: 7509847562195690
-    TagComponent:
-      Tag: EditorCamera
-    TransformComponent:
-      Position: [-49.7492867, 125.556389, -565.335266]
-      Rotation: [0.121903554, 0.0471457839, 0]
-      Scale: [1, 1, 1]
-    CameraComponent:
-      {}
   - Entity: 1728503541188748087
     TagComponent:
       Tag: Light
@@ -56,8 +11,53 @@ Entities:
       Intensity: 100
       Direction: [0, -1, 0]
       Range: 100
-      Position: [0, 0, 0]
+      Position: [1568, 0, 0]
       Attenuation: 100
       SpotInnerRadius: 100
       SpotOuterRadius: 100
       LightType: 1
+  - Entity: 7509847562195690
+    TagComponent:
+      Tag: EditorCamera
+    TransformComponent:
+      Position: [-50.2520943, 126.863441, -575.992249]
+      Rotation: [0.121903554, 0.0471457839, 0]
+      Scale: [1, 1, 1]
+    CameraComponent:
+      {}
+  - Entity: 6057646693852787664
+    TagComponent:
+      Tag: Cube
+    TransformComponent:
+      Position: [0, 0, 0]
+      Rotation: [0, 66.7397766, 0]
+      Scale: [1, 1, 1]
+    ModelComponent:
+      {}
+  - Entity: 3316484318424843108
+    TagComponent:
+      Tag: Chest
+    TransformComponent:
+      Position: [-200, 0, 0]
+      Rotation: [0, 69.8812714, 0]
+      Scale: [1, 1, 1]
+    ModelComponent:
+      {}
+  - Entity: 3446174191707793529
+    TagComponent:
+      Tag: Gremlin
+    TransformComponent:
+      Position: [200, 0, 0]
+      Rotation: [0, 69.8821716, 0]
+      Scale: [1, 1, 1]
+    ModelComponent:
+      {}
+  - Entity: 3905982894324659577
+    TagComponent:
+      Tag: ParticleSystem
+    TransformComponent:
+      Position: [0, 0, 0]
+      Rotation: [0, 0, 0]
+      Scale: [1, 1, 1]
+    ParticleSystemComponent:
+      {}
