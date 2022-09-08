@@ -41,6 +41,8 @@ void SceneSerializer::SerializeSettings(const char* aFileName)
 	out << YAML::BeginMap;
 	out << YAML::Key << "Preset1" << YAML::Value << SettingsPanel::preset1;
 	out << YAML::Key << "Preset2" << YAML::Value << SettingsPanel::preset2;
+	out << YAML::Key << "Blend" << YAML::Value << SettingsPanel::blend;
+	out << YAML::Key << "BlendActive" << YAML::Value << SettingsPanel::blendActive;
 	out << YAML::EndMap;
 
 	std::ofstream fout((std::string(aFileName) + ".settings").c_str());
@@ -99,6 +101,14 @@ bool SceneSerializer::DeserializeSettings(const char* aFileName)
 	if (data["Preset2"])
 	{
 		SettingsPanel::preset2 = data["Preset2"].as<std::string>();
+	}
+	if (data["Blend"])
+	{
+		SettingsPanel::blend = data["Blend"].as<float>();
+	}
+	if (data["BlendActive"])
+	{
+		SettingsPanel::blendActive = data["BlendActive"].as<bool>();
 	}
 
 	return true;

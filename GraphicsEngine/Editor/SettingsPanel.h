@@ -15,4 +15,8 @@ public:
 
 	inline static std::string preset1;
 	inline static std::string preset2;
+
+	inline static float blend = 0.f;
+	inline static bool blendActive = false;
+
 };

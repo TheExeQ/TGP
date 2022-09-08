@@ -5,6 +5,7 @@
 #include <Core/DX11.h>
 #include <ImGui/imgui.h>
 #include <stdio.h>
+#include <cmath>
 
 void SettingsPanel::OnImGuiRender()
 {
@@ -54,8 +55,6 @@ void SettingsPanel::OnImGuiRender()
 		DX11::myClearColor = temp;
 	}
 
-	static float blend = 0.f;
-	static bool blendActive = false;
 	ImGui::SliderFloat("##Blend", &blend, 0.f, 1.f);
 	ImGui::SameLine();
 	ImGui::Checkbox("Blending", &blendActive);
@@ -66,7 +65,7 @@ void SettingsPanel::OnImGuiRender()
 
 		for (uint32_t i = 0; i < 4; i++)
 		{
-			result[i] = preset1Color[i] + (preset2Color[i] * blend);
+			result[i] = std::lerp(preset1Color[i], preset2Color[i], blend);
 		}
 
 		DX11::myClearColor = result;
