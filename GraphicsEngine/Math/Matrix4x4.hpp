@@ -19,6 +19,15 @@ namespace CommonUtilities
 		T& operator()(const int aRow, const int aColumn);
 		const T& operator()(const int aRow, const int aColumn) const;
 
+		Vector3<T> operator[](const int& index) const 
+		{
+			Vector3<T> result;
+			result.x = myMatrix[index][0];
+			result.y = myMatrix[index][1];
+			result.z = myMatrix[index][2];
+			return result;
+		};
+
 		static Vector3<T> Right(Matrix4x4<T> aMatrix);
 		static Vector3<T> Up(Matrix4x4<T> aMatrix);
 		static Vector3<T> Forward(Matrix4x4<T> aMatrix);
@@ -26,10 +35,10 @@ namespace CommonUtilities
 		// Static function for translating a matrix.
 		static Matrix4x4<T> Translate(Matrix4x4<T> aMatrix, const Vector3<T>& aTranslation);
 
-		// Static funtion for scaling a matrix.
+		// Static function for scaling a matrix.
 		static Matrix4x4<T> Rotate(Matrix4x4<T> aMatrix, const Vector3<T>& aRotation);
 
-		// Static funtion for scaling a matrix.
+		// Static function for scaling a matrix.
 		static Matrix4x4<T> Scale(Matrix4x4<T> aMatrix, const Vector3<T>& aScale);
 			
 		// Static function for creating a transpose of a matrix.
@@ -38,12 +47,11 @@ namespace CommonUtilities
 		// Assumes aTransform is made up of nothing but rotations and translations.
 		static Matrix4x4<T> GetFastInverse(const Matrix4x4<T>& aTransform);
 
-
-	private:
 		// Static functions for creating rotation matrices.
 		static Matrix4x4<T> CreateRotationAroundX(T aAngleInRadians);
 		static Matrix4x4<T> CreateRotationAroundY(T aAngleInRadians);
 		static Matrix4x4<T> CreateRotationAroundZ(T aAngleInRadians);
+	private:
 
 		std::array<std::array<T, 4>, 4> myMatrix;
 	};

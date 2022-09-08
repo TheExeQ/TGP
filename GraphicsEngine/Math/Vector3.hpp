@@ -123,6 +123,9 @@ namespace CommonUtilities
 	//Returns the vector aVector multiplied by the scalar aScalar
 	template <class T> Vector3<T> operator*(const T& aScalar, const Vector3<T>& aVector) { return { aVector.x * aScalar, aVector.y * aScalar, aVector.z * aScalar }; }
 
+	//Returns the vector aVector multiplied by the scalar aScalar
+	template <class T> Vector3<T> operator*(const Vector3<T>& aVector, const Vector3<T>& aVector2) { return { aVector.x * aVector2.x, aVector.y * aVector2.y, aVector.z * aVector2.z }; }
+
 	//Returns the vector aVector divided by the scalar aScalar (equivalent to aVector multiplied by 1 / aScalar)
 	template <class T> Vector3<T> operator/(const Vector3<T>& aVector, const T& aScalar) 
 	{ 

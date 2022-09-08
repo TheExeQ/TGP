@@ -90,6 +90,7 @@ void ForwardRenderer::RenderModels(Entity aCamera, std::vector<Entity>& aModelLi
 	for (size_t l = 0; l < aLightList.size() && l < MAX_FORWARD_LIGHTS; l++)
 	{
 		mySceneLightBufferData.Lights[l] = aLightList[l].GetComponent<LightComponent>().light.GetLightBufferData();
+		mySceneLightBufferData.Lights[l].Position = aLightList[l].GetComponent<TransformComponent>().position;
 		mySceneLightBufferData.numLights++;
 	}
 

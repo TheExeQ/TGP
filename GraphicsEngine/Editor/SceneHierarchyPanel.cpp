@@ -297,9 +297,8 @@ void SceneHierarchyPanel::DrawComponents(Entity aEntity)
 		{
 			DrawVec3Control("Color", component.light.ourlightBuffer.Color);
 			ImGui::InputFloat("Intensity", &component.light.ourlightBuffer.Intensity);
-			DrawVec3Control("Direction", component.light.ourlightBuffer.Direction);
+			//DrawVec3Control("Direction", component.light.ourlightBuffer.Direction);
 			ImGui::InputFloat("Range", &component.light.ourlightBuffer.Range);
-			DrawVec3Control("Position", component.light.ourlightBuffer.Position);
 			ImGui::InputFloat("Attenuation", &component.light.ourlightBuffer.Attenuation);
 			ImGui::InputFloat("SpotInnerRadius", &component.light.ourlightBuffer.SpotInnerRadius);
 			ImGui::InputFloat("SpotOuterRadius", &component.light.ourlightBuffer.SpotOuterRadius);

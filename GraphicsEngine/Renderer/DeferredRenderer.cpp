@@ -6,6 +6,7 @@
 #include "Camera.h"
 #include "DirectionalLight.h"
 #include "EnvironmentLight.h"
+#include "Math/Matrix4x4.hpp"
 #include <fstream>
 
 bool DeferredRenderer::Init()
@@ -64,7 +65,7 @@ bool DeferredRenderer::Init()
         return false;
     }
 
-    bufferDesc.ByteWidth = sizeof(Light::LightBufferData);
+    bufferDesc.ByteWidth = sizeof(SceneLightBufferData);
     result = DX11::myDevice->CreateBuffer(&bufferDesc, nullptr, mySceneLightBuffer.GetAddressOf());
     if (FAILED(result))
     {
@@ -190,6 +191,17 @@ void DeferredRenderer::Render(Entity aCamera, std::vector<Entity>& aLightList, c
     for (size_t l = 0; l < aLightList.size() && l < MAX_FORWARD_LIGHTS; l++)
     {
         mySceneLightBufferData.Lights[l] = aLightList[l].GetComponent<LightComponent>().light.GetLightBufferData();
+        mySceneLightBufferData.Lights[l].Position = aLightList[l].GetComponent<TransformComponent>().position;
+        auto rot = aLightList[l].GetComponent<TransformComponent>().rotation;
+        auto direction = Vector4(0.f, -1.f, 0.f, 0.f) * 
+            CommonUtilities::Matrix4x4<float>::CreateRotationAroundX(rot.x) * 
+            CommonUtilities::Matrix4x4<float>::CreateRotationAroundY(rot.y) *
+            CommonUtilities::Matrix4x4<float>::CreateRotationAroundZ(rot.z);
+        mySceneLightBufferData.Lights[l].Direction = { 
+            direction.x,
+            direction.y,
+            direction.z
+        };
         mySceneLightBufferData.numLights++;
     }
 

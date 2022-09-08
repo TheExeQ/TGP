@@ -1,17 +1,16 @@
 Entities:
   - Entity: 1728503541188748087
     TagComponent:
-      Tag: Light
+      Tag: LightRed
     TransformComponent:
-      Position: [0, 0, 0]
+      Position: [-200, 150, 30]
       Rotation: [0, 0, 0]
       Scale: [1, 1, 1]
     LightComponent:
       Color: [1, 0, 0]
       Intensity: 100000
-      Direction: [0, -1, 0]
-      Range: 100
-      Position: [2, 123, 0]
+      Direction: [0, 0, 0]
+      Range: 150
       Attenuation: 100
       SpotInnerRadius: 100
       SpotOuterRadius: 100
@@ -20,8 +19,8 @@ Entities:
     TagComponent:
       Tag: EditorCamera
     TransformComponent:
-      Position: [41.1667213, 187.240601, -363.934814]
-      Rotation: [0.330850273, -0.0372032672, 0]
+      Position: [2.28344917, 289.330688, -373.776825]
+      Rotation: [0.473723233, -0.0360050015, 0]
       Scale: [1, 1, 1]
     CameraComponent:
       {}
@@ -30,7 +29,7 @@ Entities:
       Tag: Cube
     TransformComponent:
       Position: [0, 0, 0]
-      Rotation: [0, 66.7397766, 0]
+      Rotation: [0, 0, 0]
       Scale: [1, 1, 1]
     ModelComponent:
       {}
@@ -39,7 +38,7 @@ Entities:
       Tag: Chest
     TransformComponent:
       Position: [-200, 0, 0]
-      Rotation: [0, 69.8812714, 0]
+      Rotation: [0, 3.1415, 0]
       Scale: [1, 1, 1]
     ModelComponent:
       {}
@@ -48,7 +47,7 @@ Entities:
       Tag: Gremlin
     TransformComponent:
       Position: [200, 0, 0]
-      Rotation: [0, 69.8821716, 0]
+      Rotation: [0, 3.1415, 0]
       Scale: [1, 1, 1]
     ModelComponent:
       {}
@@ -61,3 +60,35 @@ Entities:
       Scale: [1, 1, 1]
     ParticleSystemComponent:
       {}
+  - Entity: 10641592637030116440
+    TagComponent:
+      Tag: LightBlue
+    TransformComponent:
+      Position: [-220, 0, -100]
+      Rotation: [0, 0, 0]
+      Scale: [1, 1, 1]
+    LightComponent:
+      Color: [0, 0, 1]
+      Intensity: 100000
+      Direction: [0, 0, 0]
+      Range: 100
+      Attenuation: 100
+      SpotInnerRadius: 100
+      SpotOuterRadius: 100
+      LightType: 1
+  - Entity: 13168016240173744635
+    TagComponent:
+      Tag: LightGreen
+    TransformComponent:
+      Position: [45, 135, -75]
+      Rotation: [-0.785374999, 0, -0.785374999]
+      Scale: [1, 1, 1]
+    LightComponent:
+      Color: [0, 1, 0]
+      Intensity: 1000000
+      Direction: [0, -1, 0]
+      Range: 150
+      Attenuation: 100
+      SpotInnerRadius: 100
+      SpotOuterRadius: 100
+      LightType: 2

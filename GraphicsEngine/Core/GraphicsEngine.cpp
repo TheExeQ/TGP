@@ -273,19 +273,19 @@ void GraphicsEngine::RenderFrame()
 		std::vector<Entity> lightEntitiesToRender = myScene->CullLights(camera);
 		std::vector<Entity> particlesEntitiesToRender = myScene->CullParticles(camera);
 		
-		//myGBuffer->SetAsTarget();
-		//myDeferredRenderer.GenereteGBuffer(camera, modelEntitiesToRender, myTimer.GetDeltaTime(), myTimer.GetTotalTime());
-		//myGBuffer->ClearTarget();
-		//myGBuffer->SetAsResource(0);
-		//DX11::myContext->OMSetRenderTargets(1, DX11::myRenderTarget.GetAddressOf(), DX11::myDepthStencil.Get());
-		//SetDepthStencilState(DepthStencilState::DSS_Off);
-		//myDeferredRenderer.Render(camera, lightEntitiesToRender, myDirectionalLight, myEnvironmentLight, myTimer.GetDeltaTime(), myTimer.GetTotalTime());
+		myGBuffer->SetAsTarget();
+		myDeferredRenderer.GenereteGBuffer(camera, modelEntitiesToRender, myTimer.GetDeltaTime(), myTimer.GetTotalTime());
+		myGBuffer->ClearTarget();
+		myGBuffer->SetAsResource(0);
+		DX11::myContext->OMSetRenderTargets(1, DX11::myRenderTarget.GetAddressOf(), DX11::myDepthStencil.Get());
+		SetDepthStencilState(DepthStencilState::DSS_Off);
+		myDeferredRenderer.Render(camera, lightEntitiesToRender, myDirectionalLight, myEnvironmentLight, myTimer.GetDeltaTime(), myTimer.GetTotalTime());
 
-		myForwardRenderer.RenderModels(camera, modelEntitiesToRender, lightEntitiesToRender, myDirectionalLight, myEnvironmentLight);
+		//myForwardRenderer.RenderModels(camera, modelEntitiesToRender, lightEntitiesToRender, myDirectionalLight, myEnvironmentLight);
 
-		//SetBlendState(BlendState::BS_Additive);
-		//SetDepthStencilState(DepthStencilState::DSS_ReadOnly);
-		//myForwardRenderer.RenderParticles(camera, particlesEntitiesToRender);
+		SetBlendState(BlendState::BS_Additive);
+		SetDepthStencilState(DepthStencilState::DSS_ReadOnly);
+		myForwardRenderer.RenderParticles(camera, particlesEntitiesToRender);
 	}
 }
 

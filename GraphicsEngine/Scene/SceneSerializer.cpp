@@ -190,7 +190,6 @@ bool SceneSerializer::Deserialize(const char* aFileName)
 				comp.light.ourlightBuffer.Intensity = ent["LightComponent"]["Intensity"].as<float>();
 				comp.light.ourlightBuffer.Direction = ent["LightComponent"]["Direction"].as<Vector3f>();
 				comp.light.ourlightBuffer.Range = ent["LightComponent"]["Range"].as<float>();
-				comp.light.ourlightBuffer.Position = ent["LightComponent"]["Position"].as<Vector3f>();
 				comp.light.ourlightBuffer.Attenuation = ent["LightComponent"]["Attenuation"].as<float>();
 				comp.light.ourlightBuffer.SpotInnerRadius = ent["LightComponent"]["SpotInnerRadius"].as<float>();
 				comp.light.ourlightBuffer.SpotOuterRadius = ent["LightComponent"]["SpotOuterRadius"].as<float>();
@@ -290,7 +289,6 @@ void SceneSerializer::SerializeEntity(YAML::Emitter& outEmitter, Entity aEntity)
 		outEmitter << YAML::Key << "Intensity" << YAML::Value << comp.light.ourlightBuffer.Intensity;
 		outEmitter << YAML::Key << "Direction" << YAML::Value << comp.light.ourlightBuffer.Direction;
 		outEmitter << YAML::Key << "Range" << YAML::Value << comp.light.ourlightBuffer.Range;
-		outEmitter << YAML::Key << "Position" << YAML::Value << comp.light.ourlightBuffer.Position;
 		outEmitter << YAML::Key << "Attenuation" << YAML::Value << comp.light.ourlightBuffer.Attenuation;
 		outEmitter << YAML::Key << "SpotInnerRadius" << YAML::Value << comp.light.ourlightBuffer.SpotInnerRadius;
 		outEmitter << YAML::Key << "SpotOuterRadius" << YAML::Value << comp.light.ourlightBuffer.SpotOuterRadius;
