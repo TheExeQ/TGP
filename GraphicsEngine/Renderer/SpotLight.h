@@ -12,16 +12,16 @@ public:
 
 	inline float GetRange() const
 	{
-		return ourlightBuffer.Range;
+		return ourLightBuffer.Range;
 	}
 
 	inline float GetInnerCone() const
 	{
-		return ourlightBuffer.SpotInnerRadius;
+		return ourLightBuffer.SpotInnerRadius;
 	}
 
 	inline float GetOuterCone() const
 	{
-		return ourlightBuffer.SpotOuterRadius;
+		return ourLightBuffer.SpotOuterRadius;
 	}
 };

@@ -10,6 +10,6 @@ public:
 
 	inline float GetRange() const 
 	{
-		return ourlightBuffer.Range;
+		return ourLightBuffer.Range;
 	}
 };

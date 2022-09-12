@@ -1,8 +1,10 @@
 #pragma once
 #include <wrl/client.h>
 #include <d3d11.h>
+#include "Core/Base.h"
 #include "Math/Vector.hpp"
 #include "Scene/Scene.h"
+#include "Math/Matrix4x4.hpp"
 
 using namespace CommonUtilities;
 using namespace Microsoft::WRL;
@@ -12,6 +14,9 @@ class Light
 public:
 	struct LightBufferData
 	{
+		Matrix4x4<float> LightView;
+		Matrix4x4<float> LightProj;
+
 		Vector3<float> Color;
 		float Intensity;
 		Vector3<float> Direction;
@@ -22,7 +27,12 @@ public:
 		float SpotInnerRadius;
 		float SpotOuterRadius;
 		int LightType;
-		float Padding;
+		bool CastShadows;
+
+		float Near;
+		float Far;
+
+		Vector2f Padding;
 	};
 
 	virtual ~Light() = default;
@@ -30,18 +40,19 @@ public:
 
 	virtual void SetAsResource(ComPtr<ID3D11Buffer> aLightBuffer);
 
-	void SetColor(Vector3f aColor) { ourlightBuffer.Color = aColor; };
-	void SetIntensity(float aIntensity) { ourlightBuffer.Intensity = aIntensity; };
-	void SetDirection(Vector3f aDirection) { ourlightBuffer.Direction = aDirection; };
+	void SetColor(Vector3f aColor) { ourLightBuffer.Color = aColor; };
+	void SetIntensity(float aIntensity) { ourLightBuffer.Intensity = aIntensity; };
+	void SetDirection(Vector3f aDirection) { ourLightBuffer.Direction = aDirection; };
 
-	_inline Vector4<float> GetColor() const { return Vector4(ourlightBuffer.Color.x, ourlightBuffer.Color.y, ourlightBuffer.Color.z, 1.f); };
-	_inline float GetIntensity() const { return ourlightBuffer.Intensity; };
-	_inline Vector3f GetDirection() const { return ourlightBuffer.Direction; };
+	_inline Vector4<float> GetColor() const { return Vector4(ourLightBuffer.Color.x, ourLightBuffer.Color.y, ourLightBuffer.Color.z, 1.f); };
+	_inline float GetIntensity() const { return ourLightBuffer.Intensity; };
+	_inline Vector3f GetDirection() const { return ourLightBuffer.Direction; };
 
-	_inline LightBufferData GetLightBufferData() { return ourlightBuffer; };
+	_inline LightBufferData GetLightBufferData() { return ourLightBuffer; };
 
 protected:
-	LightBufferData ourlightBuffer;
+	LightBufferData ourLightBuffer;
+	Scope<DepthStencil> myShadowMap;
 
 private:
 	friend class LightAssetHandler;

@@ -19,5 +19,4 @@ protected:
 	ComPtr<ID3D11ShaderResourceView> mySRV;
 private:
 	friend class TextureAssetHandler;
-
 };

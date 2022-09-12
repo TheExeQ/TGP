@@ -3,8 +3,8 @@
 
 void Light::Init(Vector3<float> aColor, float anIntensity)
 {
-	ourlightBuffer.Color = aColor;
-	ourlightBuffer.Intensity = anIntensity;
+	ourLightBuffer.Color = aColor;
+	ourLightBuffer.Intensity = anIntensity;
 }
 
 void Light::SetAsResource(ComPtr<ID3D11Buffer> aLightBuffer)
@@ -25,7 +25,7 @@ void Light::SetAsResource(ComPtr<ID3D11Buffer> aLightBuffer)
 		return;
 	}
 
-	memcpy_s(bufferData.pData, sizeof(LightBufferData), &ourlightBuffer, sizeof(LightBufferData));
+	memcpy_s(bufferData.pData, sizeof(LightBufferData), &ourLightBuffer, sizeof(LightBufferData));
 
 	DX11::myContext->Unmap(aLightBuffer.Get(), 0);
 
