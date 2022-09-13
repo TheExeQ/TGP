@@ -91,11 +91,11 @@ Scope<GBuffer> TextureAssetHandler::CreateGBuffer(int aWidth, int aHeight)
 	return CreateScope<GBuffer>(gbuffer);
 }
 
-Scope<DepthStencil> TextureAssetHandler::CreateDepthStencil(const std::string aName, size_t aWidth, size_t aHeight)
+Ref<DepthStencil> TextureAssetHandler::CreateDepthStencil(const std::string aName, size_t aWidth, size_t aHeight)
 {
 	HRESULT result;
 
-	Scope<DepthStencil> output = CreateScope<DepthStencil>();
+	Ref<DepthStencil> output = CreateRef<DepthStencil>();
 	output->myName = aName;
 
 	D3D11_TEXTURE2D_DESC desc = {};
@@ -125,7 +125,7 @@ Scope<DepthStencil> TextureAssetHandler::CreateDepthStencil(const std::string aN
 	assert(SUCCEEDED(result));
 
 	D3D11_DEPTH_STENCIL_VIEW_DESC dsv_desc = {};
-	dsv_desc.Format = DXGI_FORMAT::DXGI_FORMAT_R32_FLOAT;
+	dsv_desc.Format = DXGI_FORMAT::DXGI_FORMAT_D32_FLOAT;
 	dsv_desc.ViewDimension = D3D11_DSV_DIMENSION::D3D11_DSV_DIMENSION_TEXTURE2D;
 	result = DX11::myDevice->CreateDepthStencilView(output->myTexture.Get(), &dsv_desc, output->myDSV.GetAddressOf());
 

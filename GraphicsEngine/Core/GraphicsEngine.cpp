@@ -11,8 +11,54 @@
 #include "Scene/SceneSerializer.h"
 #include "Editor/SettingsPanel.h"
 
+#include <commctrl.h>
+
 CommonUtilities::InputHandler GraphicsEngine::myInputHandler;
 CommonUtilities::Timer GraphicsEngine::myTimer;
+
+// Forward declare message handler from imgui_impl_win32.cpp
+extern IMGUI_IMPL_API LRESULT ImGui_ImplWin32_WndProcHandler(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam);
+
+LRESULT CALLBACK GraphicsEngine::WinProc(_In_ HWND hWnd, _In_ UINT uMsg, _In_ WPARAM wParam, _In_ LPARAM lParam)
+{
+	if (::ImGui_ImplWin32_WndProcHandler(hWnd, uMsg, wParam, lParam))
+		return true;
+
+	myInputHandler.UpdateEvents(uMsg, wParam, lParam);
+
+	// We want to be able to access the Graphics Engine instance from inside this function.
+	static GraphicsEngine* graphicsEnginePtr = nullptr;
+
+	if (uMsg == WM_DESTROY || uMsg == WM_CLOSE)
+	{
+		PostQuitMessage(0);
+	}
+	else if (uMsg == WM_CREATE)
+	{
+		const CREATESTRUCT* createdStruct = reinterpret_cast<CREATESTRUCT*>(lParam);
+		graphicsEnginePtr = static_cast<GraphicsEngine*>(createdStruct->lpCreateParams);
+	}
+
+	return DefWindowProc(hWnd, uMsg, wParam, lParam);
+}
+
+//LRESULT CALLBACK StaticWndProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam, UINT_PTR uIdSubclass, DWORD_PTR dwRefData)
+//{
+//	switch (uMsg) 
+//	{
+//	case WM_NCDESTROY: 
+//	{
+//		RemoveWindowSubclass(hwnd, &StaticWndProc, uIdSubclass);
+//		break;
+//	}
+//	case WM_DROPFILES: 
+//	{
+//		break;
+//	}
+//	}
+//
+//	return DefSubclassProc(hwnd, uMsg, wParam, lParam);
+//}
 
 bool GraphicsEngine::Initialize(unsigned someX, unsigned someY,
 	unsigned someWidth, unsigned someHeight,
@@ -54,6 +100,20 @@ bool GraphicsEngine::Initialize(unsigned someX, unsigned someY,
 		nullptr, nullptr, nullptr,
 		this
 		);
+
+	//HWND hStatic = CreateWindowEx(
+	//	WS_EX_ACCEPTFILES,
+	//	TEXT("static"),
+	//	TEXT("Drag and drop your file to this area"),
+	//	WS_VISIBLE | WS_CHILD,
+	//	20, // x
+	//	20, // y
+	//	120, // w
+	//	60, // h
+	//	myWindowHandle, // parent window
+	//	(HMENU)1, // unique label
+	//	NULL, NULL);
+	//SetWindowSubclass(hStatic, &StaticWndProc, 0, 0);
 
 	// F1 -- This is where we should init our Framework
 	if (!myFramework.Initialize(myWindowHandle, false))
@@ -134,6 +194,7 @@ bool GraphicsEngine::Initialize(unsigned someX, unsigned someY,
 		clientRect.bottom - clientRect.top);
 
 	myDeferredRenderer.Init();
+	myShadowRenderer.Init();
 	myImGuiLayer.OnAttach(GetWindowHandle());
 
 	if (!InitializeScene())
@@ -222,32 +283,6 @@ bool GraphicsEngine::CleanUp()
 	return false;
 }
 
-// Forward declare message handler from imgui_impl_win32.cpp
-extern IMGUI_IMPL_API LRESULT ImGui_ImplWin32_WndProcHandler(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam);
-
-LRESULT CALLBACK GraphicsEngine::WinProc(_In_ HWND hWnd, _In_ UINT uMsg, _In_ WPARAM wParam, _In_ LPARAM lParam)
-{
-	if (::ImGui_ImplWin32_WndProcHandler(hWnd, uMsg, wParam, lParam))
-		return true;
-
-	myInputHandler.UpdateEvents(uMsg, wParam, lParam);
-	
-	// We want to be able to access the Graphics Engine instance from inside this function.
-	static GraphicsEngine* graphicsEnginePtr = nullptr;
-
-	if(uMsg == WM_DESTROY || uMsg == WM_CLOSE)
-	{
-		PostQuitMessage(0);
-	}
-	else if (uMsg == WM_CREATE)
-	{
-		const CREATESTRUCT* createdStruct = reinterpret_cast<CREATESTRUCT*>(lParam);
-		graphicsEnginePtr = static_cast<GraphicsEngine*>(createdStruct->lpCreateParams);
-	}
-
-	return DefWindowProc(hWnd, uMsg, wParam, lParam);
-}
-
 void GraphicsEngine::BeginFrame()
 {
 	// F1 - This is where we clear our buffers and start the DX frame.
@@ -273,9 +308,9 @@ void GraphicsEngine::RenderFrame()
 		std::vector<Entity> lightEntitiesToRender = myScene->CullLights(camera);
 		std::vector<Entity> particlesEntitiesToRender = myScene->CullParticles(camera);
 		
-		myDirectionalLight->ClearShadowMap();
-		myDirectionalLight->SetShadowMapAsDepth();
-		myShadowRenderer.Render(lightEntitiesToRender, myDirectionalLight, modelEntitiesToRender);
+		//myDirectionalLight->ClearShadowMap();
+		//myDirectionalLight->SetShadowMapAsDepth();
+		//myShadowRenderer.Render(lightEntitiesToRender, myDirectionalLight, modelEntitiesToRender);
 
 		myGBuffer->SetAsTarget();
 		myDeferredRenderer.GenereteGBuffer(camera, modelEntitiesToRender, myTimer.GetDeltaTime(), myTimer.GetTotalTime());

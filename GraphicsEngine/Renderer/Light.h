@@ -45,6 +45,8 @@ public:
 	void SetIntensity(float aIntensity) { ourLightBuffer.Intensity = aIntensity; };
 	void SetDirection(Vector3f aDirection) { ourLightBuffer.Direction = aDirection; };
 
+	void SetShadowMapAsDepth();
+
 	_inline Vector4<float> GetColor() const { return Vector4(ourLightBuffer.Color.x, ourLightBuffer.Color.y, ourLightBuffer.Color.z, 1.f); };
 	_inline float GetIntensity() const { return ourLightBuffer.Intensity; };
 	_inline Vector3f GetDirection() const { return ourLightBuffer.Direction; };
@@ -52,11 +54,10 @@ public:
 	_inline LightBufferData GetLightBufferData() { return ourLightBuffer; };
 
 	_inline void ClearShadowMap() { myShadowMap.reset(); };
-	_inline void SetShadowMapAsDepth();
 
 protected:
 	LightBufferData ourLightBuffer;
-	Scope<DepthStencil> myShadowMap;
+	Ref<DepthStencil> myShadowMap;
 
 private:
 	friend class LightAssetHandler;

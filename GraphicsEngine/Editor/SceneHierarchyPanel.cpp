@@ -295,13 +295,13 @@ void SceneHierarchyPanel::DrawComponents(Entity aEntity)
 
 	DrawComponent<LightComponent>("Light", aEntity, [](auto& component)
 		{
-			DrawVec3Control("Color", component.light.ourlightBuffer.Color);
-			ImGui::InputFloat("Intensity", &component.light.ourlightBuffer.Intensity);
-			//DrawVec3Control("Direction", component.light.ourlightBuffer.Direction);
-			ImGui::InputFloat("Range", &component.light.ourlightBuffer.Range);
-			ImGui::InputFloat("Attenuation", &component.light.ourlightBuffer.Attenuation);
-			ImGui::InputFloat("SpotInnerRadius", &component.light.ourlightBuffer.SpotInnerRadius);
-			ImGui::InputFloat("SpotOuterRadius", &component.light.ourlightBuffer.SpotOuterRadius);
-			ImGui::InputInt("LightType", &component.light.ourlightBuffer.LightType);
+			DrawVec3Control("Color", component.light.ourLightBuffer.Color);
+			ImGui::InputFloat("Intensity", &component.light.ourLightBuffer.Intensity);
+			//DrawVec3Control("Direction", component.light.ourLightBuffer.Direction);
+			ImGui::InputFloat("Range", &component.light.ourLightBuffer.Range);
+			ImGui::InputFloat("Attenuation", &component.light.ourLightBuffer.Attenuation);
+			ImGui::InputFloat("SpotInnerRadius", &component.light.ourLightBuffer.SpotInnerRadius);
+			ImGui::InputFloat("SpotOuterRadius", &component.light.ourLightBuffer.SpotOuterRadius);
+			ImGui::InputInt("LightType", &component.light.ourLightBuffer.LightType);
 		});
 }

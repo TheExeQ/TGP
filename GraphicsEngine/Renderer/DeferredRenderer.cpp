@@ -16,11 +16,11 @@ bool DeferredRenderer::Init()
     std::ifstream vsFile;
     std::ifstream psFile;
 
-    psFile.open("../Assets/Shaders/GBufferPS.cso", std::ios::binary);
-    std::string psData = { std::istreambuf_iterator<char>(psFile), std::istreambuf_iterator<char>() };
+	psFile.open("../Assets/Shaders/GBufferPS.cso", std::ios::binary);
+	std::string psData = { std::istreambuf_iterator<char>(psFile), std::istreambuf_iterator<char>() };
 
-    result = DX11::myDevice->CreatePixelShader(psData.data(), psData.size(), 0, &myGBufferPS);
-    psFile.close();
+	result = DX11::myDevice->CreatePixelShader(psData.data(), psData.size(), 0, &myGBufferPS);
+	psFile.close();
     
     // ----
     

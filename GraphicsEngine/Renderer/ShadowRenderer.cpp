@@ -5,7 +5,36 @@
 
 bool ShadowRenderer::Init()
 {
+	HRESULT result = S_FALSE;
 
+	D3D11_BUFFER_DESC bufferDesc;
+	ZeroMemory(&bufferDesc, sizeof(bufferDesc));
+	bufferDesc.Usage = D3D11_USAGE_DYNAMIC;
+	bufferDesc.BindFlags = D3D11_BIND_CONSTANT_BUFFER;
+	bufferDesc.CPUAccessFlags = D3D11_CPU_ACCESS_WRITE;
+
+	bufferDesc.ByteWidth = sizeof(FrameBufferData);
+	result = DX11::myDevice->CreateBuffer(&bufferDesc, nullptr, myFrameBuffer.GetAddressOf());
+	if (FAILED(result))
+	{
+		return false;
+	}
+
+	bufferDesc.ByteWidth = sizeof(ObjectBufferData);
+	result = DX11::myDevice->CreateBuffer(&bufferDesc, nullptr, myObjectBuffer.GetAddressOf());
+	if (FAILED(result))
+	{
+		return false;
+	}
+
+	bufferDesc.ByteWidth = sizeof(MaterialBufferData);
+	result = DX11::myDevice->CreateBuffer(&bufferDesc, nullptr, myMaterialBuffer.GetAddressOf());
+	if (FAILED(result))
+	{
+		return false;
+	}
+
+	return true;
 }
 
 void ShadowRenderer::Render(std::vector<Entity>& aLight, Ref<DirectionalLight> aDirectionalLight, std::vector<Entity>& aModelList)

@@ -79,6 +79,9 @@ cbuffer MaterialBuffer : register(b2)
 
 struct LightData
 {
+    float4x4 LightView;
+    float4x4 LightProj;
+    
     float3 Color;
     float Intensity;
     float3 Direction;
@@ -89,7 +92,12 @@ struct LightData
     float SpotInnerRadius;
     float SpotOuterRadius;
     int LightType;
-    float Padding;
+    bool CastShadows;
+    
+    float Near;
+    float Far;
+    
+    float2 Padding;
 };
 
 cbuffer LightBuffer : register(b3)

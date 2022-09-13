@@ -186,14 +186,14 @@ bool SceneSerializer::Deserialize(const char* aFileName)
 			if (ent["LightComponent"])
 			{
 				auto& comp = DeserializedEntity.AddComponent<LightComponent>();
-				comp.light.ourlightBuffer.Color = ent["LightComponent"]["Color"].as<Vector3f>();
-				comp.light.ourlightBuffer.Intensity = ent["LightComponent"]["Intensity"].as<float>();
-				comp.light.ourlightBuffer.Direction = ent["LightComponent"]["Direction"].as<Vector3f>();
-				comp.light.ourlightBuffer.Range = ent["LightComponent"]["Range"].as<float>();
-				comp.light.ourlightBuffer.Attenuation = ent["LightComponent"]["Attenuation"].as<float>();
-				comp.light.ourlightBuffer.SpotInnerRadius = ent["LightComponent"]["SpotInnerRadius"].as<float>();
-				comp.light.ourlightBuffer.SpotOuterRadius = ent["LightComponent"]["SpotOuterRadius"].as<float>();
-				comp.light.ourlightBuffer.LightType = ent["LightComponent"]["LightType"].as<int>();
+				comp.light.ourLightBuffer.Color = ent["LightComponent"]["Color"].as<Vector3f>();
+				comp.light.ourLightBuffer.Intensity = ent["LightComponent"]["Intensity"].as<float>();
+				comp.light.ourLightBuffer.Direction = ent["LightComponent"]["Direction"].as<Vector3f>();
+				comp.light.ourLightBuffer.Range = ent["LightComponent"]["Range"].as<float>();
+				comp.light.ourLightBuffer.Attenuation = ent["LightComponent"]["Attenuation"].as<float>();
+				comp.light.ourLightBuffer.SpotInnerRadius = ent["LightComponent"]["SpotInnerRadius"].as<float>();
+				comp.light.ourLightBuffer.SpotOuterRadius = ent["LightComponent"]["SpotOuterRadius"].as<float>();
+				comp.light.ourLightBuffer.LightType = ent["LightComponent"]["LightType"].as<int>();
 			}
 		}
 	}
@@ -285,14 +285,14 @@ void SceneSerializer::SerializeEntity(YAML::Emitter& outEmitter, Entity aEntity)
 
 		outEmitter << YAML::Key << "LightComponent";
 		outEmitter << YAML::BeginMap;
-		outEmitter << YAML::Key << "Color" << YAML::Value << comp.light.ourlightBuffer.Color;
-		outEmitter << YAML::Key << "Intensity" << YAML::Value << comp.light.ourlightBuffer.Intensity;
-		outEmitter << YAML::Key << "Direction" << YAML::Value << comp.light.ourlightBuffer.Direction;
-		outEmitter << YAML::Key << "Range" << YAML::Value << comp.light.ourlightBuffer.Range;
-		outEmitter << YAML::Key << "Attenuation" << YAML::Value << comp.light.ourlightBuffer.Attenuation;
-		outEmitter << YAML::Key << "SpotInnerRadius" << YAML::Value << comp.light.ourlightBuffer.SpotInnerRadius;
-		outEmitter << YAML::Key << "SpotOuterRadius" << YAML::Value << comp.light.ourlightBuffer.SpotOuterRadius;
-		outEmitter << YAML::Key << "LightType" << YAML::Value << comp.light.ourlightBuffer.LightType;
+		outEmitter << YAML::Key << "Color" << YAML::Value << comp.light.ourLightBuffer.Color;
+		outEmitter << YAML::Key << "Intensity" << YAML::Value << comp.light.ourLightBuffer.Intensity;
+		outEmitter << YAML::Key << "Direction" << YAML::Value << comp.light.ourLightBuffer.Direction;
+		outEmitter << YAML::Key << "Range" << YAML::Value << comp.light.ourLightBuffer.Range;
+		outEmitter << YAML::Key << "Attenuation" << YAML::Value << comp.light.ourLightBuffer.Attenuation;
+		outEmitter << YAML::Key << "SpotInnerRadius" << YAML::Value << comp.light.ourLightBuffer.SpotInnerRadius;
+		outEmitter << YAML::Key << "SpotOuterRadius" << YAML::Value << comp.light.ourLightBuffer.SpotOuterRadius;
+		outEmitter << YAML::Key << "LightType" << YAML::Value << comp.light.ourLightBuffer.LightType;
 		outEmitter << YAML::EndMap;
 	}
 
