@@ -184,6 +184,29 @@ bool GraphicsEngine::Initialize(unsigned someX, unsigned someY,
 		return false;
 	}
 
+	D3D11_SAMPLER_DESC samplerDesc;
+
+	samplerDesc.Filter = D3D11_FILTER_MIN_MAG_MIP_LINEAR;
+	samplerDesc.AddressU = D3D11_TEXTURE_ADDRESS_CLAMP;
+	samplerDesc.AddressV = D3D11_TEXTURE_ADDRESS_CLAMP;
+	samplerDesc.AddressW = D3D11_TEXTURE_ADDRESS_CLAMP;
+	samplerDesc.MipLODBias = 0.f;
+	samplerDesc.MaxAnisotropy = 1.f;
+	samplerDesc.ComparisonFunc = D3D11_COMPARISON_LESS;
+	samplerDesc.BorderColor[0] = 0.f;
+	samplerDesc.BorderColor[1] = 0.f;
+	samplerDesc.BorderColor[2] = 0.f;
+	samplerDesc.BorderColor[3] = 0.f;
+	samplerDesc.MinLOD = 0.f;
+	samplerDesc.MaxLOD = D3D11_FLOAT32_MAX;
+
+	result = DX11::myDevice->CreateSamplerState(&samplerDesc, &mySamplerStates[SamplerState::SS_Default]);
+
+	if (FAILED(result))
+	{
+		return false;
+	}
+
 	myDepthStencilStates[DepthStencilState::DSS_ReadWrite] = nullptr;
 
 	RECT clientRect;
@@ -397,4 +420,17 @@ void GraphicsEngine::SetBlendState(BlendState aState)
 void GraphicsEngine::SetDepthStencilState(DepthStencilState aState)
 {
 	DX11::myContext->OMSetDepthStencilState(myDepthStencilStates[aState].Get(), 0);
+}
+
+void GraphicsEngine::SetSamplerState(SamplerState aState, uint32_t aSlot)
+{
+	DX11::myContext->PSSetSamplers(aSlot, 1, mySamplerStates[aState].GetAddressOf());
+}
+
+void GraphicsEngine::ResetStates()
+{
+	SetBlendState(BlendState::BS_None);
+	SetDepthStencilState(DSS_ReadWrite);
+	SetSamplerState(SS_Default, 0);
+	SetSamplerState(SS_PointClamp, 1);
 }

@@ -33,6 +33,13 @@ enum DepthStencilState
 	DSS_Count,
 };
 
+enum SamplerState
+{
+	SS_Default,
+	SS_PointClamp,
+	SS_Count,
+};
+
 class GraphicsEngine
 {
 	SIZE myWindowSize{0,0};
@@ -58,6 +65,9 @@ public:
 
 	void SetBlendState(BlendState aState);
 	void SetDepthStencilState(DepthStencilState aState);
+	void SetSamplerState(SamplerState aState, uint32_t aSlot);
+
+	void ResetStates();
 
 	Scope<GBuffer>& GetGBuffer() { return myGBuffer; };
 
@@ -83,6 +93,7 @@ private:
 
 	std::array<ComPtr<ID3D11BlendState>, BlendState::BS_Count> myBlendStates;
 	std::array<ComPtr<ID3D11DepthStencilState>, DepthStencilState::DSS_Count> myDepthStencilStates;
+	std::array<ComPtr<ID3D11SamplerState>, SamplerState::SS_Count> mySamplerStates;
 
 	static CommonUtilities::InputHandler myInputHandler;
 	static CommonUtilities::Timer myTimer;

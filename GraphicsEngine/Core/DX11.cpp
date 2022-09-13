@@ -108,7 +108,7 @@ bool DX11::Initialize(HWND aWindowHandle, bool aDebug)
 	{
 		return false;
 	}
-	
+
 	return true;
 }
 
