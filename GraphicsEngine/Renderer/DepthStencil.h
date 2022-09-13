@@ -13,6 +13,8 @@ public:
 		myDSV.Reset();
 	}
 
+	void SetAsDepth();
+
 protected:
 	ComPtr<ID3D11DepthStencilView> myDSV;
 	D3D11_VIEWPORT myViewport;

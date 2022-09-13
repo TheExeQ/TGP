@@ -1,6 +1,8 @@
 #pragma once
 #include "ConstantBufferTypes.h"
+#include "Core/Base.h"
 #include "Scene/Entity.h"
+#include "DirectionalLight.h"
 
 #include <vector>
 
@@ -8,7 +10,7 @@ class ShadowRenderer
 {
 public:
 	bool Init();
-	void Render(Entity& aLight, std::vector<Entity>& aModelList);
+	void Render(std::vector<Entity>& aLight, Ref<DirectionalLight> aDirectionalLight, std::vector<Entity>& aModelList);
 
 private:
 	FrameBufferData myFrameBufferData;

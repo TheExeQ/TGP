@@ -273,6 +273,10 @@ void GraphicsEngine::RenderFrame()
 		std::vector<Entity> lightEntitiesToRender = myScene->CullLights(camera);
 		std::vector<Entity> particlesEntitiesToRender = myScene->CullParticles(camera);
 		
+		myDirectionalLight->ClearShadowMap();
+		myDirectionalLight->SetShadowMapAsDepth();
+		myShadowRenderer.Render(lightEntitiesToRender, myDirectionalLight, modelEntitiesToRender);
+
 		myGBuffer->SetAsTarget();
 		myDeferredRenderer.GenereteGBuffer(camera, modelEntitiesToRender, myTimer.GetDeltaTime(), myTimer.GetTotalTime());
 		myGBuffer->ClearTarget();

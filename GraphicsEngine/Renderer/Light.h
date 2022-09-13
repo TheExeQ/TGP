@@ -5,6 +5,7 @@
 #include "Math/Vector.hpp"
 #include "Scene/Scene.h"
 #include "Math/Matrix4x4.hpp"
+#include "DepthStencil.h"
 
 using namespace CommonUtilities;
 using namespace Microsoft::WRL;
@@ -49,6 +50,9 @@ public:
 	_inline Vector3f GetDirection() const { return ourLightBuffer.Direction; };
 
 	_inline LightBufferData GetLightBufferData() { return ourLightBuffer; };
+
+	_inline void ClearShadowMap() { myShadowMap.reset(); };
+	_inline void SetShadowMapAsDepth();
 
 protected:
 	LightBufferData ourLightBuffer;

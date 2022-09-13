@@ -4,6 +4,8 @@
 #include "Core/DX11.h"
 #include "Renderer/ForwardRenderer.h"
 #include "Renderer/DeferredRenderer.h"
+#include "Renderer/ShadowRenderer.h"
+#include "Renderer/GBuffer.h"
 #include "Scene/Scene.h"
 #include "Renderer/ModelAssetHandler.h"
 #include "CU/Timer.hpp"
@@ -11,7 +13,6 @@
 #include "Renderer/DirectionalLight.h"
 #include "Renderer/EnvironmentLight.h"
 #include "ImGui/ImGuiLayer.h"
-#include "Renderer/GBuffer.h"
 #include "Scene/Entity.h"
 
 #include "Editor/EditorLayer.h"
@@ -72,6 +73,7 @@ private:
 	DX11 myFramework;
 	ForwardRenderer myForwardRenderer;
 	DeferredRenderer myDeferredRenderer;
+	ShadowRenderer myShadowRenderer;
 	Ref<Scene> myScene;
 	ModelAssetHandler myModelAssetHandler;
 	
