@@ -99,6 +99,30 @@ DeferredPixelOutput main(DeferredVertexToPixel input)
 
     }
     
+    if (LB_DirectionalLight.CastShadows)
+    {
+        const float4 worldToLightView = mul(LB_DirectionalLight.LightView, worldPosition);
+        const float4 lightViewToLightProj = mul(LB_DirectionalLight.LightProj, worldToLightView);
+        
+        float2 projectedTexCoord;
+        projectedTexCoord.x = lightViewToLightProj.x / lightViewToLightProj.w / 2.f + 0.5f;
+        projectedTexCoord.y = -lightViewToLightProj.y / lightViewToLightProj.w / 2.f + 0.5f;
+
+        if (saturate(projectedTexCoord.x) == projectedTexCoord.x &&
+            saturate(projectedTexCoord.y) == projectedTexCoord.y)
+        {
+            const float shadowBias = 0.0005f;
+            const float shadow = 0.f;
+            const float viewDepth = (lightViewToLightProj.z / lightViewToLightProj.w) - shadowBias;
+            const float lightDepth = dirLightShadowMap.Sample(pointClampSampler, projectedTexCoord).r;
+            
+            if (lightDepth < viewDepth)
+            {
+                directLighting *= shadow;
+            }
+        }
+    }
+    
     result.myColor.rgb = LinearToGamma(directLighting + ambientLighting + pointLight + spotLight);
     result.myColor.a = 1.0f;
 

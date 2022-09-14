@@ -96,11 +96,17 @@ void ShadowRenderer::Render(std::vector<Entity>& aLight, Ref<DirectionalLight> a
 
 			DX11::myContext->VSSetConstantBuffers(1, 1, myObjectBuffer.GetAddressOf());
 
+			DX11::myContext->IASetInputLayout(mdlData.myInputLayout.Get());
+			DX11::myContext->IASetVertexBuffers(0, 1, mdlData.myVertexBuffer.GetAddressOf(), &mdlData.myStride, &mdlData.myOffset);
+			DX11::myContext->IASetIndexBuffer(mdlData.myIndexBuffer.Get(), DXGI_FORMAT_R32_UINT, 0);
+			DX11::myContext->IASetPrimitiveTopology(static_cast<D3D11_PRIMITIVE_TOPOLOGY>(mdlData.myPrimitiveTopology));
+
+			DX11::myContext->VSSetShader(mdlData.myVS.Get(), nullptr, 0);
+			DX11::myContext->PSSetShader(mdlData.myPS.Get(), nullptr, 0);
+
 			mdlData.myMaterial->SetAsResource(myMaterialBuffer);
 
-			// Config input assembler
-
-			DX11::myContext->PSSetShader(nullptr, nullptr, 0);
+			//DX11::myContext->PSSetShader(nullptr, nullptr, 0);
 			DX11::myContext->DrawIndexed(mdlData.myIndexCount, 0, 0);
 		}
 	}

@@ -14,6 +14,7 @@ public:
 	}
 
 	void SetAsDepth();
+	void Clear();
 
 protected:
 	ComPtr<ID3D11DepthStencilView> myDSV;

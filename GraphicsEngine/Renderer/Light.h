@@ -53,7 +53,7 @@ public:
 
 	_inline LightBufferData GetLightBufferData() { return ourLightBuffer; };
 
-	_inline void ClearShadowMap() { myShadowMap.reset(); };
+	_inline void ClearShadowMap() { myShadowMap->Clear(); };
 
 protected:
 	LightBufferData ourLightBuffer;

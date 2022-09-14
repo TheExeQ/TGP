@@ -3,7 +3,7 @@ Entities:
     TagComponent:
       Tag: LightRed
     TransformComponent:
-      Position: [-200, 150, 30]
+      Position: [-200, 200, 85]
       Rotation: [0, 0, 0]
       Scale: [1, 1, 1]
     LightComponent:
@@ -19,8 +19,8 @@ Entities:
     TagComponent:
       Tag: EditorCamera
     TransformComponent:
-      Position: [2.28344917, 289.330688, -373.776825]
-      Rotation: [0.473723233, -0.0360050015, 0]
+      Position: [-440.11615, 462.404724, -556.771729]
+      Rotation: [0.469270647, 0.639827132, 0]
       Scale: [1, 1, 1]
     CameraComponent:
       {}
@@ -30,14 +30,14 @@ Entities:
     TransformComponent:
       Position: [0, 0, 0]
       Rotation: [0, 0, 0]
-      Scale: [1, 1, 1]
+      Scale: [10, 1, 10]
     ModelComponent:
       {}
   - Entity: 3316484318424843108
     TagComponent:
       Tag: Chest
     TransformComponent:
-      Position: [-200, 0, 0]
+      Position: [-200, 50, 0]
       Rotation: [0, 3.1415, 0]
       Scale: [1, 1, 1]
     ModelComponent:
@@ -46,7 +46,7 @@ Entities:
     TagComponent:
       Tag: Gremlin
     TransformComponent:
-      Position: [200, 0, 0]
+      Position: [200, 50, 0]
       Rotation: [0, 3.1415, 0]
       Scale: [1, 1, 1]
     ModelComponent:
@@ -55,7 +55,7 @@ Entities:
     TagComponent:
       Tag: ParticleSystem
     TransformComponent:
-      Position: [0, 0, 0]
+      Position: [0, 50, 200]
       Rotation: [0, 0, 0]
       Scale: [1, 1, 1]
     ParticleSystemComponent:
@@ -64,7 +64,7 @@ Entities:
     TagComponent:
       Tag: LightBlue
     TransformComponent:
-      Position: [-220, 0, -100]
+      Position: [-200, 85, -120]
       Rotation: [0, 0, 0]
       Scale: [1, 1, 1]
     LightComponent:
@@ -80,7 +80,7 @@ Entities:
     TagComponent:
       Tag: LightGreen
     TransformComponent:
-      Position: [45, 135, -75]
+      Position: [45, 120, -75]
       Rotation: [-0.785374999, 0, -0.785374999]
       Scale: [1, 1, 1]
     LightComponent:

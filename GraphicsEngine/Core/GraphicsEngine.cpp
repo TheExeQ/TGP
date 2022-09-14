@@ -207,6 +207,29 @@ bool GraphicsEngine::Initialize(unsigned someX, unsigned someY,
 		return false;
 	}
 
+	D3D11_SAMPLER_DESC pointSamplerDesc;
+
+	pointSamplerDesc.Filter = D3D11_FILTER_MIN_MAG_MIP_POINT;
+	pointSamplerDesc.AddressU = D3D11_TEXTURE_ADDRESS_CLAMP;
+	pointSamplerDesc.AddressV = D3D11_TEXTURE_ADDRESS_CLAMP;
+	pointSamplerDesc.AddressW = D3D11_TEXTURE_ADDRESS_CLAMP;
+	pointSamplerDesc.MipLODBias = 0.f;
+	pointSamplerDesc.MaxAnisotropy = 1.f;
+	pointSamplerDesc.ComparisonFunc = D3D11_COMPARISON_NEVER;
+	pointSamplerDesc.BorderColor[0] = 0.f;
+	pointSamplerDesc.BorderColor[1] = 0.f;
+	pointSamplerDesc.BorderColor[2] = 0.f;
+	pointSamplerDesc.BorderColor[3] = 0.f;
+	pointSamplerDesc.MinLOD = -FLT_MAX;
+	pointSamplerDesc.MaxLOD = FLT_MAX;
+
+	result = DX11::myDevice->CreateSamplerState(&pointSamplerDesc, &mySamplerStates[SamplerState::SS_PointClamp]);
+
+	if (FAILED(result))
+	{
+		return false;
+	}
+
 	myDepthStencilStates[DepthStencilState::DSS_ReadWrite] = nullptr;
 
 	RECT clientRect;
@@ -309,8 +332,7 @@ bool GraphicsEngine::CleanUp()
 void GraphicsEngine::BeginFrame()
 {
 	// F1 - This is where we clear our buffers and start the DX frame.
-	SetBlendState(BlendState::BS_None);
-	SetDepthStencilState(DepthStencilState::DSS_ReadWrite);
+	ResetStates();
 	myFramework.BeginFrame();
 	myGBuffer->Clear();
 	myImGuiLayer.Begin();
@@ -330,10 +352,12 @@ void GraphicsEngine::RenderFrame()
 		std::vector<Entity> modelEntitiesToRender = myScene->CullModels(camera);
 		std::vector<Entity> lightEntitiesToRender = myScene->CullLights(camera);
 		std::vector<Entity> particlesEntitiesToRender = myScene->CullParticles(camera);
-		
-		//myDirectionalLight->ClearShadowMap();
-		//myDirectionalLight->SetShadowMapAsDepth();
-		//myShadowRenderer.Render(lightEntitiesToRender, myDirectionalLight, modelEntitiesToRender);
+
+		DX11::myContext->OMSetRenderTargets(0, nullptr, nullptr);
+
+		myDirectionalLight->ClearShadowMap();
+		myDirectionalLight->SetShadowMapAsDepth();
+		myShadowRenderer.Render(lightEntitiesToRender, myDirectionalLight, modelEntitiesToRender);
 
 		myGBuffer->SetAsTarget();
 		myDeferredRenderer.GenereteGBuffer(camera, modelEntitiesToRender, myTimer.GetDeltaTime(), myTimer.GetTotalTime());
