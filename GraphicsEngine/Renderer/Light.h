@@ -46,6 +46,7 @@ public:
 	void SetDirection(Vector3f aDirection) { ourLightBuffer.Direction = aDirection; };
 
 	void SetShadowMapAsDepth();
+	void SetShadowMapAsResource();
 
 	_inline Vector4<float> GetColor() const { return Vector4(ourLightBuffer.Color.x, ourLightBuffer.Color.y, ourLightBuffer.Color.z, 1.f); };
 	_inline float GetIntensity() const { return ourLightBuffer.Intensity; };

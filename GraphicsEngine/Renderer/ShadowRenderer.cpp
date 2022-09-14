@@ -102,11 +102,10 @@ void ShadowRenderer::Render(std::vector<Entity>& aLight, Ref<DirectionalLight> a
 			DX11::myContext->IASetPrimitiveTopology(static_cast<D3D11_PRIMITIVE_TOPOLOGY>(mdlData.myPrimitiveTopology));
 
 			DX11::myContext->VSSetShader(mdlData.myVS.Get(), nullptr, 0);
-			DX11::myContext->PSSetShader(mdlData.myPS.Get(), nullptr, 0);
 
 			mdlData.myMaterial->SetAsResource(myMaterialBuffer);
 
-			//DX11::myContext->PSSetShader(nullptr, nullptr, 0);
+			DX11::myContext->PSSetShader(nullptr, nullptr, 0);
 			DX11::myContext->DrawIndexed(mdlData.myIndexCount, 0, 0);
 		}
 	}

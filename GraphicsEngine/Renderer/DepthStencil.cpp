@@ -3,7 +3,7 @@
 
 void DepthStencil::SetAsDepth()
 {
-	DX11::myContext->OMSetRenderTargets(0, DX11::myRenderTarget.GetAddressOf(), myDSV.Get());
+	DX11::myContext->OMSetRenderTargets(1, DX11::myRenderTarget.GetAddressOf(), myDSV.Get());
 }
 
 void DepthStencil::Clear()

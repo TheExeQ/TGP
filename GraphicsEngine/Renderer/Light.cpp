@@ -40,6 +40,10 @@ void Light::SetAsResource(ComPtr<ID3D11Buffer> aLightBuffer)
 void Light::SetShadowMapAsDepth()
 {
 	myShadowMap->SetAsDepth();
+}
+
+void Light::SetShadowMapAsResource()
+{
 	myShadowMap->SetAsResource(6);
 }
 
