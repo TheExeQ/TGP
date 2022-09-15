@@ -2,6 +2,8 @@
 #include "Scene/Scene.h"
 #include "Scene/SceneSerializer.h"
 #include "Core/GraphicsEngine.h"
+#include "Commands/CommandStack.h"
+
 #include <Core/DX11.h>
 #include <ImGui/imgui.h>
 #include <stdio.h>
@@ -55,7 +57,13 @@ void SettingsPanel::OnImGuiRender()
 		DX11::myClearColor = temp;
 	}
 
-	ImGui::SliderFloat("##Blend", &blend, 0.f, 1.f);
+	float blendNew = blend;
+	if (ImGui::SliderFloat("##Blend", &blendNew, 0.f, 1.f))
+	{
+		Ref<ValueCommand<float>> command = CreateRef<ValueCommand<float>>(&blend, blend, blendNew);
+		CommandManager::DoCommand(command);
+	}
+
 	ImGui::SameLine();
 	ImGui::Checkbox("Blending", &blendActive);
 

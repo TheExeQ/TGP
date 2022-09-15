@@ -10,6 +10,7 @@
 #include "Renderer/ParticleAssetHandler.h"
 #include "Scene/SceneSerializer.h"
 #include "Editor/SettingsPanel.h"
+#include "Commands/CommandStack.h"
 
 #include <filesystem>
 #include <shellapi.h>
@@ -435,6 +436,15 @@ void GraphicsEngine::EndFrame()
 
 void GraphicsEngine::Controller()
 {
+	if (myInputHandler.IsKeyPressed(KeyCode::Z) && myInputHandler.IsKeyDown(KeyCode::CONTROL))
+	{
+		CommandManager::Undo();
+	}
+	if (myInputHandler.IsKeyPressed(KeyCode::Y) && myInputHandler.IsKeyDown(KeyCode::CONTROL))
+	{
+		CommandManager::Redo();
+	}
+
 	if (!movementActive) { return; }
 
 	static float moveSpeed = 100.f;

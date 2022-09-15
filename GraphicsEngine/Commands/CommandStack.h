@@ -1,12 +1,13 @@
 #pragma once
 #include "Commands.h"
+#include "Core/Base.h"
 
 #include <stack>
 
 class CommandManager
 {
 public:
-	static void DoCommand(BaseCommand* command)
+	static void DoCommand(Ref<BaseCommand> command)
 	{
 		command->Execute();
 		while (!myRedoStack.empty())
@@ -18,19 +19,25 @@ public:
 
 	static void Undo()
 	{
-		myUndoStack.top()->Undo();
-		myRedoStack.push(myUndoStack.top());
-		myUndoStack.pop();
+		if (!myUndoStack.empty())
+		{
+			myUndoStack.top()->Undo();
+			myRedoStack.push(myUndoStack.top());
+			myUndoStack.pop();
+		}
 	};
 
 	static void Redo()
 	{
-		myRedoStack.top()->Execute();
-		myUndoStack.push(myRedoStack.top());
-		myRedoStack.pop();
+		if (!myRedoStack.empty())
+		{
+			myRedoStack.top()->Execute();
+			myUndoStack.push(myRedoStack.top());
+			myRedoStack.pop();
+		}
 	};
 
 private:
-	static std::stack<BaseCommand*> myUndoStack;
-	static std::stack<BaseCommand*> myRedoStack;
+	inline static std::stack<Ref<BaseCommand>> myUndoStack;
+	inline static std::stack<Ref<BaseCommand>> myRedoStack;
 };

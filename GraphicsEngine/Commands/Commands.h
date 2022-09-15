@@ -10,7 +10,7 @@ struct BaseCommand
 template<typename T>
 struct ValueCommand : public BaseCommand
 {
-	ValueCommand(T* ptr, const T& from, const T& to) : myValuePtr(ptr), myFrom(from), myTo(to) { BaseCommand(); }
+	ValueCommand(T* ptr, const T& from, const T& to) : myValuePtr(ptr), myFrom(from), myTo(to), BaseCommand() { }
 
 	virtual bool Execute() override;
 	virtual bool Undo() override;
@@ -25,10 +25,12 @@ template<typename T>
 bool ValueCommand<T>::Execute()
 {
 	*myValuePtr = myTo;
+	return true;
 }
 
 template<typename T>
 bool ValueCommand<T>::Undo()
 {
 	*myValuePtr = myFrom;
+	return true;
 }
