@@ -11,7 +11,10 @@
 #include "Scene/SceneSerializer.h"
 #include "Editor/SettingsPanel.h"
 
-#include <commctrl.h>
+#include <filesystem>
+#include <shellapi.h>
+
+#define MAX_FILENAME 2000
 
 CommonUtilities::InputHandler GraphicsEngine::myInputHandler;
 CommonUtilities::Timer GraphicsEngine::myTimer;
@@ -29,36 +32,94 @@ LRESULT CALLBACK GraphicsEngine::WinProc(_In_ HWND hWnd, _In_ UINT uMsg, _In_ WP
 	// We want to be able to access the Graphics Engine instance from inside this function.
 	static GraphicsEngine* graphicsEnginePtr = nullptr;
 
-	if (uMsg == WM_DESTROY || uMsg == WM_CLOSE)
+	switch (uMsg)
+	{
+	case WM_DESTROY:
+	case WM_CLOSE:
 	{
 		PostQuitMessage(0);
+		break;
 	}
-	else if (uMsg == WM_CREATE)
+
+	case WM_CREATE:
 	{
 		const CREATESTRUCT* createdStruct = reinterpret_cast<CREATESTRUCT*>(lParam);
 		graphicsEnginePtr = static_cast<GraphicsEngine*>(createdStruct->lpCreateParams);
+		break;
+	}
+
+	case WM_DROPFILES:
+	{
+		HDROP droppedFile = (HDROP)wParam;
+
+		TCHAR filePath[MAX_FILENAME];
+
+		auto fileCount = DragQueryFile(droppedFile, -1, NULL, 0);
+
+		for (int fileId = 0; fileId < fileCount; fileId++)
+		{
+			if (DragQueryFile(droppedFile, fileId, filePath, MAX_FILENAME) > 0)
+			{
+				int filePathLength = 0;
+
+				for (int i = 0; i < MAX_FILENAME; i++)
+				{
+					if (filePath[i] == '\0')
+					{
+						filePathLength = i;
+						break;
+					}
+				}
+
+				int filePathNameBegin = 0;
+
+				for (int i = 0; i < filePathLength; i++)
+				{
+					if (filePath[filePathLength - i] == '\\')
+					{
+						filePathNameBegin = filePathLength - i + 1;
+						break;
+					}
+				}
+
+				std::wstring fileName = L"../Assets/";
+				std::filesystem::path somePath(filePath);
+
+				auto ext = somePath.extension();
+
+				if (ext.string() == ".fbx")
+				{
+					fileName = L"../Models/";
+				}
+				else if (ext.string() == ".dds")
+				{
+					fileName = L"../Textures/";
+				}
+				else if (ext.string() == ".scene")
+				{
+					fileName = L"../Scenes/";
+				}
+				else if (ext.string() == ".settings" || ext.string() == ".preset")
+				{
+					fileName = L"../Settings/";
+				}
+
+				for (int i = filePathNameBegin; i < filePathLength; i++)
+				{
+					fileName.push_back(filePath[i]);
+				}
+
+				CopyFile(filePath, fileName.c_str(), true);
+			}
+		}
+
+		DragFinish(droppedFile);
+		break;
+	}
 	}
 
 	return DefWindowProc(hWnd, uMsg, wParam, lParam);
 }
-
-//LRESULT CALLBACK StaticWndProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam, UINT_PTR uIdSubclass, DWORD_PTR dwRefData)
-//{
-//	switch (uMsg) 
-//	{
-//	case WM_NCDESTROY: 
-//	{
-//		RemoveWindowSubclass(hwnd, &StaticWndProc, uIdSubclass);
-//		break;
-//	}
-//	case WM_DROPFILES: 
-//	{
-//		break;
-//	}
-//	}
-//
-//	return DefSubclassProc(hwnd, uMsg, wParam, lParam);
-//}
 
 bool GraphicsEngine::Initialize(unsigned someX, unsigned someY,
 	unsigned someWidth, unsigned someHeight,
@@ -101,19 +162,7 @@ bool GraphicsEngine::Initialize(unsigned someX, unsigned someY,
 		this
 		);
 
-	//HWND hStatic = CreateWindowEx(
-	//	WS_EX_ACCEPTFILES,
-	//	TEXT("static"),
-	//	TEXT("Drag and drop your file to this area"),
-	//	WS_VISIBLE | WS_CHILD,
-	//	20, // x
-	//	20, // y
-	//	120, // w
-	//	60, // h
-	//	myWindowHandle, // parent window
-	//	(HMENU)1, // unique label
-	//	NULL, NULL);
-	//SetWindowSubclass(hStatic, &StaticWndProc, 0, 0);
+	DragAcceptFiles(myWindowHandle, true);
 
 	// F1 -- This is where we should init our Framework
 	if (!myFramework.Initialize(myWindowHandle, false))

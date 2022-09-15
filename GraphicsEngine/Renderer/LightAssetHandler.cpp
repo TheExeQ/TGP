@@ -42,7 +42,7 @@ Ref<DirectionalLight> LightAssetHandler::CreateDirectionalLight(Vector3<float> a
 	myDirectionalLight->ourLightBuffer.LightProj = lightProj;
 	myDirectionalLight->ourLightBuffer.LightView = Matrix4x4<float>::GetFastInverse(lightView);
 
-	myDirectionalLight->myShadowMap = TextureAssetHandler::CreateDepthStencil("ds", res.x, res.y);
+	myDirectionalLight->myShadowMap = TextureAssetHandler::CreateDepthStencil("shadow", res.x, res.y);
 
 	myDirectionalLight->ourLightBuffer.CastShadows = true;
 
