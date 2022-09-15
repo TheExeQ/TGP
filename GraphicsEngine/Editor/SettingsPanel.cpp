@@ -57,11 +57,25 @@ void SettingsPanel::OnImGuiRender()
 		DX11::myClearColor = temp;
 	}
 
-	float blendNew = blend;
-	if (ImGui::SliderFloat("##Blend", &blendNew, 0.f, 1.f))
+	static bool singleFrameUpdate = true;
+
+	static float blendOld = blend;
+	
+	if (singleFrameUpdate)
 	{
-		Ref<ValueCommand<float>> command = CreateRef<ValueCommand<float>>(&blend, blend, blendNew);
+		blendOld = blend;
+	}
+
+	if (ImGui::SliderFloat("##Blend", &blend, 0.f, 1.f))
+	{
+		singleFrameUpdate = false;
+	}
+
+	if (ImGui::IsItemDeactivatedAfterEdit())
+	{
+		Ref<ValueCommand<float>> command = CreateRef<ValueCommand<float>>(&blend, blendOld, blend);
 		CommandManager::DoCommand(command);
+		singleFrameUpdate = true;
 	}
 
 	ImGui::SameLine();
