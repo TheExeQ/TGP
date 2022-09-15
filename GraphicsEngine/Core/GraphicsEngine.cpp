@@ -317,7 +317,7 @@ bool GraphicsEngine::InitializeScene()
 
 	TextureAssetHandler::LoadTexture("studio_cubemap.dds");
 
-	myDirectionalLight = LightAssetHandler::CreateDirectionalLight({ 1.0f, 1.0f, 1.0f }, 0.5f, { 0.f, 0.f, 0.f });
+	myDirectionalLight = LightAssetHandler::CreateDirectionalLight({ 1.0f, 1.0f, 1.0f }, 0.5f, { 0.f, 200.f, 0.f }, { 45.f, -45.f, 0 }, { -1.f, -1.f, 1.f });
 	myEnvironmentLight = LightAssetHandler::CreateEnvironmentLight("studio_cubemap.dds");
 
 	return true;

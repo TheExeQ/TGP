@@ -1,19 +1,28 @@
 #include "LightAssetHandler.h"
 #include "Math/Matrix.hpp"
 #include "TextureAssetHandler.h"
+#include "Core/GraphicsEngine.h"
 
-Ref<DirectionalLight> LightAssetHandler::CreateDirectionalLight(Vector3<float> aColor, float aIntensity, Vector3<float> aDirection)
+Ref<DirectionalLight> LightAssetHandler::CreateDirectionalLight(Vector3<float> aColor, float aIntensity, 
+	Vector3<float> aPosition, Vector3<float> aRotation, Vector3<float> aDirection)
 {
 	myLights.push_back(CreateRef<DirectionalLight>());
 	myDirectionalLight = std::dynamic_pointer_cast<DirectionalLight>(myLights.back());
 	myDirectionalLight->Init(aColor, aIntensity);
+	myDirectionalLight->ourLightBuffer.Position = aPosition;
 	myDirectionalLight->ourLightBuffer.Direction = aDirection;
 	myDirectionalLight->ourLightBuffer.LightType = 0;
 
 	constexpr float nearPlane = 1.f;
 	constexpr float farPlane = 25000.f;
 
-	const POINT res = { 2048, 2048 };
+	POINT res = { 0, 0 };
+
+	RECT clientRect = { 0, 0, 0, 0 };
+	GetClientRect(GraphicsEngine::Get().GetWindowHandle(), &clientRect);
+
+	res.x = clientRect.right - clientRect.left;
+	res.y = clientRect.bottom - clientRect.top;
 
 	myDirectionalLight->ourLightBuffer.Near = nearPlane;
 	myDirectionalLight->ourLightBuffer.Far = farPlane;
@@ -26,7 +35,12 @@ Ref<DirectionalLight> LightAssetHandler::CreateDirectionalLight(Vector3<float> a
 	lightProj(4, 3) = nearPlane / (nearPlane - farPlane);
 	lightProj(4, 4) = 1.f;
 
+	Matrix4x4<float> lightView;
+	lightView = Matrix4x4<float>::Rotate(lightView, aRotation);
+	lightView = Matrix4x4<float>::Translate(lightView, myDirectionalLight->GetLightBufferData().Position);
+
 	myDirectionalLight->ourLightBuffer.LightProj = lightProj;
+	myDirectionalLight->ourLightBuffer.LightView = Matrix4x4<float>::GetFastInverse(lightView);
 
 	myDirectionalLight->myShadowMap = TextureAssetHandler::CreateDepthStencil("ds", res.x, res.y);
 
