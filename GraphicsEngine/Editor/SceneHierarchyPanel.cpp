@@ -2,12 +2,18 @@
 #include <imgui/imgui.h>
 #include <imgui/imgui_internal.h>
 #include <string>
+#include <filesystem>
 
 #include "Core/GraphicsEngine.h"
 #include "Scene/Components.h"
 #include "Math/Vector.hpp"
 #include "Math/Matrix.hpp"
 #include "Math/Mathf.hpp"
+
+#include "Renderer/ModelAssetHandler.h"
+#include "Renderer/ModelInstance.h"
+#include "Renderer/TextureAssetHandler.h"
+#include "Renderer/Material.h"
 
 void SceneHierarchyPanel::OnImGuiRender()
 {
@@ -285,12 +291,81 @@ void SceneHierarchyPanel::DrawComponents(Entity aEntity)
 
 	DrawComponent<ModelComponent>("Model", aEntity, [](auto& component)
 		{
+			std::vector<std::string> items;
+			std::string path;
 
+			//path = "../Assets/Models/SM";
+			//for (const auto& entry : std::filesystem::directory_iterator(path))
+			//{
+			//	items.push_back(std::string("SM/") + entry.path().filename().string());
+			//}
+
+			//path = "../Assets/Models/SK";
+			//for (const auto& entry : std::filesystem::directory_iterator(path))
+			//{
+			//	items.push_back(std::string("SK/") + entry.path().filename().string());
+			//}
+
+			//static std::string current_item;
+
+			//if (ImGui::BeginCombo("Model", current_item.c_str()))
+			//{
+			//	for (int n = 0; n < items.size(); n++)
+			//	{
+			//		bool is_selected = (current_item == items[n]);
+			//		if (ImGui::Selectable(items[n].c_str(), is_selected))
+			//		{
+			//			current_item = items[n];
+
+			//			Ref<Model>& model = component.modelInstance.GetModel();
+			//			ModelAssetHandler::LoadModel(current_item);
+			//			model = ModelAssetHandler::GetModel(current_item);
+			//		}
+
+			//		if (is_selected)
+			//		{
+			//			ImGui::SetItemDefaultFocus();
+			//		}
+			//	}
+			//	ImGui::EndCombo();
+			//}
+
+			//items.clear();
+
+			path = "../Assets/Textures/";
+			for (const auto& entry : std::filesystem::directory_iterator(path))
+			{
+				items.push_back(entry.path().filename().string());
+			}
+
+			static std::string current_item2;
+
+			if (ImGui::BeginCombo("Texture", current_item2.c_str()))
+			{
+				for (int n = 0; n < items.size(); n++)
+				{
+					bool is_selected = (current_item2 == items[n]);
+					if (ImGui::Selectable(items[n].c_str(), is_selected))
+					{
+						current_item2 = items[n];
+
+						Ref<Material> material = component.modelInstance.GetModel()->GetModelData(0).myMaterial;
+						TextureAssetHandler::LoadTexture(current_item2);
+						material->SetAlbedoTexture(TextureAssetHandler::GetTexture(current_item2));
+					}
+
+					if (is_selected)
+					{
+						ImGui::SetItemDefaultFocus();
+					}
+				}
+				ImGui::EndCombo();
+			}
 		});
 
 	DrawComponent<ParticleSystemComponent>("Particle System", aEntity, [](auto& component)
 		{
-			
+
 		});
 
 	DrawComponent<LightComponent>("Light", aEntity, [](auto& component)

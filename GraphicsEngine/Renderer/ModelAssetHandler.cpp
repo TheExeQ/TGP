@@ -19,12 +19,17 @@ bool ModelAssetHandler::Init()
 	return true;
 }
 
-Ref<ModelInstance> ModelAssetHandler::GetModelInstance(const std::string& name) const
+Ref<ModelInstance> ModelAssetHandler::GetModelInstance(const std::string& name)
 {
 	Ref<ModelInstance> modelInstance = CreateRef<ModelInstance>();
 	modelInstance->Init(myModelRegistry[name]);
 
 	return modelInstance;
+}
+
+Ref<Model> ModelAssetHandler::GetModel(const std::string& name)
+{
+	return myModelRegistry[name];
 }
 
 bool ModelAssetHandler::LoadModel(const std::string& someFilePath)
@@ -279,7 +284,7 @@ bool ModelAssetHandler::LoadModel(const std::string& someFilePath)
 	return false;
 }
 
-bool ModelAssetHandler::LoadAnimation(const std::string& aModelName, const std::string& someFilePath) const
+bool ModelAssetHandler::LoadAnimation(const std::string& aModelName, const std::string& someFilePath)
 {
 	auto model = myModelRegistry[aModelName];
 	TGA::FBXAnimation tgaAnimation;

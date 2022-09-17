@@ -90,19 +90,19 @@ LRESULT CALLBACK GraphicsEngine::WinProc(_In_ HWND hWnd, _In_ UINT uMsg, _In_ WP
 
 				if (ext.string() == ".fbx")
 				{
-					fileName = L"../Models/";
+					fileName.append(L"Models/");
 				}
 				else if (ext.string() == ".dds")
 				{
-					fileName = L"../Textures/";
+					fileName.append(L"Textures/");
 				}
 				else if (ext.string() == ".scene")
 				{
-					fileName = L"../Scenes/";
+					fileName.append(L"Scenes/");
 				}
 				else if (ext.string() == ".settings" || ext.string() == ".preset")
 				{
-					fileName = L"../Settings/";
+					fileName.append(L"Settings/");
 				}
 
 				for (int i = filePathNameBegin; i < filePathLength; i++)
@@ -110,7 +110,16 @@ LRESULT CALLBACK GraphicsEngine::WinProc(_In_ HWND hWnd, _In_ UINT uMsg, _In_ WP
 					fileName.push_back(filePath[i]);
 				}
 
-				CopyFile(filePath, fileName.c_str(), true);
+				auto orgFilename = fileName;
+				orgFilename = orgFilename.substr(0, orgFilename.length() - ext.wstring().length());
+
+				int count = 1;
+
+				while (!CopyFile(filePath, fileName.c_str(), true))
+				{
+					fileName = orgFilename + std::to_wstring(count) + ext.wstring();
+					count++;
+				}
 			}
 		}
 

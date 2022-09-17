@@ -44,6 +44,7 @@ public:
 	FORCEINLINE bool HasBones() { return (mySkeleton.GetRoot()) ? true : false; };
 
 	void AddAnimation(Animation aAnimation);
+	void SetMaterial(Ref<Material> aMaterial);
 
 private:
 	std::array<CommonUtilities::Matrix4x4<float>, 128> myBoneTransforms;

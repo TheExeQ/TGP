@@ -18,3 +18,11 @@ void Model::AddAnimation(Animation aAnimation)
 {
 	mySkeleton.Animations[aAnimation.Name] = aAnimation;
 }
+
+void Model::SetMaterial(Ref<Material> aMaterial)
+{
+	for (auto& data : myData)
+	{
+		data.myMaterial = aMaterial;
+	}
+}

@@ -13,9 +13,10 @@ class ModelAssetHandler
 public:
 	bool Init();
 	
-	Ref<ModelInstance> GetModelInstance(const std::string& name) const;
-	bool LoadModel(const std::string& someFilePath);
-	bool LoadAnimation(const std::string& aModelName, const std::string& someFilePath) const;
+	static Ref<ModelInstance> GetModelInstance(const std::string& name);
+	static Ref<Model> GetModel(const std::string& name);
+	static bool LoadModel(const std::string& someFilePath);
+	static bool LoadAnimation(const std::string& aModelName, const std::string& someFilePath);
 	
 private:
 	bool InitUnitCube();
