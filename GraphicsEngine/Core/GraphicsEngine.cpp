@@ -376,7 +376,7 @@ bool GraphicsEngine::InitializeScene()
 
 	TextureAssetHandler::LoadTexture("studio_cubemap.dds");
 
-	myDirectionalLight = LightAssetHandler::CreateDirectionalLight({ 1.0f, 1.0f, 1.0f }, 0.5f, { 0.f, 200.f, 0.f }, { 45.f, -45.f, 0 }, { -1.f, -1.f, 1.f });
+	myDirectionalLight = LightAssetHandler::CreateDirectionalLight({ 1.0f, 1.0f, 1.0f }, 0.5f, { 0.f, 500.f, 0.f }, { 45.f, -45.f, 0 }, { -1.f, -1.f, 1.f });
 	myEnvironmentLight = LightAssetHandler::CreateEnvironmentLight("studio_cubemap.dds");
 
 	return true;
@@ -414,9 +414,16 @@ void GraphicsEngine::RenderFrame()
 
 		DX11::myContext->OMSetRenderTargets(0, nullptr, nullptr);
 
+		DX11::SetViewport(2048, 2048);
+
 		myDirectionalLight->ClearShadowMap();
 		myDirectionalLight->SetShadowMapAsDepth();
 		myShadowRenderer.Render(lightEntitiesToRender, myDirectionalLight, modelEntitiesToRender);
+
+		auto width = DX11::myClientRect.right - DX11::myClientRect.left;
+		auto height = DX11::myClientRect.bottom - DX11::myClientRect.top;
+
+		DX11::SetViewport(width, height);
 
 		myGBuffer->SetAsTarget();
 		myDeferredRenderer.GenereteGBuffer(camera, modelEntitiesToRender, myTimer.GetDeltaTime(), myTimer.GetTotalTime());

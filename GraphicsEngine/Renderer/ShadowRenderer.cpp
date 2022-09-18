@@ -59,6 +59,7 @@ void ShadowRenderer::Render(std::vector<Entity>& aLight, Ref<DirectionalLight> a
 	memcpy(frameBufferData.pData, &myFrameBufferData, sizeof(FrameBufferData));
 
 	DX11::myContext->Unmap(myFrameBuffer.Get(), 0);
+	DX11::myContext->VSSetConstantBuffers(0, 1, myFrameBuffer.GetAddressOf());
 
 	DX11::myContext->PSSetShader(nullptr, nullptr, 0);
 	DX11::myContext->GSSetShader(nullptr, nullptr, 0);

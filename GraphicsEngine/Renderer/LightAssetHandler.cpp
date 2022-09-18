@@ -13,16 +13,10 @@ Ref<DirectionalLight> LightAssetHandler::CreateDirectionalLight(Vector3<float> a
 	myDirectionalLight->ourLightBuffer.Direction = aDirection;
 	myDirectionalLight->ourLightBuffer.LightType = 0;
 
-	constexpr float nearPlane = 1.f;
+	constexpr float nearPlane = 0.001f;
 	constexpr float farPlane = 25000.f;
 
-	POINT res = { 0, 0 };
-
-	RECT clientRect = { 0, 0, 0, 0 };
-	GetClientRect(GraphicsEngine::Get().GetWindowHandle(), &clientRect);
-
-	res.x = clientRect.right - clientRect.left;
-	res.y = clientRect.bottom - clientRect.top;
+	POINT res = { 2048, 2048 };
 
 	myDirectionalLight->ourLightBuffer.Near = nearPlane;
 	myDirectionalLight->ourLightBuffer.Far = farPlane;

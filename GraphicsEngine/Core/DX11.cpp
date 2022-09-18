@@ -60,13 +60,12 @@ bool DX11::Initialize(HWND aWindowHandle, bool aDebug)
 		return false;
 	}
 
-	RECT clientRect = { 0, 0, 0, 0 };
-	GetClientRect(aWindowHandle, &clientRect);
+	GetClientRect(aWindowHandle, &myClientRect);
 
 	Microsoft::WRL::ComPtr<ID3D11Texture2D> depthBufferTexture;
 	D3D11_TEXTURE2D_DESC depthBufferDesc = {};
-	depthBufferDesc.Width = clientRect.right - clientRect.left;
-	depthBufferDesc.Height = clientRect.bottom - clientRect.top;
+	depthBufferDesc.Width = myClientRect.right - myClientRect.left;
+	depthBufferDesc.Height = myClientRect.bottom - myClientRect.top;
 	depthBufferDesc.ArraySize = 1;
 	depthBufferDesc.Format = DXGI_FORMAT_D32_FLOAT;
 	depthBufferDesc.SampleDesc.Count = 1;
@@ -97,8 +96,8 @@ bool DX11::Initialize(HWND aWindowHandle, bool aDebug)
 	}
 
 	D3D11_VIEWPORT viewport = {};
-	viewport.Width = static_cast<float>(clientRect.right - clientRect.left);
-	viewport.Height = static_cast<float>(clientRect.bottom - clientRect.top);
+	viewport.Width = static_cast<float>(myClientRect.right - myClientRect.left);
+	viewport.Height = static_cast<float>(myClientRect.bottom - myClientRect.top);
 	viewport.MinDepth = 0.0f;
 	viewport.MaxDepth = 1.0f;
 	viewport.TopLeftX = 0;
@@ -121,4 +120,16 @@ void DX11::BeginFrame()
 void DX11::EndFrame()
 {
 	mySwapchain->Present(1, 0); 
+}
+
+void DX11::SetViewport(const int& width, const int& height)
+{
+	D3D11_VIEWPORT viewport = {};
+	viewport.Width = width;
+	viewport.Height = height;
+	viewport.MinDepth = 0.0f;
+	viewport.MaxDepth = 1.0f;
+	viewport.TopLeftX = 0;
+	viewport.TopLeftY = 0;
+	myContext->RSSetViewports(1, &viewport);
 }
