@@ -193,10 +193,7 @@ void DeferredRenderer::Render(Entity aCamera, std::vector<Entity>& aLightList, c
         mySceneLightBufferData.Lights[l] = aLightList[l].GetComponent<LightComponent>().light.GetLightBufferData();
         mySceneLightBufferData.Lights[l].Position = aLightList[l].GetComponent<TransformComponent>().position;
         auto rot = aLightList[l].GetComponent<TransformComponent>().rotation;
-        auto direction = Vector4(0.f, -1.f, 0.f, 0.f) * 
-            CommonUtilities::Matrix4x4<float>::CreateRotationAroundX(rot.x) * 
-            CommonUtilities::Matrix4x4<float>::CreateRotationAroundY(rot.y) *
-            CommonUtilities::Matrix4x4<float>::CreateRotationAroundZ(rot.z);
+        auto direction = Matrix4::Direction(rot);
         mySceneLightBufferData.Lights[l].Direction = { 
             direction.x,
             direction.y,

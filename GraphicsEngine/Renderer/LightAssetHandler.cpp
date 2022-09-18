@@ -4,13 +4,16 @@
 #include "Core/GraphicsEngine.h"
 
 Ref<DirectionalLight> LightAssetHandler::CreateDirectionalLight(Vector3<float> aColor, float aIntensity, 
-	Vector3<float> aPosition, Vector3<float> aRotation, Vector3<float> aDirection)
+	Vector3<float> aPosition, Vector3<float> aRotation)
 {
 	myLights.push_back(CreateRef<DirectionalLight>());
 	myDirectionalLight = std::dynamic_pointer_cast<DirectionalLight>(myLights.back());
 	myDirectionalLight->Init(aColor, aIntensity);
 	myDirectionalLight->ourLightBuffer.Position = aPosition;
-	myDirectionalLight->ourLightBuffer.Direction = aDirection;
+
+	auto dir = Matrix4::Direction(aRotation);
+
+	myDirectionalLight->ourLightBuffer.Direction = Vector3f(dir.x, dir.y, dir.z);
 	myDirectionalLight->ourLightBuffer.LightType = 0;
 
 	constexpr float nearPlane = 0.001f;

@@ -47,6 +47,9 @@ namespace CommonUtilities
 		// Assumes aTransform is made up of nothing but rotations and translations.
 		static Matrix4x4<T> GetFastInverse(const Matrix4x4<T>& aTransform);
 
+		// Get direction from euler angles
+		static Vector4<T> Direction(const Vector3<T>& aRot);
+
 		// Static functions for creating rotation matrices.
 		static Matrix4x4<T> CreateRotationAroundX(T aAngleInRadians);
 		static Matrix4x4<T> CreateRotationAroundY(T aAngleInRadians);
@@ -55,6 +58,17 @@ namespace CommonUtilities
 
 		std::array<std::array<T, 4>, 4> myMatrix;
 	};
+
+	template<typename T>
+	CommonUtilities::Vector4<T> CommonUtilities::Matrix4x4<T>::Direction(const Vector3<T>& aRot)
+	{
+		auto direction = Vector4(0.f, -1.f, 0.f, 0.f) *
+			CommonUtilities::Matrix4x4<float>::CreateRotationAroundX(aRot.x) *
+			CommonUtilities::Matrix4x4<float>::CreateRotationAroundY(aRot.y) *
+			CommonUtilities::Matrix4x4<float>::CreateRotationAroundZ(aRot.z);
+
+		return direction;
+	}
 
 	template<typename T>
 	CommonUtilities::Matrix4x4<T> CommonUtilities::Matrix4x4<T>::Rotate(Matrix4x4<T> aMatrix, const Vector3<T>& aRotation)
