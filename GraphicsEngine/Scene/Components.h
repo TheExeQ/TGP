@@ -29,8 +29,8 @@ struct TransformComponent
 	Matrix4 GetTransform() 
 	{
 		Matrix4 transform;
-		transform = Matrix4::Rotate(transform, rotation);
 		transform = Matrix4::Scale(transform, scale);
+		transform = Matrix4::Rotate(transform, rotation);
 		transform = Matrix4::Translate(transform, position);
 		return transform;
 	};
