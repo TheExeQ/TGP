@@ -11,8 +11,8 @@ class LightAssetHandler
 {
 public:
 	static Ref<DirectionalLight> CreateDirectionalLight(Vector3<float> aColor, float aIntensity, Vector3<float> aPosition, Vector3<float> aRotation);
-	static Ref<PointLight> CreatePointLight(Vector3<float> aColor, float aIntensity, float aRange, Vector3<float> aPosition);
-	static Ref<SpotLight> CreateSpotLight(Vector3<float> aColor, float aIntensity, float aRange, float aInner, float aOuter, Vector3<float> aPosition);
+	static Ref<PointLight> CreatePointLight(Vector3<float> aColor, float aIntensity, float aRange);
+	static Ref<SpotLight> CreateSpotLight(Vector3<float> aColor, float aIntensity, float aRange, float aInner, float aOuter, float fov, float aspectRatio);
 	static Ref<EnvironmentLight> CreateEnvironmentLight(const std::string& aTextureName);
 
 private:

@@ -47,3 +47,8 @@ void Light::SetShadowMapAsResource()
 	myShadowMap->SetAsResource(6);
 }
 
+void Light::SetLightView(const Matrix4& lightView)
+{
+	ourLightBuffer.LightView = Matrix4::GetFastInverse(lightView);
+}
+

@@ -96,7 +96,6 @@ DeferredPixelOutput main(DeferredVertexToPixel input)
                 break;
                 
         }
-
     }
     
     if (LB_DirectionalLight.CastShadows)

@@ -46,7 +46,7 @@ Ref<DirectionalLight> LightAssetHandler::CreateDirectionalLight(Vector3<float> a
 	return myDirectionalLight;
 }
 
-Ref<PointLight> LightAssetHandler::CreatePointLight(Vector3<float> aColor, float aIntensity, float aRange, Vector3<float> aPosition)
+Ref<PointLight> LightAssetHandler::CreatePointLight(Vector3<float> aColor, float aIntensity, float aRange)
 {
 	myLights.push_back(CreateRef<PointLight>());
 	Ref<PointLight> result = std::dynamic_pointer_cast<PointLight>(myLights.back());
@@ -58,7 +58,8 @@ Ref<PointLight> LightAssetHandler::CreatePointLight(Vector3<float> aColor, float
 	return result;
 }
 
-Ref<SpotLight> LightAssetHandler::CreateSpotLight(Vector3<float> aColor, float aIntensity, float aRange, float aInner, float aOuter, Vector3<float> aPosition)
+Ref<SpotLight> LightAssetHandler::CreateSpotLight(Vector3<float> aColor, float aIntensity, float aRange, float aInner, float aOuter, 
+	float fov, float aspectRatio)
 {
 	myLights.push_back(CreateRef<SpotLight>());
 	Ref<SpotLight> result = std::dynamic_pointer_cast<SpotLight>(myLights.back());
@@ -67,7 +68,26 @@ Ref<SpotLight> LightAssetHandler::CreateSpotLight(Vector3<float> aColor, float a
 	result->SetRange(aRange);
 	result->SetInnerCone(aInner);
 	result->SetOuterCone(aOuter);
-	result->ourLightBuffer.LightType = 1;
+	result->ourLightBuffer.LightType = 2;
+
+	constexpr float nearPlane = 0.001f;
+	constexpr float farPlane = 25000.f;
+
+	const float hFOV = 90.f * (3.14f / 180);
+	const float vFOV = 2 * std::atan(std::tan(hFOV * 0.5f) * aspectRatio);
+
+	const float myXScale = 1 / std::tanf(hFOV * 0.5f);
+	const float myYScale = 1 / std::tanf(vFOV * 0.5f);
+	const float Q = farPlane / (farPlane - nearPlane);
+
+	Matrix4x4<float> lightProj;
+
+	lightProj(1, 1) = myXScale;
+	lightProj(2, 2) = myYScale;
+	lightProj(3, 3) = Q;
+	lightProj(3, 4) = 1.f / Q;
+	lightProj(4, 3) = -Q * nearPlane;
+	lightProj(4, 4) = 0.f;
 
 	return result;
 }

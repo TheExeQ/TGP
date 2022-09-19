@@ -3,6 +3,7 @@
 #include "Core/DX11.h"
 #include "Components.h"
 #include "Editor/SettingsPanel.h"
+#include "Renderer/LightAssetHandler.h"
 
 #include <fstream>
 
@@ -186,14 +187,39 @@ bool SceneSerializer::Deserialize(const char* aFileName)
 			if (ent["LightComponent"])
 			{
 				auto& comp = DeserializedEntity.AddComponent<LightComponent>();
+				comp.light.ourLightBuffer.LightType = ent["LightComponent"]["LightType"].as<int>();
 				comp.light.ourLightBuffer.Color = ent["LightComponent"]["Color"].as<Vector3f>();
 				comp.light.ourLightBuffer.Intensity = ent["LightComponent"]["Intensity"].as<float>();
-				comp.light.ourLightBuffer.Direction = ent["LightComponent"]["Direction"].as<Vector3f>();
 				comp.light.ourLightBuffer.Range = ent["LightComponent"]["Range"].as<float>();
-				comp.light.ourLightBuffer.Attenuation = ent["LightComponent"]["Attenuation"].as<float>();
 				comp.light.ourLightBuffer.SpotInnerRadius = ent["LightComponent"]["SpotInnerRadius"].as<float>();
 				comp.light.ourLightBuffer.SpotOuterRadius = ent["LightComponent"]["SpotOuterRadius"].as<float>();
-				comp.light.ourLightBuffer.LightType = ent["LightComponent"]["LightType"].as<int>();
+
+				switch (comp.light.ourLightBuffer.LightType)
+				{
+				case 0:
+				{
+					comp.light.ourLightBuffer = LightAssetHandler::CreateDirectionalLight(comp.light.ourLightBuffer.Color, comp.light.ourLightBuffer.Intensity, { 0.f, 0.f, 0.f }, { 0.f, 0.f, 0.f })->GetLightBufferData();
+					break;
+				}
+				case 1:
+				{
+					comp.light.ourLightBuffer = LightAssetHandler::CreatePointLight(comp.light.ourLightBuffer.Color, comp.light.ourLightBuffer.Intensity,
+						comp.light.ourLightBuffer.Range)->GetLightBufferData();
+					break;
+				}
+				case 2:
+				{
+					comp.light.ourLightBuffer = LightAssetHandler::CreateSpotLight(comp.light.ourLightBuffer.Color, comp.light.ourLightBuffer.Intensity, comp.light.ourLightBuffer.Range
+						, comp.light.ourLightBuffer.SpotInnerRadius, comp.light.ourLightBuffer.SpotOuterRadius, 90.f, 16.f / 9.f)->GetLightBufferData();
+					break;
+				}
+				default:
+				{
+					break;
+				}
+				}
+				comp.light.ourLightBuffer.Direction = ent["LightComponent"]["Direction"].as<Vector3f>();
+				comp.light.ourLightBuffer.Attenuation = ent["LightComponent"]["Attenuation"].as<float>();
 			}
 		}
 	}

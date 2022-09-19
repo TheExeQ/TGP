@@ -9,7 +9,6 @@
 
 #include <entt/entt.hpp>
 
-
 struct TagComponent
 {
 	std::string name;

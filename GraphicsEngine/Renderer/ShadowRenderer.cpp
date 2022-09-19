@@ -34,15 +34,50 @@ bool ShadowRenderer::Init()
 		return false;
 	}
 
+	bufferDesc.ByteWidth = sizeof(SceneLightBufferData);
+	result = DX11::myDevice->CreateBuffer(&bufferDesc, nullptr, mySceneLightBuffer.GetAddressOf());
+	if (FAILED(result))
+	{
+		return false;
+	}
+
 	return true;
 }
 
-void ShadowRenderer::Render(std::vector<Entity>& aLight, Ref<DirectionalLight> aDirectionalLight, std::vector<Entity>& aModelList)
+void ShadowRenderer::Render(std::vector<Entity>& aLightList, Ref<DirectionalLight> aDirectionalLight, std::vector<Entity>& aModelList)
 {
 	HRESULT result = S_FALSE;
 
-	//const Light::LightBufferData lightData = aLight.GetComponent<LightComponent>().light.GetLightBufferData();
-	//const auto lightTransformComp = aLight.GetComponent<TransformComponent>();
+	mySceneLightBufferData.numLights = 0;
+	ZeroMemory(mySceneLightBufferData.Lights, sizeof(Light::LightBufferData) * MAX_FORWARD_LIGHTS);
+
+	for (size_t l = 0; l < aLightList.size() && l < MAX_FORWARD_LIGHTS; l++)
+	{
+		auto transform = aLightList[l].GetComponent<TransformComponent>();
+
+		mySceneLightBufferData.Lights[l] = aLightList[l].GetComponent<LightComponent>().light.GetLightBufferData();
+		mySceneLightBufferData.Lights[l].Position = transform.position;
+		auto rot = aLightList[l].GetComponent<TransformComponent>().rotation;
+		auto direction = Matrix4::Direction(rot);
+		mySceneLightBufferData.Lights[l].Direction = {
+			direction.x,
+			direction.y,
+			direction.z
+		};
+		mySceneLightBufferData.Lights[l].LightView = Matrix4::GetFastInverse(transform.GetTransform());
+		mySceneLightBufferData.numLights++;
+	}
+
+	D3D11_MAPPED_SUBRESOURCE lightBufferData;
+	result = DX11::myContext->Map(mySceneLightBuffer.Get(), 0, D3D11_MAP_WRITE_DISCARD, 0, &lightBufferData);
+	if (FAILED(result))
+	{
+		return;
+	}
+	memcpy(lightBufferData.pData, &mySceneLightBufferData, sizeof(SceneLightBufferData));
+	DX11::myContext->Unmap(mySceneLightBuffer.Get(), 0);
+
+	DX11::myContext->PSSetConstantBuffers(3, 1, mySceneLightBuffer.GetAddressOf());
 
 	myFrameBufferData.View = aDirectionalLight->GetLightBufferData().LightView;
 	myFrameBufferData.CamTranslation = aDirectionalLight->GetLightBufferData().Position;

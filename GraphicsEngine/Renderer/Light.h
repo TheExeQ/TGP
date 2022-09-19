@@ -4,7 +4,7 @@
 #include "Core/Base.h"
 #include "Math/Vector.hpp"
 #include "Scene/Scene.h"
-#include "Math/Matrix4x4.hpp"
+#include "Math/Matrix.hpp"
 #include "DepthStencil.h"
 
 using namespace CommonUtilities;
@@ -55,6 +55,8 @@ public:
 	_inline LightBufferData GetLightBufferData() { return ourLightBuffer; };
 
 	_inline void ClearShadowMap() { myShadowMap->Clear(); };
+
+	_inline void SetLightView(const Matrix4& lightView);
 
 protected:
 	LightBufferData ourLightBuffer;

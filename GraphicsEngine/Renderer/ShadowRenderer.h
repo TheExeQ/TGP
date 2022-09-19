@@ -15,8 +15,10 @@ public:
 private:
 	FrameBufferData myFrameBufferData;
 	ObjectBufferData myObjectBufferData;
+	SceneLightBufferData mySceneLightBufferData;
 
 	ComPtr<ID3D11Buffer> myFrameBuffer;
 	ComPtr<ID3D11Buffer> myObjectBuffer;
 	ComPtr<ID3D11Buffer> myMaterialBuffer;
+	ComPtr<ID3D11Buffer> mySceneLightBuffer;
 };
