@@ -45,8 +45,8 @@ public:
 	void SetIntensity(float aIntensity) { ourLightBuffer.Intensity = aIntensity; };
 	void SetDirection(Vector3f aDirection) { ourLightBuffer.Direction = aDirection; };
 
-	void SetShadowMapAsDepth();
-	void SetShadowMapAsResource();
+	void SetShadowMapAsDepth(const int& aIndex);
+	void SetShadowMapAsResource(const int& aSlot, const int& aAmount);
 
 	_inline Vector4<float> GetColor() const { return Vector4(ourLightBuffer.Color.x, ourLightBuffer.Color.y, ourLightBuffer.Color.z, 1.f); };
 	_inline float GetIntensity() const { return ourLightBuffer.Intensity; };
@@ -54,17 +54,23 @@ public:
 
 	_inline LightBufferData GetLightBufferData() { return ourLightBuffer; };
 
-	_inline void ClearShadowMap() { myShadowMap->Clear(); };
+	_inline void ClearShadowMap() 
+	{
+		for (auto& shadowMap : myShadowMaps)
+		{
+			if (!shadowMap) { continue; }
+			shadowMap->Clear();
+		}
+	};
 
-	_inline void SetLightView(const Matrix4& lightView);
+	void SetLightView(const Matrix4& lightView);
 
 protected:
 	LightBufferData ourLightBuffer;
-	Ref<DepthStencil> myShadowMap;
+	std::array<Ref<DepthStencil>, 6> myShadowMaps;
 
 private:
 	friend class LightAssetHandler;
 	friend class SceneHierarchyPanel;
 	friend class SceneSerializer;
-
 };

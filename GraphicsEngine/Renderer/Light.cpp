@@ -37,14 +37,19 @@ void Light::SetAsResource(ComPtr<ID3D11Buffer> aLightBuffer)
 	);
 }
 
-void Light::SetShadowMapAsDepth()
+void Light::SetShadowMapAsDepth(const int& aIndex)
 {
-	myShadowMap->SetAsDepth();
+	if (aIndex > myShadowMaps.size() - 1) { return; }
+	myShadowMaps[aIndex]->SetAsDepth();
 }
 
-void Light::SetShadowMapAsResource()
+void Light::SetShadowMapAsResource(const int& aSlot, const int& aAmount)
 {
-	myShadowMap->SetAsResource(6);
+	if (aAmount > 6) { return; }
+	for (int i = 0; i < aAmount; i++)
+	{
+		myShadowMaps[i]->SetAsResource(aSlot + i);
+	}
 }
 
 void Light::SetLightView(const Matrix4& lightView)

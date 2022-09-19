@@ -198,19 +198,19 @@ bool SceneSerializer::Deserialize(const char* aFileName)
 				{
 				case 0:
 				{
-					comp.light.ourLightBuffer = LightAssetHandler::CreateDirectionalLight(comp.light.ourLightBuffer.Color, comp.light.ourLightBuffer.Intensity, { 0.f, 0.f, 0.f }, { 0.f, 0.f, 0.f })->GetLightBufferData();
+					comp.light = *LightAssetHandler::CreateDirectionalLight(comp.light.ourLightBuffer.Color, comp.light.ourLightBuffer.Intensity, { 0.f, 0.f, 0.f }, { 0.f, 0.f, 0.f }).get();
 					break;
 				}
 				case 1:
 				{
-					comp.light.ourLightBuffer = LightAssetHandler::CreatePointLight(comp.light.ourLightBuffer.Color, comp.light.ourLightBuffer.Intensity,
-						comp.light.ourLightBuffer.Range)->GetLightBufferData();
+					comp.light = *LightAssetHandler::CreatePointLight(comp.light.ourLightBuffer.Color, comp.light.ourLightBuffer.Intensity,
+						comp.light.ourLightBuffer.Range, 90.f, 16.f / 9.f).get();
 					break;
 				}
 				case 2:
 				{
-					comp.light.ourLightBuffer = LightAssetHandler::CreateSpotLight(comp.light.ourLightBuffer.Color, comp.light.ourLightBuffer.Intensity, comp.light.ourLightBuffer.Range
-						, comp.light.ourLightBuffer.SpotInnerRadius, comp.light.ourLightBuffer.SpotOuterRadius, 90.f, 16.f / 9.f)->GetLightBufferData();
+					comp.light = *LightAssetHandler::CreateSpotLight(comp.light.ourLightBuffer.Color, comp.light.ourLightBuffer.Intensity, comp.light.ourLightBuffer.Range
+						, comp.light.ourLightBuffer.SpotInnerRadius, comp.light.ourLightBuffer.SpotOuterRadius, 90.f, 16.f / 9.f).get();
 					break;
 				}
 				default:

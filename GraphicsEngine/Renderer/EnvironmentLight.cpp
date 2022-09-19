@@ -4,6 +4,6 @@ void EnvironmentLight::SetAsResource(ComPtr<ID3D11Buffer> aLightBuffer)
 {
 	if (myTexture)
 	{
-		myTexture->SetAsResource(10);
+		myTexture->SetAsResource(14);
 	}
 }

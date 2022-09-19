@@ -1,6 +1,7 @@
 #include "ShadowRenderer.h"
 #include "Core/DX11.h"
 #include "Scene/Components.h"
+#include "Scene/Entity.h"
 #include "Material.h"
 
 bool ShadowRenderer::Init()
@@ -46,103 +47,143 @@ bool ShadowRenderer::Init()
 
 void ShadowRenderer::Render(std::vector<Entity>& aLightList, Ref<DirectionalLight> aDirectionalLight, std::vector<Entity>& aModelList)
 {
-	HRESULT result = S_FALSE;
-
-	mySceneLightBufferData.numLights = 0;
-	ZeroMemory(mySceneLightBufferData.Lights, sizeof(Light::LightBufferData) * MAX_FORWARD_LIGHTS);
-
-	for (size_t l = 0; l < aLightList.size() && l < MAX_FORWARD_LIGHTS; l++)
-	{
-		auto transform = aLightList[l].GetComponent<TransformComponent>();
-
-		mySceneLightBufferData.Lights[l] = aLightList[l].GetComponent<LightComponent>().light.GetLightBufferData();
-		mySceneLightBufferData.Lights[l].Position = transform.position;
-		auto rot = aLightList[l].GetComponent<TransformComponent>().rotation;
-		auto direction = Matrix4::Direction(rot);
-		mySceneLightBufferData.Lights[l].Direction = {
-			direction.x,
-			direction.y,
-			direction.z
-		};
-		mySceneLightBufferData.Lights[l].LightView = Matrix4::GetFastInverse(transform.GetTransform());
-		mySceneLightBufferData.numLights++;
-	}
-
-	D3D11_MAPPED_SUBRESOURCE lightBufferData;
-	result = DX11::myContext->Map(mySceneLightBuffer.Get(), 0, D3D11_MAP_WRITE_DISCARD, 0, &lightBufferData);
-	if (FAILED(result))
-	{
-		return;
-	}
-	memcpy(lightBufferData.pData, &mySceneLightBufferData, sizeof(SceneLightBufferData));
-	DX11::myContext->Unmap(mySceneLightBuffer.Get(), 0);
-
-	DX11::myContext->PSSetConstantBuffers(3, 1, mySceneLightBuffer.GetAddressOf());
-
 	myFrameBufferData.View = aDirectionalLight->GetLightBufferData().LightView;
-	myFrameBufferData.CamTranslation = aDirectionalLight->GetLightBufferData().Position;
 	myFrameBufferData.Projection = aDirectionalLight->GetLightBufferData().LightProj;
+	myFrameBufferData.CamTranslation = aDirectionalLight->GetLightBufferData().Position;
 	myFrameBufferData.RenderMode = static_cast<unsigned int>(0);
 
-	D3D11_MAPPED_SUBRESOURCE frameBufferData;
-
-	result = DX11::myContext->Map(myFrameBuffer.Get(), 0, D3D11_MAP_WRITE_DISCARD, 0, &frameBufferData);
-	if (FAILED(result))
+	for (int i = 0; i < aLightList.size() + 1; i++)
 	{
-		return;
-	}
-	memcpy(frameBufferData.pData, &myFrameBufferData, sizeof(FrameBufferData));
+		int timesToDraw = 1;
 
-	DX11::myContext->Unmap(myFrameBuffer.Get(), 0);
-	DX11::myContext->VSSetConstantBuffers(0, 1, myFrameBuffer.GetAddressOf());
-
-	DX11::myContext->PSSetShader(nullptr, nullptr, 0);
-	DX11::myContext->GSSetShader(nullptr, nullptr, 0);
-
-	for (Entity& ent : aModelList)
-	{
-		auto& mdlInst = ent.GetComponent<ModelComponent>().modelInstance;
-		auto& mdlTransform = ent.GetComponent<TransformComponent>();
-
-		D3D11_MAPPED_SUBRESOURCE objBufferData;
-		ZeroMemory(&objBufferData, sizeof(objBufferData));
-
-		ZeroMemory(&myObjectBufferData.HasBones, 16);
-
-		myObjectBufferData.World = mdlTransform.GetTransform();
-		myObjectBufferData.HasBones = mdlInst.GetModel()->HasBones();
-		if (myObjectBufferData.HasBones)
+		if (i != 0)
 		{
-			memcpy_s(&myObjectBufferData.BoneData[0], sizeof(Matrix4x4<float>) * 128,
-				&mdlInst.GetModel()->GetBoneTransforms()[0], sizeof(Matrix4x4<float>) * 128);
+			auto& lightComp = aLightList[i - 1].GetComponent<LightComponent>();
+			if (lightComp.light.GetLightBufferData().LightType == 1)
+			{
+				continue;
+				lightComp.light.ClearShadowMap();
+				lightComp.light.SetShadowMapAsDepth(0);
+				timesToDraw = 6;
+			}
+			else
+			{
+				lightComp.light.ClearShadowMap();
+				lightComp.light.SetShadowMapAsDepth(0);
+			}
+
+			myFrameBufferData.Projection = lightComp.light.GetLightBufferData().LightProj;
+			lightComp.light.SetLightView(aLightList[i - 1].GetComponent<TransformComponent>().GetTransform());
+			myFrameBufferData.View = lightComp.light.GetLightBufferData().LightView;
+			//myFrameBufferData.View = Matrix4::GetFastInverse(aLightList[i - 1].GetComponent<TransformComponent>().GetTransform());
+			myFrameBufferData.CamTranslation = aLightList[i - 1].GetComponent<TransformComponent>().position;
+			myFrameBufferData.RenderMode = static_cast<unsigned int>(0);
+
+			mySceneLightBufferData.DirectionalLight.CastShadows = false;
 		}
 
-		result = DX11::myContext->Map(myObjectBuffer.Get(), 0, D3D11_MAP_WRITE_DISCARD, 0, &objBufferData);
-		if (FAILED(result))
+		for (int j = 0; j < timesToDraw; j++)
 		{
-			return;
-		}
-		memcpy(objBufferData.pData, &myObjectBufferData, sizeof(ObjectBufferData));
+			if (j > 0)
+			{
+				auto& lightComp = aLightList[i - 1].GetComponent<LightComponent>();
+				lightComp.light.SetShadowMapAsDepth(j);
+			}
 
-		DX11::myContext->Unmap(myObjectBuffer.Get(), 0);
+			HRESULT result = S_FALSE;
 
-		for (uint32_t m = 0; m < mdlInst.GetNumMeshes(); m++)
-		{
-			const auto& mdlData = mdlInst.GetModelData(m);
+			mySceneLightBufferData.numLights = 0;
+			ZeroMemory(mySceneLightBufferData.Lights, sizeof(Light::LightBufferData) * MAX_FORWARD_LIGHTS);
 
-			DX11::myContext->VSSetConstantBuffers(1, 1, myObjectBuffer.GetAddressOf());
+			for (size_t l = 0; l < aLightList.size() && l < MAX_FORWARD_LIGHTS; l++)
+			{
+				auto transform = aLightList[l].GetComponent<TransformComponent>();
 
-			DX11::myContext->IASetVertexBuffers(0, 1, mdlData.myVertexBuffer.GetAddressOf(), &mdlData.myStride, &mdlData.myOffset);
-			DX11::myContext->IASetIndexBuffer(mdlData.myIndexBuffer.Get(), DXGI_FORMAT_R32_UINT, 0);
-			DX11::myContext->IASetPrimitiveTopology(static_cast<D3D11_PRIMITIVE_TOPOLOGY>(mdlData.myPrimitiveTopology));
-			DX11::myContext->IASetInputLayout(mdlData.myInputLayout.Get());
+				mySceneLightBufferData.Lights[l] = aLightList[l].GetComponent<LightComponent>().light.GetLightBufferData();
+				mySceneLightBufferData.Lights[l].Position = transform.position;
+				auto rot = aLightList[l].GetComponent<TransformComponent>().rotation;
+				auto direction = Matrix4::Direction(rot);
+				mySceneLightBufferData.Lights[l].Direction = {
+					direction.x,
+					direction.y,
+					direction.z
+				};
+				mySceneLightBufferData.Lights[l].LightView = Matrix4::GetFastInverse(transform.GetTransform());
+				mySceneLightBufferData.numLights++;
+			}
 
-			DX11::myContext->VSSetShader(mdlData.myVS.Get(), nullptr, 0);
+			D3D11_MAPPED_SUBRESOURCE lightBufferData;
+			result = DX11::myContext->Map(mySceneLightBuffer.Get(), 0, D3D11_MAP_WRITE_DISCARD, 0, &lightBufferData);
+			if (FAILED(result))
+			{
+				return;
+			}
+			memcpy(lightBufferData.pData, &mySceneLightBufferData, sizeof(SceneLightBufferData));
+			DX11::myContext->Unmap(mySceneLightBuffer.Get(), 0);
 
-			mdlData.myMaterial->SetAsResource(myMaterialBuffer);
+			DX11::myContext->PSSetConstantBuffers(3, 1, mySceneLightBuffer.GetAddressOf());
+
+			D3D11_MAPPED_SUBRESOURCE frameBufferData;
+
+			result = DX11::myContext->Map(myFrameBuffer.Get(), 0, D3D11_MAP_WRITE_DISCARD, 0, &frameBufferData);
+			if (FAILED(result))
+			{
+				return;
+			}
+			memcpy(frameBufferData.pData, &myFrameBufferData, sizeof(FrameBufferData));
+
+			DX11::myContext->Unmap(myFrameBuffer.Get(), 0);
+			DX11::myContext->VSSetConstantBuffers(0, 1, myFrameBuffer.GetAddressOf());
 
 			DX11::myContext->PSSetShader(nullptr, nullptr, 0);
-			DX11::myContext->DrawIndexed(mdlData.myIndexCount, 0, 0);
+			DX11::myContext->GSSetShader(nullptr, nullptr, 0);
+
+			for (Entity& ent : aModelList)
+			{
+				auto& mdlInst = ent.GetComponent<ModelComponent>().modelInstance;
+				auto& mdlTransform = ent.GetComponent<TransformComponent>();
+
+				D3D11_MAPPED_SUBRESOURCE objBufferData;
+				ZeroMemory(&objBufferData, sizeof(objBufferData));
+
+				ZeroMemory(&myObjectBufferData.HasBones, 16);
+
+				myObjectBufferData.World = mdlTransform.GetTransform();
+				myObjectBufferData.HasBones = mdlInst.GetModel()->HasBones();
+				if (myObjectBufferData.HasBones)
+				{
+					memcpy_s(&myObjectBufferData.BoneData[0], sizeof(Matrix4x4<float>) * 128,
+						&mdlInst.GetModel()->GetBoneTransforms()[0], sizeof(Matrix4x4<float>) * 128);
+				}
+
+				result = DX11::myContext->Map(myObjectBuffer.Get(), 0, D3D11_MAP_WRITE_DISCARD, 0, &objBufferData);
+				if (FAILED(result))
+				{
+					return;
+				}
+				memcpy(objBufferData.pData, &myObjectBufferData, sizeof(ObjectBufferData));
+
+				DX11::myContext->Unmap(myObjectBuffer.Get(), 0);
+
+				for (uint32_t m = 0; m < mdlInst.GetNumMeshes(); m++)
+				{
+					const auto& mdlData = mdlInst.GetModelData(m);
+
+					DX11::myContext->VSSetConstantBuffers(1, 1, myObjectBuffer.GetAddressOf());
+
+					DX11::myContext->IASetVertexBuffers(0, 1, mdlData.myVertexBuffer.GetAddressOf(), &mdlData.myStride, &mdlData.myOffset);
+					DX11::myContext->IASetIndexBuffer(mdlData.myIndexBuffer.Get(), DXGI_FORMAT_R32_UINT, 0);
+					DX11::myContext->IASetPrimitiveTopology(static_cast<D3D11_PRIMITIVE_TOPOLOGY>(mdlData.myPrimitiveTopology));
+					DX11::myContext->IASetInputLayout(mdlData.myInputLayout.Get());
+
+					DX11::myContext->VSSetShader(mdlData.myVS.Get(), nullptr, 0);
+
+					mdlData.myMaterial->SetAsResource(myMaterialBuffer);
+
+					DX11::myContext->PSSetShader(nullptr, nullptr, 0);
+					DX11::myContext->DrawIndexed(mdlData.myIndexCount, 0, 0);
+				}
+			}
 		}
 	}
 }

@@ -417,7 +417,7 @@ void GraphicsEngine::RenderFrame()
 		DX11::SetViewport(2048, 2048);
 
 		myDirectionalLight->ClearShadowMap();
-		myDirectionalLight->SetShadowMapAsDepth();
+		myDirectionalLight->SetShadowMapAsDepth(0);
 		myShadowRenderer.Render(lightEntitiesToRender, myDirectionalLight, modelEntitiesToRender);
 
 		auto width = DX11::myClientRect.right - DX11::myClientRect.left;
@@ -431,7 +431,35 @@ void GraphicsEngine::RenderFrame()
 		myGBuffer->SetAsResource(0);
 		DX11::myContext->OMSetRenderTargets(1, DX11::myRenderTarget.GetAddressOf(), DX11::myDepthStencil.Get());
 		SetDepthStencilState(DepthStencilState::DSS_Off);
-		myDirectionalLight->SetShadowMapAsResource();
+		myDirectionalLight->SetShadowMapAsResource(6, 1);
+
+		bool foundSpot = false, foundPoint = false;
+
+		for (auto light : lightEntitiesToRender)
+		{
+			auto data = light.GetComponent<LightComponent>().light;
+			switch (data.GetLightBufferData().LightType)
+			{
+			case 1:
+			{
+				data.SetShadowMapAsResource(8, 6);
+				foundPoint = true;
+				break;
+			}
+			case 2:
+			{
+				data.SetShadowMapAsResource(7, 1);
+				foundSpot = true;
+				break;
+			}
+			default:
+			{
+
+				break;
+			}
+			}
+		}
+
 		myDeferredRenderer.Render(camera, lightEntitiesToRender, myDirectionalLight, myEnvironmentLight, myTimer.GetDeltaTime(), myTimer.GetTotalTime());
 
 		//myForwardRenderer.RenderModels(camera, modelEntitiesToRender, lightEntitiesToRender, myDirectionalLight, myEnvironmentLight);
