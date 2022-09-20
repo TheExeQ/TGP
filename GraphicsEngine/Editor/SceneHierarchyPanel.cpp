@@ -94,7 +94,15 @@ void SceneHierarchyPanel::DrawEntityNode(Entity aEntity)
 		myDragDropEntities = mySelectionContext;
 		if (ImGui::IsKeyDown(ImGuiKey_LeftCtrl))
 		{
-			mySelectionContext.push_back(aEntity);
+			auto it = std::find(mySelectionContext.begin(), mySelectionContext.end(), aEntity);
+			if (it == mySelectionContext.end())
+			{
+				mySelectionContext.push_back(aEntity);
+			}
+			else
+			{
+				mySelectionContext.erase(it);
+			}
 		}
 		else
 		{
