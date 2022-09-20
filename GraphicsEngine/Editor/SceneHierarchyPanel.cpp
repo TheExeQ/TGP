@@ -51,7 +51,12 @@ void SceneHierarchyPanel::OnImGuiRender()
 			if (payload)
 			{
 				Entity& entity = *(Entity*)payload->Data;
+				for (auto selectedEnt : myDragDropEntities)
+				{
+					myContext->UnparentEntity(selectedEnt);
+				}
 				myContext->UnparentEntity(entity);
+				myDragDropEntities.clear();
 			}
 
 			ImGui::EndDragDropTarget();
@@ -83,8 +88,10 @@ void SceneHierarchyPanel::DrawEntityNode(Entity aEntity)
 	flags |= ImGuiTreeNodeFlags_OpenOnArrow;
 	flags |= ImGuiTreeNodeFlags_SpanAvailWidth;
 	bool opened = ImGui::TreeNodeEx((void*)(uint64_t)(uint32_t)aEntity, flags, tag.c_str());
+
 	if (ImGui::IsItemClicked())
 	{
+		myDragDropEntities = mySelectionContext;
 		if (ImGui::IsKeyDown(ImGuiKey_LeftCtrl))
 		{
 			mySelectionContext.push_back(aEntity);
@@ -105,13 +112,17 @@ void SceneHierarchyPanel::DrawEntityNode(Entity aEntity)
 		ImGui::EndPopup();
 	}
 
+	bool isDragDropping = false;
+
 	if (ImGui::BeginDragDropSource(ImGuiDragDropFlags_SourceAllowNullID))
 	{
 		ImGui::Text(aEntity.GetComponent<TagComponent>().name.c_str());
 		ImGui::SetDragDropPayload("scene_entity_hierarchy", &aEntity, sizeof(Entity));
 		ImGui::EndDragDropSource();
+		std::cout << "Begin Drag Source" << std::endl;
+		isDragDropping = true;
 	}
-
+	
 	if (ImGui::BeginDragDropTarget())
 	{
 		const ImGuiPayload* payload = ImGui::AcceptDragDropPayload("scene_entity_hierarchy", ImGuiDragDropFlags_AcceptNoDrawDefaultRect);
@@ -119,7 +130,12 @@ void SceneHierarchyPanel::DrawEntityNode(Entity aEntity)
 		if (payload)
 		{
 			Entity& droppedEntity = *(Entity*)payload->Data;
+			for (auto selectedEnt : myDragDropEntities)
+			{
+				myContext->ParentEntity(selectedEnt, aEntity);
+			}
 			myContext->ParentEntity(droppedEntity, aEntity);
+			myDragDropEntities.clear();
 		}
 
 		ImGui::EndDragDropTarget();

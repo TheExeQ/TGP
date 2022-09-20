@@ -11,6 +11,8 @@
 
 void SettingsPanel::OnImGuiRender()
 {
+	ImGui::ShowDemoWindow();
+
 	ImGui::Begin("Settings");
 	ImGui::ColorEdit3("Clear Color", &colorSlider[0]);
 

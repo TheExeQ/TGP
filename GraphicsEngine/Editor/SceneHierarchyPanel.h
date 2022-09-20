@@ -17,4 +17,5 @@ private:
 
 	Ref<Scene> myContext = nullptr;
 	std::vector<Entity> mySelectionContext;
+	std::vector<Entity> myDragDropEntities;
 };
