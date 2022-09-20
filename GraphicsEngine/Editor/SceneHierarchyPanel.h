@@ -6,7 +6,7 @@ class SceneHierarchyPanel
 {
 public:
 	void OnImGuiRender();
-	Entity GetSelectedEntity() const { return mySelectionContext; };
+	Entity GetSelectedEntity() const { return mySelectionContext[0]; };
 
 private:
 	template<typename T>
@@ -16,5 +16,5 @@ private:
 	void DrawComponents(Entity aEntity);
 
 	Ref<Scene> myContext = nullptr;
-	Entity mySelectionContext;
+	std::vector<Entity> mySelectionContext;
 };

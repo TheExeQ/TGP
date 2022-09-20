@@ -30,6 +30,9 @@ public:
 	std::vector<Entity> CullParticles(Entity camera);
 	std::vector<Entity> CullLights(Entity camera);
 
+	void ParentEntity(Entity aChild, Entity aParent);
+	void UnparentEntity(Entity aEntity);
+
 	void SetMainCamera(Entity aCamera);
 	Entity GetMainCamera() const;
 

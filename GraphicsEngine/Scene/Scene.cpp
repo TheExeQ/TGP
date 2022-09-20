@@ -29,6 +29,7 @@ Entity Scene::CreateEntity(const char* aName, Ref<Scene> aScene)
 	entity.AddComponent<TransformComponent>();
 	entity.AddComponent<TagComponent>().name = aName;
 	auto uuid = entity.AddComponent<IDComponent>().uuid;
+	entity.AddComponent<RelationshipComponent>();
 	myEnttMap[uuid] = (entt::entity)entity;
 	return entity;
 }
@@ -39,6 +40,7 @@ Entity Scene::CreateEntityWithID(TGA::UUID aID, const char* aName, Ref<Scene> aS
 	entity.AddComponent<TransformComponent>();
 	entity.AddComponent<TagComponent>().name = aName;
 	entity.AddComponent<IDComponent>().uuid = aID;
+	entity.AddComponent<RelationshipComponent>();
 	myEnttMap[aID] = (entt::entity)entity;
 	return entity;
 }
@@ -93,6 +95,33 @@ std::vector<Entity> Scene::CullLights(Entity camera)
 	}
 
 	return visibleEntity;
+}
+
+void Scene::ParentEntity(Entity aChild, Entity aParent)
+{
+	if (!aChild.IsValid() || !aParent.IsValid()) { return; }
+
+	UnparentEntity(aChild);
+
+	auto& childRelationShip = aChild.GetComponent<RelationshipComponent>();
+	auto& parentRelationShip = aParent.GetComponent<RelationshipComponent>();
+
+	childRelationShip.Parent = aParent.GetUUID();
+	parentRelationShip.Children.push_back(aChild.GetUUID());
+}
+
+void Scene::UnparentEntity(Entity aEntity)
+{
+	if (!aEntity.IsValid()) { return; }
+
+	auto& entityRelationShip = aEntity.GetComponent<RelationshipComponent>();
+	if (aEntity.HasParent())
+	{
+		auto& parentChildren = myRegistry.get<RelationshipComponent>((entt::entity)Entity(aEntity.ParentUUID(), myActiveScene)).Children;
+		parentChildren.erase(std::remove(parentChildren.begin(), parentChildren.end(), aEntity.GetUUID()), parentChildren.end());
+	}
+
+	entityRelationShip.Parent = 0;
 }
 
 void Scene::SetMainCamera(Entity aCamera)

@@ -19,6 +19,12 @@ struct IDComponent
 	TGA::UUID uuid = TGA::UUID();
 };
 
+struct RelationshipComponent
+{
+	TGA::UUID Parent = 0;
+	std::vector<TGA::UUID> Children;
+};
+
 struct TransformComponent
 {
 	Vector3f position;
@@ -54,3 +60,4 @@ struct LightComponent
 {
 	Light light;
 };
+

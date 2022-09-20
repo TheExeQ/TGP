@@ -35,3 +35,18 @@ bool Entity::IsValid()
 		return myScene->myRegistry.valid(myEntityHandle);
 	}
 }
+
+TGA::UUID Entity::ParentUUID()
+{
+	return GetComponent<RelationshipComponent>().Parent;
+}
+
+bool Entity::HasParent()
+{
+	return GetComponent<RelationshipComponent>().Parent != 0;
+}
+
+std::vector<TGA::UUID> Entity::ChildrenUUIDs()
+{
+	return GetComponent<RelationshipComponent>().Children;
+}

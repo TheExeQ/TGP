@@ -26,17 +26,16 @@ void SceneHierarchyPanel::OnImGuiRender()
 		myContext->myRegistry.each([&](auto entityID)
 			{
 				Entity entity(entityID, myContext);
-				if (entity.IsValid() &&
+				if (entity.IsValid() && !entity.HasParent() &&
 					(entt::entity)entity != (entt::entity)GraphicsEngine::Get().myCamera)
 				{
 					DrawEntityNode(entity);
 				}
 			});
 
-		if (ImGui::IsMouseDown(0) && ImGui::IsWindowHovered())
-			mySelectionContext = {};
+		if (ImGui::IsMouseDown(0) && !ImGui::IsKeyDown(ImGuiKey_LeftCtrl) && ImGui::IsWindowHovered() && !ImGui::IsItemHovered(ImGuiHoveredFlags_AllowWhenBlockedByActiveItem))
+			mySelectionContext.clear();
 
-		// Right-click on blank space
 		if (ImGui::BeginPopupContextWindow(0, 1, false))
 		{
 			if (ImGui::MenuItem("Create Empty Entity"))
@@ -45,12 +44,25 @@ void SceneHierarchyPanel::OnImGuiRender()
 			ImGui::EndPopup();
 		}
 
+		if (ImGui::BeginDragDropTargetCustom(windowRect, ImGui::GetCurrentWindow()->ID))
+		{
+			const ImGuiPayload* payload = ImGui::AcceptDragDropPayload("scene_entity_hierarchy", ImGuiDragDropFlags_AcceptNoDrawDefaultRect);
+
+			if (payload)
+			{
+				Entity& entity = *(Entity*)payload->Data;
+				myContext->UnparentEntity(entity);
+			}
+
+			ImGui::EndDragDropTarget();
+		}
+
 		ImGui::End();
 
 		ImGui::Begin("Properties");
-		if (myContext->myRegistry.valid(mySelectionContext))
+		if (!mySelectionContext.empty() && myContext->myRegistry.valid(mySelectionContext[0]))
 		{
-			DrawComponents(mySelectionContext);
+			DrawComponents(mySelectionContext[0]);
 		}
 
 		ImGui::End();
@@ -61,12 +73,27 @@ void SceneHierarchyPanel::DrawEntityNode(Entity aEntity)
 {
 	auto tag = aEntity.GetComponent<TagComponent>().name;
 
-	ImGuiTreeNodeFlags flags = ((mySelectionContext == aEntity) ? ImGuiTreeNodeFlags_Selected : 0) | ImGuiTreeNodeFlags_OpenOnArrow;
+	ImGuiTreeNodeFlags flags = 0;
+
+	for (const auto& selectedEnt : mySelectionContext)
+	{
+		if (selectedEnt == aEntity)
+			flags = ImGuiTreeNodeFlags_Selected;
+	}
+	flags |= ImGuiTreeNodeFlags_OpenOnArrow;
 	flags |= ImGuiTreeNodeFlags_SpanAvailWidth;
 	bool opened = ImGui::TreeNodeEx((void*)(uint64_t)(uint32_t)aEntity, flags, tag.c_str());
 	if (ImGui::IsItemClicked())
 	{
-		mySelectionContext = aEntity;
+		if (ImGui::IsKeyDown(ImGuiKey_LeftCtrl))
+		{
+			mySelectionContext.push_back(aEntity);
+		}
+		else
+		{
+			mySelectionContext.clear();
+			mySelectionContext.push_back(aEntity);
+		}
 	}
 
 	bool entityDeleted = false;
@@ -78,17 +105,45 @@ void SceneHierarchyPanel::DrawEntityNode(Entity aEntity)
 		ImGui::EndPopup();
 	}
 
+	if (ImGui::BeginDragDropSource(ImGuiDragDropFlags_SourceAllowNullID))
+	{
+		ImGui::Text(aEntity.GetComponent<TagComponent>().name.c_str());
+		ImGui::SetDragDropPayload("scene_entity_hierarchy", &aEntity, sizeof(Entity));
+		ImGui::EndDragDropSource();
+	}
+
+	if (ImGui::BeginDragDropTarget())
+	{
+		const ImGuiPayload* payload = ImGui::AcceptDragDropPayload("scene_entity_hierarchy", ImGuiDragDropFlags_AcceptNoDrawDefaultRect);
+
+		if (payload)
+		{
+			Entity& droppedEntity = *(Entity*)payload->Data;
+			myContext->ParentEntity(droppedEntity, aEntity);
+		}
+
+		ImGui::EndDragDropTarget();
+	}
+
 	if (opened)
 	{
-		// Draw Child Nodes
+		for (auto child : aEntity.ChildrenUUIDs())
+		{
+			Entity e = myContext->GetEntityFromUUID(child);
+			if (e.IsValid())
+			{
+				DrawEntityNode(e);
+			}
+		}
+
 		ImGui::TreePop();
 	}
 
 	if (entityDeleted)
 	{
 		myContext->DestroyEntity(aEntity);
-		if (mySelectionContext == aEntity)
-			mySelectionContext = {};
+		if (!mySelectionContext.empty() && mySelectionContext[0] == aEntity)
+			mySelectionContext.clear();
 	}
 }
 
@@ -203,11 +258,11 @@ static void DrawComponent(const std::string& name, Entity aEntity, UIFunction ui
 
 template<typename T>
 void SceneHierarchyPanel::DisplayAddComponentEntry(const std::string& entryName) {
-	if (!mySelectionContext.HasComponent<T>())
+	if (!mySelectionContext[0].HasComponent<T>())
 	{
 		if (ImGui::MenuItem(entryName.c_str()))
 		{
-			mySelectionContext.AddComponent<T>();
+			mySelectionContext[0].AddComponent<T>();
 			ImGui::CloseCurrentPopup();
 		}
 	}

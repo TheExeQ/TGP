@@ -16,6 +16,11 @@ public:
 	TGA::UUID GetUUID();
 	bool IsValid();
 
+	TGA::UUID ParentUUID();
+	bool HasParent();
+
+	std::vector<TGA::UUID> ChildrenUUIDs();
+
 	template<typename T, typename... Args>
 	T& AddComponent(Args&&... args)
 	{
