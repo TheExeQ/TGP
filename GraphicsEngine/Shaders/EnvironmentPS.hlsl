@@ -126,22 +126,22 @@ DeferredPixelOutput main(DeferredVertexToPixel input)
 			break;
 
 		case 2:
-			pointLight += EvaluateSpotLight(
-				diffuseColor,
-				specularColor,
-				pixelNormal,
-				material.g,
-				light.Color,
-				light.Intensity,
-				light.Range,
-				light.Position,
-				light.Direction,
-				light.SpotOuterRadius,
-				light.SpotInnerRadius,
-				toEye,
-				worldPosition.xyz
-			);
-
+                pointLight += EvaluateSpotLight(
+							diffuseColor,
+							specularColor,
+							pixelNormal,
+							material.g,
+							light.Color,
+							light.Intensity,
+							light.Range,
+							light.Position,
+							light.Direction,
+							light.SpotOuterRadius,
+							light.SpotInnerRadius,
+							toEye,
+							worldPosition.xyz
+						);
+			
 			if (light.CastShadows)
 			{
 				const float4 worldToLightView = mul(light.LightView, worldPosition);
@@ -159,9 +159,23 @@ DeferredPixelOutput main(DeferredVertexToPixel input)
 					const float viewDepth = (lightViewToLightProj.z / lightViewToLightProj.w) - shadowBias;
 					const float lightDepth = spotLightShadowMap.Sample(pointClampSampler, projectedTexCoord).r;
 
-					if (lightDepth < viewDepth)
+					if (lightDepth > viewDepth)
 					{
-						directLighting *= shadow;
+						//pointLight += EvaluateSpotLight(
+						//	diffuseColor,
+						//	specularColor,
+						//	pixelNormal,
+						//	material.g,
+						//	light.Color,
+						//	light.Intensity,
+						//	light.Range,
+						//	light.Position,
+						//	light.Direction,
+						//	light.SpotOuterRadius,
+						//	light.SpotInnerRadius,
+						//	toEye,
+						//	worldPosition.xyz
+						//);
 					}
 				}
 			}

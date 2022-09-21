@@ -130,7 +130,7 @@ void SceneHierarchyPanel::DrawEntityNode(Entity aEntity)
 		std::cout << "Begin Drag Source" << std::endl;
 		isDragDropping = true;
 	}
-	
+
 	if (ImGui::BeginDragDropTarget())
 	{
 		const ImGuiPayload* payload = ImGui::AcceptDragDropPayload("scene_entity_hierarchy", ImGuiDragDropFlags_AcceptNoDrawDefaultRect);
@@ -453,9 +453,28 @@ void SceneHierarchyPanel::DrawComponents(Entity aEntity)
 			ImGui::InputFloat("Intensity", &component.light.ourLightBuffer.Intensity);
 			//DrawVec3Control("Direction", component.light.ourLightBuffer.Direction);
 			ImGui::InputFloat("Range", &component.light.ourLightBuffer.Range);
-			ImGui::InputFloat("Attenuation", &component.light.ourLightBuffer.Attenuation);
-			ImGui::InputFloat("SpotInnerRadius", &component.light.ourLightBuffer.SpotInnerRadius);
-			ImGui::InputFloat("SpotOuterRadius", &component.light.ourLightBuffer.SpotOuterRadius);
+
+			switch (component.light.ourLightBuffer.LightType)
+			{
+			case 1:
+			{
+
+				break;
+			}
+
+			case 2:
+			{
+				ImGui::InputFloat("SpotInnerRadius", &component.light.ourLightBuffer.SpotInnerRadius);
+				ImGui::InputFloat("SpotOuterRadius", &component.light.ourLightBuffer.SpotOuterRadius);
+				break;
+			}
+
+			default:
+			{
+				break;
+			}
+			}
+			//ImGui::InputFloat("Attenuation", &component.light.ourLightBuffer.Attenuation);
 			ImGui::InputInt("LightType", &component.light.ourLightBuffer.LightType);
 		});
 }

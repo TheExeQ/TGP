@@ -128,8 +128,12 @@ Ref<SpotLight> LightAssetHandler::CreateSpotLight(Vector3<float> aColor, float a
 	//lightProj(4, 3) = nearPlane / (nearPlane - farPlane);
 	//lightProj(4, 4) = 1.f;
 
-
-	result->myShadowMaps[0] = TextureAssetHandler::CreateDepthStencil("spotShadow", res.x, res.y);
+	result->myShadowMaps[0] = TextureAssetHandler::CreateDepthStencil("spotShadow1", res.x, res.y);
+	result->myShadowMaps[1] = TextureAssetHandler::CreateDepthStencil("spotShadow2", res.x, res.y);
+	result->myShadowMaps[2] = TextureAssetHandler::CreateDepthStencil("spotShadow3", res.x, res.y);
+	result->myShadowMaps[3] = TextureAssetHandler::CreateDepthStencil("spotShadow4", res.x, res.y);
+	result->myShadowMaps[4] = TextureAssetHandler::CreateDepthStencil("spotShadow5", res.x, res.y);
+	result->myShadowMaps[5] = TextureAssetHandler::CreateDepthStencil("spotShadow6", res.x, res.y);
 
 	result->ourLightBuffer.LightProj = lightProj;
 	result->ourLightBuffer.CastShadows = true;
