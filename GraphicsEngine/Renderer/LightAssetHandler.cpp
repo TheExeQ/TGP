@@ -55,7 +55,7 @@ Ref<PointLight> LightAssetHandler::CreatePointLight(Vector3<float> aColor, float
 	result->SetRange(aRange);
 	result->ourLightBuffer.LightType = 1;
 
-	constexpr float nearPlane = 0.001f;
+	constexpr float nearPlane = 0.01f;
 	constexpr float farPlane = 25000.f;
 
 	POINT res = { 2048, 2048 };
@@ -75,6 +75,9 @@ Ref<PointLight> LightAssetHandler::CreatePointLight(Vector3<float> aColor, float
 	lightProj(3, 4) = 1.f / Q;
 	lightProj(4, 3) = -Q * nearPlane;
 	lightProj(4, 4) = 0.f;
+
+	result->ourLightBuffer.Near = nearPlane;
+	result->ourLightBuffer.Far = farPlane;
 
 	result->myShadowMaps[0] = TextureAssetHandler::CreateDepthStencil("pointShadow1", res.x, res.y);
 	result->myShadowMaps[1] = TextureAssetHandler::CreateDepthStencil("pointShadow2", res.x, res.y);
@@ -101,7 +104,7 @@ Ref<SpotLight> LightAssetHandler::CreateSpotLight(Vector3<float> aColor, float a
 	result->SetOuterCone(aOuter);
 	result->ourLightBuffer.LightType = 2;
 
-	constexpr float nearPlane = 1.0f;
+	constexpr float nearPlane = 0.1f;
 	constexpr float farPlane = 10000.f;
 
 	POINT res = { 2048, 2048 };
@@ -128,8 +131,15 @@ Ref<SpotLight> LightAssetHandler::CreateSpotLight(Vector3<float> aColor, float a
 	//lightProj(4, 3) = nearPlane / (nearPlane - farPlane);
 	//lightProj(4, 4) = 1.f;
 
+	result->ourLightBuffer.Near = nearPlane;
+	result->ourLightBuffer.Far = farPlane;
 
 	result->myShadowMaps[0] = TextureAssetHandler::CreateDepthStencil("spotShadow", res.x, res.y);
+	result->myShadowMaps[1] = TextureAssetHandler::CreateDepthStencil("spotShadow2", res.x, res.y);
+	result->myShadowMaps[2] = TextureAssetHandler::CreateDepthStencil("spotShadow3", res.x, res.y);
+	result->myShadowMaps[3] = TextureAssetHandler::CreateDepthStencil("spotShadow4", res.x, res.y);
+	result->myShadowMaps[4] = TextureAssetHandler::CreateDepthStencil("spotShadow5", res.x, res.y);
+	result->myShadowMaps[5] = TextureAssetHandler::CreateDepthStencil("spotShadow6", res.x, res.y);
 
 	result->ourLightBuffer.LightProj = lightProj;
 	result->ourLightBuffer.CastShadows = true;

@@ -62,7 +62,7 @@ namespace CommonUtilities
 	template<typename T>
 	CommonUtilities::Vector4<T> CommonUtilities::Matrix4x4<T>::Direction(const Vector3<T>& aRot)
 	{
-		auto direction = Vector4(0.f, -1.f, 0.f, 0.f) *
+		auto direction = Vector4(0.f, 0.f, 1.f, 0.f) *
 			CommonUtilities::Matrix4x4<float>::CreateRotationAroundX(aRot.x) *
 			CommonUtilities::Matrix4x4<float>::CreateRotationAroundY(aRot.y) *
 			CommonUtilities::Matrix4x4<float>::CreateRotationAroundZ(aRot.z);

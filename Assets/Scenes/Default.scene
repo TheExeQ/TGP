@@ -12,8 +12,8 @@ Entities:
       Direction: [0, 0, 0]
       Range: 150
       Attenuation: 100
-      SpotInnerRadius: 100
-      SpotOuterRadius: 100
+      SpotInnerRadius: 0
+      SpotOuterRadius: 0
       LightType: 1
   - Entity: 7509847562195690
     TagComponent:
@@ -73,22 +73,22 @@ Entities:
       Direction: [0, 0, 0]
       Range: 100
       Attenuation: 100
-      SpotInnerRadius: 100
-      SpotOuterRadius: 100
+      SpotInnerRadius: 0
+      SpotOuterRadius: 0
       LightType: 1
   - Entity: 13168016240173744635
     TagComponent:
       Tag: LightGreen
     TransformComponent:
-      Position: [45, 120, -75]
-      Rotation: [-0.785374999, 0, -0.785374999]
+      Position: [195, 150, -96]
+      Rotation: [0.785374999, 0, 0]
       Scale: [1, 1, 1]
     LightComponent:
       Color: [0, 1, 0]
       Intensity: 1000000
       Direction: [0, -1, 0]
-      Range: 150
+      Range: 1000
       Attenuation: 100
       SpotInnerRadius: 100
-      SpotOuterRadius: 100
+      SpotOuterRadius: 1000
       LightType: 2
