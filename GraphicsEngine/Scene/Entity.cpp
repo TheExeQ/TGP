@@ -46,6 +46,16 @@ bool Entity::HasParent()
 	return GetComponent<RelationshipComponent>().Parent != 0;
 }
 
+bool Entity::IsChild(Entity aEntity)
+{
+	for (auto childUUID : ChildrenUUIDs())
+	{
+		Entity child(childUUID, myScene);
+		if (aEntity.GetUUID() == childUUID || child.IsChild(aEntity)) { return true; };
+	}
+	return false;
+}
+
 std::vector<TGA::UUID> Entity::ChildrenUUIDs()
 {
 	return GetComponent<RelationshipComponent>().Children;

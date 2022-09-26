@@ -19,6 +19,8 @@ public:
 	TGA::UUID ParentUUID();
 	bool HasParent();
 
+	bool IsChild(Entity aEntity);
+
 	std::vector<TGA::UUID> ChildrenUUIDs();
 
 	template<typename T, typename... Args>
