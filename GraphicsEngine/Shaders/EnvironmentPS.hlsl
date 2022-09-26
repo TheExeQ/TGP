@@ -87,19 +87,6 @@ DeferredPixelOutput main(DeferredVertexToPixel input)
 			break;
 
 		case 1:
-			pointLight += EvaluatePointLight(
-				diffuseColor,
-				specularColor,
-				pixelNormal,
-				roughness,
-				light.Color,
-				light.Intensity,
-				light.Range,
-				light.Position,
-				toEye,
-				worldPosition.xyz
-			);
-
 			//if (light.CastShadows)
 			//{
 			//	const float4 worldToLightView = mul(light.LightView, worldPosition);
@@ -120,9 +107,23 @@ DeferredPixelOutput main(DeferredVertexToPixel input)
 			//		if (lightDepth < viewDepth)
 			//		{
 			//			directLighting *= shadow;
+			//			break;
 			//		}
 			//	}
 			//}
+			
+            pointLight += EvaluatePointLight(
+				diffuseColor,
+				specularColor,
+				pixelNormal,
+				roughness,
+				light.Color,
+				light.Intensity,
+				light.Range,
+				light.Position,
+				toEye,
+				worldPosition.xyz
+			);
 			break;
 
 		case 2:

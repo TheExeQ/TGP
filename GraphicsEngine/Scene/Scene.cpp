@@ -100,6 +100,11 @@ std::vector<Entity> Scene::CullLights(Entity camera)
 void Scene::ParentEntity(Entity aChild, Entity aParent)
 {
 	if (!aChild.IsValid() || !aParent.IsValid()) { return; }
+	if (aChild.GetUUID() == aParent.GetUUID()) { return; }
+	if (aParent.ParentUUID() == aChild.GetUUID()) 
+	{ 
+		UnparentEntity(aParent); 
+	}
 
 	UnparentEntity(aChild);
 

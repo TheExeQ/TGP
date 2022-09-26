@@ -105,7 +105,7 @@ Ref<SpotLight> LightAssetHandler::CreateSpotLight(Vector3<float> aColor, float a
 	result->ourLightBuffer.LightType = 2;
 
 	constexpr float nearPlane = 0.1f;
-	constexpr float farPlane = 10000.f;
+	constexpr float farPlane = 25000.f;
 
 	POINT res = { 2048, 2048 };
 

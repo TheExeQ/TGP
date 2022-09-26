@@ -127,7 +127,6 @@ void SceneHierarchyPanel::DrawEntityNode(Entity aEntity)
 		ImGui::Text(aEntity.GetComponent<TagComponent>().name.c_str());
 		ImGui::SetDragDropPayload("scene_entity_hierarchy", &aEntity, sizeof(Entity));
 		ImGui::EndDragDropSource();
-		std::cout << "Begin Drag Source" << std::endl;
 		isDragDropping = true;
 	}
 
@@ -142,6 +141,7 @@ void SceneHierarchyPanel::DrawEntityNode(Entity aEntity)
 			{
 				myContext->ParentEntity(selectedEnt, aEntity);
 			}
+			
 			myContext->ParentEntity(droppedEntity, aEntity);
 			myDragDropEntities.clear();
 		}
