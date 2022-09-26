@@ -109,11 +109,11 @@ Ref<SpotLight> LightAssetHandler::CreateSpotLight(Vector3<float> aColor, float a
 
 	POINT res = { 2048, 2048 };
 
-	const float hFOV = 90.f * (3.14f / 180);
-	const float vFOV = 2 * std::atan(std::tan(hFOV * 0.5f) * aspectRatio);
+	const float hFOV = 90.f * (3.14f / 180.f);
+	const float vFOV = 2 * std::atan(std::tan(hFOV * 0.5f) /** aspectRatio*/);
 
-	const float myXScale = 1 / std::tanf(hFOV * 0.5f);
-	const float myYScale = 1 / std::tanf(vFOV * 0.5f);
+	const float myXScale = 1.f / std::tanf(hFOV * 0.5f);
+	const float myYScale = 1.f / std::tanf(vFOV * 0.5f);
 	const float Q = farPlane / (farPlane - nearPlane);
 
 	Matrix4x4<float> lightProj;

@@ -75,7 +75,7 @@ void ShadowRenderer::Render(std::vector<Entity>& aLightList, Ref<DirectionalLigh
 			myFrameBufferData.Projection = lightComp.light.GetLightBufferData().LightProj;
 			lightComp.light.SetLightView(aLightList[i - 1].GetComponent<TransformComponent>().GetTransform());
 			myFrameBufferData.View = lightComp.light.GetLightBufferData().LightView;
-			//myFrameBufferData.View = Matrix4::GetFastInverse(aLightList[i - 1].GetComponent<TransformComponent>().GetTransform());
+			myFrameBufferData.View = Matrix4::GetFastInverse(aLightList[i - 1].GetComponent<TransformComponent>().GetTransform());
 			myFrameBufferData.CamTranslation = aLightList[i - 1].GetComponent<TransformComponent>().position;
 			myFrameBufferData.RenderMode = static_cast<unsigned int>(0);
 
