@@ -54,6 +54,30 @@ PixelOutput main(VertexToPixel input)
         -LB_DirectionalLight.Direction,
         toEye);
     
+	if (LB_DirectionalLight.CastShadows)
+	{
+		const float4 worldToLightView = mul(LB_DirectionalLight.LightView, input.myVxPosition);
+		const float4 lightViewToLightProj = mul(LB_DirectionalLight.LightProj, worldToLightView);
+
+		float2 projectedTexCoord;
+		projectedTexCoord.x = lightViewToLightProj.x / lightViewToLightProj.w / 2.f + 0.5f;
+		projectedTexCoord.y = -lightViewToLightProj.y / lightViewToLightProj.w / 2.f + 0.5f;
+
+		if (saturate(projectedTexCoord.x) == projectedTexCoord.x &&
+			saturate(projectedTexCoord.y) == projectedTexCoord.y)
+		{
+			const float shadowBias = 0.0005f;
+			const float shadow = 0.f;
+			const float viewDepth = (lightViewToLightProj.z / lightViewToLightProj.w) - shadowBias;
+			const float lightDepth = dirLightShadowMap.Sample(pointClampSampler, projectedTexCoord).r;
+
+			if (lightDepth < viewDepth)
+			{
+				directLighting *= shadow;
+			}
+		}
+	}
+
     float3 pointLight = 0;
     float3 spotLight = 0;
     

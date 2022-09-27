@@ -71,7 +71,7 @@ DeferredPixelOutput main(DeferredVertexToPixel input)
 
             if (lightDepth < viewDepth)
             {
-				//directLighting *= shadow;
+				directLighting *= shadow;
             }
         }
     }
@@ -136,40 +136,35 @@ DeferredPixelOutput main(DeferredVertexToPixel input)
                     projectedTexCoord.x = lightViewToLightProj.x / lightViewToLightProj.w / 2.f + 0.5f;
                     projectedTexCoord.y = -lightViewToLightProj.y / lightViewToLightProj.w / 2.f + 0.5f;
 
-                    float blue = 0.f;
-				
                     if (saturate(projectedTexCoord.x) == projectedTexCoord.x &&
 					saturate(projectedTexCoord.y) == projectedTexCoord.y)
                     {
-                        const float shadowBias = 0.0005f;
+                        const float shadowBias = 0.000005f;
                         const float viewDepth = (lightViewToLightProj.z / lightViewToLightProj.w) - shadowBias;
                         const float lightDepth = spotLightShadowMap.Sample(pointClampSampler, projectedTexCoord).r;
 
                         if (lightDepth < viewDepth)
                         {
-                            blue = 1.f;
-                            //break;
+                            break;
                         }
-					
-                        spotLight.rgb = float3(projectedTexCoord.x, projectedTexCoord.y, blue);
                     }
                 }
 			
-			//spotLight += EvaluateSpotLight(
-			//	diffuseColor,
-			//	specularColor,
-			//	pixelNormal,
-			//	roughness,
-			//	light.Color,
-			//	light.Intensity,
-			//	light.Range,
-			//	light.Position,
-			//	light.Direction,
-			//	light.SpotOuterRadius,
-			//	light.SpotInnerRadius,
-			//	toEye,
-			//	worldPosition.xyz
-			//);
+				spotLight += EvaluateSpotLight(
+					diffuseColor,
+					specularColor,
+					pixelNormal,
+					roughness,
+					light.Color,
+					light.Intensity,
+					light.Range,
+					light.Position,
+					light.Direction,
+					light.SpotOuterRadius,
+					light.SpotInnerRadius,
+					toEye,
+					worldPosition.xyz
+				);
 
                 break;
         }
