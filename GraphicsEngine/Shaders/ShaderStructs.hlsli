@@ -47,8 +47,8 @@ struct DeferredVertexInput
 
 struct DeferredVertexToPixel
 {
-    float4 myPosition : SV_POSITION;
-    float2 myUV : TEXCOORD;
+    float4 Position : SV_POSITION;
+    float2 UV : TEXCOORD;
 };
 
 struct DeferredPixelOutput

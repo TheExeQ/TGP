@@ -5,6 +5,7 @@
 #include "Renderer/ForwardRenderer.h"
 #include "Renderer/DeferredRenderer.h"
 #include "Renderer/ShadowRenderer.h"
+#include "Renderer/PostProcessRenderer.h"
 #include "Renderer/GBuffer.h"
 #include "Scene/Scene.h"
 #include "Renderer/ModelAssetHandler.h"
@@ -84,6 +85,7 @@ private:
 	ForwardRenderer myForwardRenderer;
 	DeferredRenderer myDeferredRenderer;
 	ShadowRenderer myShadowRenderer;
+	PostProcessRenderer myPostProcessRenderer;
 	Ref<Scene> myScene;
 	ModelAssetHandler myModelAssetHandler;
 	
@@ -101,6 +103,13 @@ private:
 	ImGuiLayer myImGuiLayer;
 
 	inline static bool movementActive = true;
+
+	Ref<Texture> myIntermediateTargetA;
+	Ref<Texture> myIntermediateTargetB;
+	Ref<Texture> myHalfSizeTarget;
+	Ref<Texture> myQuarterSizeTarget;
+	Ref<Texture> myBlurTargetA;
+	Ref<Texture> myBlurTargetB;
 
 	inline static GraphicsEngine* myInstance = nullptr;
 };

@@ -3,6 +3,8 @@
 #define nMipOffset 3
 #define PI 3.14159265358979323846f
 
+#include "Common.hlsli"
+
 float2 polarToCartesian(float polar, float2 vec)
 {
 	float2 vecOut;

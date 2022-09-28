@@ -300,12 +300,24 @@ bool GraphicsEngine::Initialize(unsigned someX, unsigned someY,
 
 	myDeferredRenderer.Init();
 	myShadowRenderer.Init();
+	myPostProcessRenderer.Init();
 	myImGuiLayer.OnAttach(GetWindowHandle());
 
 	if (!InitializeScene())
 	{
 		return false;
 	}
+
+	RECT aRect = DX11::myClientRect;
+	size_t width = aRect.right - aRect.left;
+	size_t height = aRect.bottom - aRect.top;
+
+	myIntermediateTargetA = TextureAssetHandler::CreateRenderTarget("IntermediateA", width, height, DXGI_FORMAT_R32G32B32A32_FLOAT);
+	myIntermediateTargetB = TextureAssetHandler::CreateRenderTarget("IntermediateB", width, height, DXGI_FORMAT_R32G32B32A32_FLOAT);
+	myHalfSizeTarget = TextureAssetHandler::CreateRenderTarget("HalfSize", width / 2, height / 2, DXGI_FORMAT_R32G32B32A32_FLOAT);
+	myQuarterSizeTarget = TextureAssetHandler::CreateRenderTarget("QuarterSize", width / 4, height / 4, DXGI_FORMAT_R32G32B32A32_FLOAT);
+	myBlurTargetA = TextureAssetHandler::CreateRenderTarget("BlurA", width / 4, height / 4, DXGI_FORMAT_R32G32B32A32_FLOAT);
+	myBlurTargetB = TextureAssetHandler::CreateRenderTarget("BlurB", width / 4, height / 4, DXGI_FORMAT_R32G32B32A32_FLOAT);
 
 	return true;
 }
@@ -460,6 +472,7 @@ void GraphicsEngine::RenderFrame()
 			}
 		}
 
+		//myIntermediateTargetA->SetAsTarget();
 		myDeferredRenderer.Render(camera, lightEntitiesToRender, myDirectionalLight, myEnvironmentLight, myTimer.GetDeltaTime(), myTimer.GetTotalTime());
 
 		//myForwardRenderer.RenderModels(camera, modelEntitiesToRender, lightEntitiesToRender, myDirectionalLight, myEnvironmentLight);
@@ -467,6 +480,39 @@ void GraphicsEngine::RenderFrame()
 		SetBlendState(BlendState::BS_Additive);
 		SetDepthStencilState(DepthStencilState::DSS_ReadOnly);
 		myForwardRenderer.RenderParticles(camera, particlesEntitiesToRender);
+
+		myIntermediateTargetB->SetAsTarget();
+		myIntermediateTargetA->SetAsResource(0);
+		myPostProcessRenderer.Render(PostProcessRenderer::PP_LUMINANCE);
+
+		myHalfSizeTarget->SetAsTarget();
+		myIntermediateTargetB->SetAsResource(0);
+		myPostProcessRenderer.Render(PostProcessRenderer::PP_COPY);
+
+		myQuarterSizeTarget->SetAsTarget();
+		myHalfSizeTarget->SetAsResource(0);
+		myPostProcessRenderer.Render(PostProcessRenderer::PP_COPY);
+
+		myBlurTargetA->SetAsTarget();
+		myQuarterSizeTarget->SetAsResource(0);
+		myPostProcessRenderer.Render(PostProcessRenderer::PP_GAUSSIAN);
+
+		myBlurTargetB->SetAsTarget();
+		myBlurTargetA->SetAsResource(0);
+		myPostProcessRenderer.Render(PostProcessRenderer::PP_GAUSSIAN);
+
+		myQuarterSizeTarget->SetAsTarget();
+		myBlurTargetB->SetAsResource(0);
+		myPostProcessRenderer.Render(PostProcessRenderer::PP_COPY);
+
+		myHalfSizeTarget->SetAsTarget();
+		myQuarterSizeTarget->SetAsResource(0);
+		myPostProcessRenderer.Render(PostProcessRenderer::PP_COPY);
+
+		DX11::myContext->OMSetRenderTargets(1, DX11::myRenderTarget.GetAddressOf(), DX11::myDepthStencil.Get());
+		myIntermediateTargetA->SetAsResource(0);
+		myHalfSizeTarget->SetAsResource(1);
+		myPostProcessRenderer.Render(PostProcessRenderer::PP_BLOOM);
 	}
 }
 
@@ -561,4 +607,11 @@ void GraphicsEngine::ResetStates()
 	SetDepthStencilState(DSS_ReadWrite);
 	SetSamplerState(SS_Default, 0);
 	SetSamplerState(SS_PointClamp, 1);
+
+	myIntermediateTargetB->ClearRTV();
+	myIntermediateTargetA->ClearRTV();
+	myHalfSizeTarget->ClearRTV();
+	myQuarterSizeTarget->ClearRTV();
+	myBlurTargetA->ClearRTV();
+	myBlurTargetB->ClearRTV();
 }

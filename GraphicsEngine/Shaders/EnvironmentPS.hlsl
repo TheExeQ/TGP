@@ -1,24 +1,23 @@
 #pragma once
 #include "ShaderStructs.hlsli"
-#include "Common.hlsli"
 #include "PBRFunctions.hlsli"
 
 DeferredPixelOutput main(DeferredVertexToPixel input)
 {
     DeferredPixelOutput result;
 
-    const float4 albedo = albedoTexture.Sample(defaultSampler, input.myUV);
+    const float4 albedo = albedoTexture.Sample(defaultSampler, input.UV);
     if (albedo.a == 0)
     {
         result.myColor = 0;
         discard;
     }
 
-    const float3 pixelNormal = normalTexture.Sample(defaultSampler, input.myUV).rgb;
-    const float4 material = materialTexture.Sample(defaultSampler, input.myUV);
-    const float3 vertexNormal = vertexNormalTexture.Sample(defaultSampler, input.myUV).rgb;
-    const float4 worldPosition = worldPositionTexture.Sample(defaultSampler, input.myUV);
-    const float ambientOcclusion = ambientOcclusionTexture.Sample(defaultSampler, input.myUV).r;
+    const float3 pixelNormal = normalTexture.Sample(defaultSampler, input.UV).rgb;
+    const float4 material = materialTexture.Sample(defaultSampler, input.UV);
+    const float3 vertexNormal = vertexNormalTexture.Sample(defaultSampler, input.UV).rgb;
+    const float4 worldPosition = worldPositionTexture.Sample(defaultSampler, input.UV);
+    const float ambientOcclusion = ambientOcclusionTexture.Sample(defaultSampler, input.UV).r;
 
     const float metalness = material.r;
     const float roughness = material.g;

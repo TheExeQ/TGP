@@ -1,4 +1,3 @@
-#pragma once
 #include "ShaderStructs.hlsli"
 
 DeferredVertexToPixel main(DeferredVertexInput input)
@@ -16,7 +15,7 @@ DeferredVertexToPixel main(DeferredVertexInput input)
         float2(2.0f, 1.0f)
     };
 
-    result.myPosition = pos[input.myIndex];
-    result.myUV = uv[input.myIndex];
+    result.Position = pos[input.myIndex];
+    result.UV = uv[input.myIndex];
     return result;
 }

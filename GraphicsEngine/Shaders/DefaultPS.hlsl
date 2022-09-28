@@ -1,5 +1,4 @@
 #include "ShaderStructs.hlsli"
-#include "Common.hlsli"
 #include "PBRFunctions.hlsli"
 
 PixelOutput main(VertexToPixel input)

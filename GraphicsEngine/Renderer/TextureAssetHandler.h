@@ -13,7 +13,8 @@ public:
 	static Ref<Texture> GetTexture(const std::string& aTextureName);
 	static bool LoadTexture(const std::string& aFileName);
 	static Scope<GBuffer> CreateGBuffer(int aWidth, int aHeight);
-	static Ref<DepthStencil> CreateDepthStencil(const std::string aName, size_t aWidth, size_t aHeight);
+	static Ref<DepthStencil> CreateDepthStencil(const std::string& aName, size_t aWidth, size_t aHeight);
+	static Ref<Texture> CreateRenderTarget(const std::string& aName, size_t aWidth, size_t aHeight, DXGI_FORMAT aFormat);
 
 private:
 	static std::unordered_map<std::string, Ref<Texture>> myRegistry;

@@ -91,7 +91,7 @@ Scope<GBuffer> TextureAssetHandler::CreateGBuffer(int aWidth, int aHeight)
 	return CreateScope<GBuffer>(gbuffer);
 }
 
-Ref<DepthStencil> TextureAssetHandler::CreateDepthStencil(const std::string aName, size_t aWidth, size_t aHeight)
+Ref<DepthStencil> TextureAssetHandler::CreateDepthStencil(const std::string& aName, size_t aWidth, size_t aHeight)
 {
 	HRESULT result;
 
@@ -136,3 +136,35 @@ Ref<DepthStencil> TextureAssetHandler::CreateDepthStencil(const std::string aNam
 	return output;
 }
 
+Ref<Texture> TextureAssetHandler::CreateRenderTarget(const std::string& aName, size_t aWidth, size_t aHeight, DXGI_FORMAT aFormat)
+{
+	Ref<Texture> result = CreateRef<Texture>();
+
+	ComPtr<ID3D11Texture2D> targetTexture;
+	D3D11_TEXTURE2D_DESC textureDesc = { 0 };
+	textureDesc.Width = aWidth;
+	textureDesc.Height = aHeight;
+	textureDesc.ArraySize = 1;
+	textureDesc.SampleDesc.Count = 1;
+	textureDesc.Format = aFormat;
+	textureDesc.BindFlags = D3D11_BIND_SHADER_RESOURCE | D3D11_BIND_RENDER_TARGET;
+
+	DX11::myDevice->CreateTexture2D(&textureDesc, nullptr, targetTexture.GetAddressOf());
+
+	D3D11_RENDER_TARGET_VIEW_DESC renderTargetViewDesc;
+	renderTargetViewDesc.Format = textureDesc.Format;
+	renderTargetViewDesc.ViewDimension = D3D11_RTV_DIMENSION_TEXTURE2D;
+	renderTargetViewDesc.Texture2D.MipSlice = 0;
+
+	DX11::myDevice->CreateRenderTargetView(targetTexture.Get(), &renderTargetViewDesc, &result->myRTV);
+
+	D3D11_SHADER_RESOURCE_VIEW_DESC shaderResourceViewDesc;
+	shaderResourceViewDesc.Format = textureDesc.Format;
+	shaderResourceViewDesc.ViewDimension = D3D11_SRV_DIMENSION_TEXTURE2D;
+	shaderResourceViewDesc.Texture2D.MostDetailedMip = 0;
+	shaderResourceViewDesc.Texture2D.MipLevels = 1;
+
+	DX11::myDevice->CreateShaderResourceView(targetTexture.Get(), &shaderResourceViewDesc, &result->mySRV);
+
+	return result;
+}
