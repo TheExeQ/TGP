@@ -140,6 +140,9 @@ Ref<Texture> TextureAssetHandler::CreateRenderTarget(const std::string& aName, s
 {
 	Ref<Texture> result = CreateRef<Texture>();
 
+	result->myWidth = aWidth;
+	result->myHeight = aHeight;
+
 	ComPtr<ID3D11Texture2D> targetTexture;
 	D3D11_TEXTURE2D_DESC textureDesc = { 0 };
 	textureDesc.Width = aWidth;

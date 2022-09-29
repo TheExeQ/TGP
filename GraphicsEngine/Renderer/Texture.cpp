@@ -9,6 +9,14 @@ Texture::~Texture()
 
 void Texture::SetAsTarget()
 {
+	D3D11_VIEWPORT viewport = {};
+	viewport.Width = myWidth;
+	viewport.Height = myHeight;
+	viewport.MinDepth = 0.0f;
+	viewport.MaxDepth = 1.0f;
+	viewport.TopLeftX = 0;
+	viewport.TopLeftY = 0;
+	DX11::myContext->RSSetViewports(1, &viewport);
 	DX11::myContext->OMSetRenderTargets(1, myRTV.GetAddressOf(), nullptr);
 }
 

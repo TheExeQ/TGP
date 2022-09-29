@@ -15,10 +15,20 @@ PostProcessPixelOutput main(PostProcessVertexToPixel input)
 	
     const float3 resource = color.rgb;
     
+    //Flat cutoff
     {
-        float luminance = dot(resource, float3(0.2126f, 0.7152f, 0.0722f));
-        result.Color.rgb = resource * pow(luminance, 5);
+
+    float luminance = dot(resource, float3(0.2126f, 0.7152f, 0.0722f));
+    float cutOff = 0.8f;
+    if (luminance >= cutOff)
+    {
+        result.Color.rgb = resource;
     }
+    else
+    {
+        result.Color.rgb = 0.f;
+    }
+}
     
     result.Color.a = 1.f;
     

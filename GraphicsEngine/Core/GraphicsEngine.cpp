@@ -478,7 +478,7 @@ void GraphicsEngine::RenderFrame()
 		//myForwardRenderer.RenderModels(camera, modelEntitiesToRender, lightEntitiesToRender, myDirectionalLight, myEnvironmentLight);
 
 		SetBlendState(BlendState::BS_Additive);
-		SetDepthStencilState(DepthStencilState::DSS_ReadOnly);
+		SetDepthStencilState(DepthStencilState::DSS_Off);
 		myForwardRenderer.RenderParticles(camera, particlesEntitiesToRender);
 
 		SetBlendState(BlendState::BS_None);
@@ -512,6 +512,14 @@ void GraphicsEngine::RenderFrame()
 		myQuarterSizeTarget->SetAsResource(0);
 		myPostProcessRenderer.Render(PostProcessRenderer::PP_COPY);
 
+		D3D11_VIEWPORT viewport = {};
+		viewport.Width = DX11::myClientRect.right - DX11::myClientRect.left;
+		viewport.Height = DX11::myClientRect.bottom - DX11::myClientRect.top;
+		viewport.MinDepth = 0.0f;
+		viewport.MaxDepth = 1.0f;
+		viewport.TopLeftX = 0;
+		viewport.TopLeftY = 0;
+		DX11::myContext->RSSetViewports(1, &viewport);
 		DX11::myContext->OMSetRenderTargets(1, DX11::myRenderTarget.GetAddressOf(), DX11::myDepthStencil.Get());
 		myIntermediateTargetA->SetAsResource(0);
 		myHalfSizeTarget->SetAsResource(1);

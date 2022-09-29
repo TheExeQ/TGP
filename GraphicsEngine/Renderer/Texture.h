@@ -20,6 +20,8 @@ protected:
 	ComPtr<ID3D11Resource> myTexture;
 	ComPtr<ID3D11RenderTargetView> myRTV;
 	ComPtr<ID3D11ShaderResourceView> mySRV;
+
+	size_t myWidth, myHeight;
 private:
 	friend class TextureAssetHandler;
 };
