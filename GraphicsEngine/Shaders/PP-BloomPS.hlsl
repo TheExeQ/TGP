@@ -11,6 +11,7 @@ PostProcessPixelOutput main(PostProcessVertexToPixel input)
     const float luminance = dot(resource1, float3(0.2126f, 0.7152f, 0.0722f));
     const float3 scaledResource = resource2 * (1.0f - luminance);
     result.Color.rgb = resource1 + scaledResource;
+    result.Color.a = 1.f;
     
     return result;
 }

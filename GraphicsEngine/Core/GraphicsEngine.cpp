@@ -472,7 +472,7 @@ void GraphicsEngine::RenderFrame()
 			}
 		}
 
-		//myIntermediateTargetA->SetAsTarget();
+		myIntermediateTargetA->SetAsTarget();
 		myDeferredRenderer.Render(camera, lightEntitiesToRender, myDirectionalLight, myEnvironmentLight, myTimer.GetDeltaTime(), myTimer.GetTotalTime());
 
 		//myForwardRenderer.RenderModels(camera, modelEntitiesToRender, lightEntitiesToRender, myDirectionalLight, myEnvironmentLight);
@@ -480,6 +480,9 @@ void GraphicsEngine::RenderFrame()
 		SetBlendState(BlendState::BS_Additive);
 		SetDepthStencilState(DepthStencilState::DSS_ReadOnly);
 		myForwardRenderer.RenderParticles(camera, particlesEntitiesToRender);
+
+		SetBlendState(BlendState::BS_None);
+		SetDepthStencilState(DepthStencilState::DSS_ReadWrite);
 
 		myIntermediateTargetB->SetAsTarget();
 		myIntermediateTargetA->SetAsResource(0);

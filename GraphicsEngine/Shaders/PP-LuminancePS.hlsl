@@ -20,6 +20,8 @@ PostProcessPixelOutput main(PostProcessVertexToPixel input)
         result.Color.rgb = resource * pow(luminance, 5);
     }
     
+    result.Color.a = 1.f;
+    
     return result;
 }
 
