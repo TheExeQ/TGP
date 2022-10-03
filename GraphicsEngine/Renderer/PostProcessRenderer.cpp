@@ -1,5 +1,6 @@
 #include "PostProcessRenderer.h"
 
+#include "Math/Matrix.hpp"
 #include "Math/Vector.hpp"
 
 #include <fstream>
@@ -38,6 +39,7 @@ bool PostProcessRenderer::Init()
 	shaderPaths[PP_LUMINANCE] = "PP-LuminancePS.cso";
 	shaderPaths[PP_GAUSSIAN] = "PP-GaussianPS.cso";
 	shaderPaths[PP_BLOOM] = "PP-BloomPS.cso";
+	shaderPaths[PP_SSAO] = "PP-ScreenSpaceAmbientOcclusionPS.cso";
 
 	for (uint32_t i = 0; i < PP_COUNT; i++)
 	{
@@ -57,11 +59,37 @@ bool PostProcessRenderer::Init()
     return true;
 }
 
-void PostProcessRenderer::Render(PostProcessPass aPass, const int& width, const int& height)
+void PostProcessRenderer::Render(PostProcessPass aPass, const int& width, const int& height, Entity aCameraEntity)
 {
 	D3D11_MAPPED_SUBRESOURCE frameBufferData;
 
 	myFrameBufferData.Resolution = CommonUtilities::Vector2<float>(width, height);
+	if (aCameraEntity.IsValid() && aCameraEntity.HasComponent<CameraComponent>())
+	{
+		const auto& camera = aCameraEntity.GetComponent<CameraComponent>().camera;
+		const auto& cameraTransform = aCameraEntity.GetComponent<TransformComponent>();
+		myFrameBufferData.View = CommonUtilities::Matrix4x4<float>::GetFastInverse(cameraTransform.GetTransform());
+		myFrameBufferData.CamTranslation = cameraTransform.position;
+		myFrameBufferData.nearPlane = camera.GetNear();
+		myFrameBufferData.farPlane = camera.GetFar();
+
+		DXGI_SWAP_CHAIN_DESC SwapChainDesc;
+		DX11::mySwapchain->GetDesc(&SwapChainDesc);
+		const HWND hwnd = SwapChainDesc.OutputWindow;
+		CommonUtilities::Vector2<float> res = CommonUtilities::Vector2<float>(DX11::myClientRect.right - DX11::myClientRect.left, DX11::myClientRect.bottom - DX11::myClientRect.top);
+
+		myFrameBufferData.Resolution = res;
+
+		const float aspectRatio = (float)myFrameBufferData.Resolution.x / (float)myFrameBufferData.Resolution.y;
+		const float farp = camera.GetFar();
+		const float halfHeight = farp * std::tanf(0.5f * camera.GetFov());
+		const float halfWidth = aspectRatio * halfHeight;
+
+		myFrameBufferData.FrustumCorners[0] = Vector4<float>(-halfWidth, -halfHeight, farp, 0.f);
+		myFrameBufferData.FrustumCorners[1] = Vector4<float>(-halfWidth, halfHeight, farp, 0.f);
+		myFrameBufferData.FrustumCorners[2] = Vector4<float>(halfWidth, halfHeight, farp, 0.f);
+		myFrameBufferData.FrustumCorners[3] = Vector4<float>(halfWidth, -halfHeight, farp, 0.f);
+	}
 
 	auto result = DX11::myContext->Map(myFrameBuffer.Get(), 0, D3D11_MAP_WRITE_DISCARD, 0, &frameBufferData);
 	if (FAILED(result))
@@ -69,6 +97,7 @@ void PostProcessRenderer::Render(PostProcessPass aPass, const int& width, const 
 		return;
 	}
 	memcpy(frameBufferData.pData, &myFrameBufferData, sizeof(FrameBufferData));
+	DX11::myContext->PSSetConstantBuffers(0, 1, myFrameBuffer.GetAddressOf());
 
 	DX11::myContext->Unmap(myFrameBuffer.Get(), 0);
 	DX11::myContext->IASetVertexBuffers(0, 0, nullptr, nullptr, nullptr);

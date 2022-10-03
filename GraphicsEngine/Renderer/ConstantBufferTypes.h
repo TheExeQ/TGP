@@ -15,7 +15,9 @@ struct FrameBufferData
 	CommonUtilities::Vector3<float> CamTranslation;
 	unsigned int RenderMode = 0;
 	CommonUtilities::Vector2<float> Resolution;
-	CommonUtilities::Vector2<float> Padding;
+	float nearPlane;
+	float farPlane;
+	std::array<CommonUtilities::Vector4<float>, 4> FrustumCorners;
 };
 
 struct ObjectBufferData

@@ -266,6 +266,17 @@ bool GraphicsEngine::Initialize(unsigned someX, unsigned someY,
 		return false;
 	}
 
+	samplerDesc.AddressU = D3D11_TEXTURE_ADDRESS_WRAP;
+	samplerDesc.AddressV = D3D11_TEXTURE_ADDRESS_WRAP;
+	samplerDesc.AddressW = D3D11_TEXTURE_ADDRESS_WRAP;
+
+	result = DX11::myDevice->CreateSamplerState(&samplerDesc, &mySamplerStates[SamplerState::SS_Wrap]);
+
+	if (FAILED(result))
+	{
+		return false;
+	}
+
 	D3D11_SAMPLER_DESC pointSamplerDesc;
 
 	pointSamplerDesc.Filter = D3D11_FILTER_MIN_MAG_MIP_POINT;
@@ -283,6 +294,17 @@ bool GraphicsEngine::Initialize(unsigned someX, unsigned someY,
 	pointSamplerDesc.MaxLOD = FLT_MAX;
 
 	result = DX11::myDevice->CreateSamplerState(&pointSamplerDesc, &mySamplerStates[SamplerState::SS_PointClamp]);
+
+	if (FAILED(result))
+	{
+		return false;
+	}
+
+	pointSamplerDesc.AddressU = D3D11_TEXTURE_ADDRESS_WRAP;
+	pointSamplerDesc.AddressV = D3D11_TEXTURE_ADDRESS_WRAP;
+	pointSamplerDesc.AddressW = D3D11_TEXTURE_ADDRESS_WRAP;
+
+	result = DX11::myDevice->CreateSamplerState(&pointSamplerDesc, &mySamplerStates[SamplerState::SS_PointWrap]);
 
 	if (FAILED(result))
 	{
@@ -318,6 +340,10 @@ bool GraphicsEngine::Initialize(unsigned someX, unsigned someY,
 	myQuarterSizeTarget = TextureAssetHandler::CreateRenderTarget("QuarterSize", width / 4, height / 4, DXGI_FORMAT_R32G32B32A32_FLOAT);
 	myBlurTargetA = TextureAssetHandler::CreateRenderTarget("BlurA", width / 4, height / 4, DXGI_FORMAT_R32G32B32A32_FLOAT);
 	myBlurTargetB = TextureAssetHandler::CreateRenderTarget("BlurB", width / 4, height / 4, DXGI_FORMAT_R32G32B32A32_FLOAT);
+	mySSAOTarget = TextureAssetHandler::CreateRenderTarget("SSAOTarget", width, height, DXGI_FORMAT_R32_FLOAT);
+	
+	TextureAssetHandler::LoadTexture("BlueNoise.dds");
+	myNoiceTexture = TextureAssetHandler::GetTexture("BlueNoise.dds");
 
 	return true;
 }
@@ -441,6 +467,11 @@ void GraphicsEngine::RenderFrame()
 		myDeferredRenderer.GenereteGBuffer(camera, modelEntitiesToRender, myTimer.GetDeltaTime(), myTimer.GetTotalTime());
 		myGBuffer->ClearTarget();
 		myGBuffer->SetAsResource(0);
+
+		mySSAOTarget->SetAsTarget();
+		myNoiceTexture->SetAsResource(8);
+		myPostProcessRenderer.Render(PostProcessRenderer::PP_SSAO, mySSAOTarget->GetWidth(), mySSAOTarget->GetHeight(), camera);
+
 		DX11::myContext->OMSetRenderTargets(1, DX11::myRenderTarget.GetAddressOf(), DX11::myDepthStencil.Get());
 		SetDepthStencilState(DepthStencilState::DSS_Off);
 		myDirectionalLight->SetShadowMapAsResource(6, 1);
@@ -617,7 +648,9 @@ void GraphicsEngine::ResetStates()
 	SetBlendState(BlendState::BS_None);
 	SetDepthStencilState(DSS_ReadWrite);
 	SetSamplerState(SS_Default, 0);
-	SetSamplerState(SS_PointClamp, 1);
+	SetSamplerState(SS_Wrap, 1);
+	SetSamplerState(SS_PointClamp, 2);
+	SetSamplerState(SS_PointWrap, 3);
 
 	myIntermediateTargetB->ClearRTV();
 	myIntermediateTargetA->ClearRTV();

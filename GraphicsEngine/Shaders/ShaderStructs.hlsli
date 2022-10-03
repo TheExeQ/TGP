@@ -63,7 +63,9 @@ cbuffer FrameBuffer : register(b0)
     float3 FB_CamTranslation;
     uint FB_RenderMode;
     float2 FB_Resolution;
-    float2 padding0;
+    float FB_Near;
+    float FB_Far;
+    float4 FB_FrustumCorners[4];
 }
 
 cbuffer Objectbuffer : register(b1)

@@ -15,6 +15,7 @@ public:
 	
 	const float& GetNear() const { return myNear; };
 	const float& GetFar() const { return myFar; };
+	const float& GetFov() const { return myFov; };
 
 private:
 	friend class SceneHierarchyPanel;

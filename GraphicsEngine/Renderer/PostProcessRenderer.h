@@ -1,6 +1,7 @@
 #pragma once
 #include "ConstantBufferTypes.h"
 #include "Core/DX11.h"
+#include "Scene/Entity.h"
 
 #include <array>
 
@@ -13,12 +14,13 @@ public:
 		PP_LUMINANCE,
 		PP_GAUSSIAN,
 		PP_BLOOM,
+		PP_SSAO,
 		PP_COUNT
 	};
 
 public:
 	bool Init();
-	void Render(PostProcessPass aPass, const int& width, const int& height);
+	void Render(PostProcessPass aPass, const int& width, const int& height, Entity aCameraEntity = Entity());
 
 private:
 	FrameBufferData myFrameBufferData;

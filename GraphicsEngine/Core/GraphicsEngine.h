@@ -37,7 +37,9 @@ enum DepthStencilState
 enum SamplerState
 {
 	SS_Default,
+	SS_Wrap,
 	SS_PointClamp,
+	SS_PointWrap,
 	SS_Count,
 };
 
@@ -110,6 +112,8 @@ private:
 	Ref<Texture> myQuarterSizeTarget;
 	Ref<Texture> myBlurTargetA;
 	Ref<Texture> myBlurTargetB;
+	Ref<Texture> mySSAOTarget;
+	Ref<Texture> myNoiceTexture;
 
 	inline static GraphicsEngine* myInstance = nullptr;
 };

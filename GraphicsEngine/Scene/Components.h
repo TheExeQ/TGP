@@ -31,7 +31,7 @@ struct TransformComponent
 	Vector3f rotation;
 	Vector3f scale = { 1.f, 1.f, 1.f };
 
-	Matrix4 GetTransform() 
+	Matrix4 GetTransform() const
 	{
 		Matrix4 transform;
 		transform = Matrix4::Scale(transform, scale);
