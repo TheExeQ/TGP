@@ -10,7 +10,7 @@ PostProcessPixelOutput main(PostProcessVertexToPixel input)
     const float Quality = 4.0f;
     const float Radius = 2.0f;
     
-    const float2 rad = Radius /*/ FB_Resolution*/;
+    const float2 rad = Radius * FB_Resolution;
     
     float4 color = TextureSlot1.Sample(defaultSampler, input.UV);
     

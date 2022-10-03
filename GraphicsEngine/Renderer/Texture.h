@@ -14,6 +14,9 @@ public:
 	void SetAsResource(uint32_t aSlot);
 	void ClearRTV();
 
+	size_t GetWidth() const { return myWidth; };
+	size_t GetHeight() const { return myHeight; };
+
 protected:
 	std::string myName;
 	

@@ -18,7 +18,7 @@ public:
 
 public:
 	bool Init();
-	void Render(PostProcessPass aPass);
+	void Render(PostProcessPass aPass, const int& width, const int& height);
 
 private:
 	FrameBufferData myFrameBufferData;

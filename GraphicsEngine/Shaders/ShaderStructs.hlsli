@@ -62,6 +62,8 @@ cbuffer FrameBuffer : register(b0)
     float4x4 FB_ToProjection;
     float3 FB_CamTranslation;
     uint FB_RenderMode;
+    float2 FB_Resolution;
+    float2 padding0;
 }
 
 cbuffer Objectbuffer : register(b1)
@@ -74,7 +76,7 @@ cbuffer Objectbuffer : register(b1)
 cbuffer MaterialBuffer : register(b2)
 {
     float3 MB_Albedo;
-    float padding;
+    float padding1;
 }
 
 struct LightData

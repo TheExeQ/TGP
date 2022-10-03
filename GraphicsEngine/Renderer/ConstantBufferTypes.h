@@ -14,6 +14,8 @@ struct FrameBufferData
 	CommonUtilities::Matrix4x4<float> Projection;
 	CommonUtilities::Vector3<float> CamTranslation;
 	unsigned int RenderMode = 0;
+	CommonUtilities::Vector2<float> Resolution;
+	CommonUtilities::Vector2<float> Padding;
 };
 
 struct ObjectBufferData

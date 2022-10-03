@@ -1,5 +1,7 @@
 #include "PostProcessRenderer.h"
 
+#include "Math/Vector.hpp"
+
 #include <fstream>
 
 bool PostProcessRenderer::Init()
@@ -55,8 +57,20 @@ bool PostProcessRenderer::Init()
     return true;
 }
 
-void PostProcessRenderer::Render(PostProcessPass aPass)
+void PostProcessRenderer::Render(PostProcessPass aPass, const int& width, const int& height)
 {
+	D3D11_MAPPED_SUBRESOURCE frameBufferData;
+
+	myFrameBufferData.Resolution = CommonUtilities::Vector2<float>(width, height);
+
+	auto result = DX11::myContext->Map(myFrameBuffer.Get(), 0, D3D11_MAP_WRITE_DISCARD, 0, &frameBufferData);
+	if (FAILED(result))
+	{
+		return;
+	}
+	memcpy(frameBufferData.pData, &myFrameBufferData, sizeof(FrameBufferData));
+
+	DX11::myContext->Unmap(myFrameBuffer.Get(), 0);
 	DX11::myContext->IASetVertexBuffers(0, 0, nullptr, nullptr, nullptr);
 	DX11::myContext->IASetIndexBuffer(nullptr, DXGI_FORMAT_UNKNOWN, 0);
 

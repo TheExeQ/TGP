@@ -486,31 +486,31 @@ void GraphicsEngine::RenderFrame()
 
 		myIntermediateTargetB->SetAsTarget();
 		myIntermediateTargetA->SetAsResource(0);
-		myPostProcessRenderer.Render(PostProcessRenderer::PP_LUMINANCE);
+		myPostProcessRenderer.Render(PostProcessRenderer::PP_LUMINANCE, myIntermediateTargetB->GetWidth(), myIntermediateTargetB->GetHeight());
 
 		myHalfSizeTarget->SetAsTarget();
 		myIntermediateTargetB->SetAsResource(0);
-		myPostProcessRenderer.Render(PostProcessRenderer::PP_COPY);
+		myPostProcessRenderer.Render(PostProcessRenderer::PP_COPY, myHalfSizeTarget->GetWidth(), myHalfSizeTarget->GetHeight());
 
 		myQuarterSizeTarget->SetAsTarget();
 		myHalfSizeTarget->SetAsResource(0);
-		myPostProcessRenderer.Render(PostProcessRenderer::PP_COPY);
+		myPostProcessRenderer.Render(PostProcessRenderer::PP_COPY, myQuarterSizeTarget->GetWidth(), myQuarterSizeTarget->GetHeight());
 
 		myBlurTargetA->SetAsTarget();
 		myQuarterSizeTarget->SetAsResource(0);
-		myPostProcessRenderer.Render(PostProcessRenderer::PP_GAUSSIAN);
+		myPostProcessRenderer.Render(PostProcessRenderer::PP_GAUSSIAN, myBlurTargetA->GetWidth(), myBlurTargetA->GetHeight());
 
 		myBlurTargetB->SetAsTarget();
 		myBlurTargetA->SetAsResource(0);
-		myPostProcessRenderer.Render(PostProcessRenderer::PP_GAUSSIAN);
+		myPostProcessRenderer.Render(PostProcessRenderer::PP_GAUSSIAN, myBlurTargetB->GetWidth(), myBlurTargetB->GetHeight());
 
 		myQuarterSizeTarget->SetAsTarget();
 		myBlurTargetB->SetAsResource(0);
-		myPostProcessRenderer.Render(PostProcessRenderer::PP_COPY);
+		myPostProcessRenderer.Render(PostProcessRenderer::PP_COPY, myQuarterSizeTarget->GetWidth(), myQuarterSizeTarget->GetHeight());
 
 		myHalfSizeTarget->SetAsTarget();
 		myQuarterSizeTarget->SetAsResource(0);
-		myPostProcessRenderer.Render(PostProcessRenderer::PP_COPY);
+		myPostProcessRenderer.Render(PostProcessRenderer::PP_COPY, myHalfSizeTarget->GetWidth(), myHalfSizeTarget->GetHeight());
 
 		D3D11_VIEWPORT viewport = {};
 		viewport.Width = DX11::myClientRect.right - DX11::myClientRect.left;
@@ -523,7 +523,7 @@ void GraphicsEngine::RenderFrame()
 		DX11::myContext->OMSetRenderTargets(1, DX11::myRenderTarget.GetAddressOf(), DX11::myDepthStencil.Get());
 		myIntermediateTargetA->SetAsResource(0);
 		myHalfSizeTarget->SetAsResource(1);
-		myPostProcessRenderer.Render(PostProcessRenderer::PP_BLOOM);
+		myPostProcessRenderer.Render(PostProcessRenderer::PP_BLOOM, myIntermediateTargetA->GetWidth(), myIntermediateTargetA->GetHeight());
 	}
 }
 
