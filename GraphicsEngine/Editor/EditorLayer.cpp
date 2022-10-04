@@ -4,14 +4,22 @@
 const char* g_ImGuiWindowNames[ImGuiWindows::COUNT] =
 {
 	"Hierarchy/Properties",
+	"ContentBrowser",
 	"Settings"
 };
+
+void EditorLayer::Init()
+{
+	myContentBrowserPanel.Init();
+}
 
 void EditorLayer::OnRender()
 {
 	WindowController();
 	if (myWindowEnabler[ImGuiWindows::SceneHierarchy])
 		mySceneHierarchyPanel.OnImGuiRender();
+	if (myWindowEnabler[ImGuiWindows::ContentBrowser])
+		myContentBrowserPanel.OnImGuiRender();
 	if (myWindowEnabler[ImGuiWindows::Settings])
 		mySettingsPanel.OnImGuiRender();
 }

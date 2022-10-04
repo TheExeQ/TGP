@@ -27,4 +27,5 @@ protected:
 	size_t myWidth, myHeight;
 private:
 	friend class TextureAssetHandler;
+	friend class ContentBrowserPanel;
 };

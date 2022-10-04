@@ -83,27 +83,28 @@ LRESULT CALLBACK GraphicsEngine::WinProc(_In_ HWND hWnd, _In_ UINT uMsg, _In_ WP
 					}
 				}
 
-				std::wstring fileName = L"../Assets/";
+				std::wstring fileName = GraphicsEngine::Get().myEditorLayer.GetContentBrowserPath().wstring();
+				fileName.append(L"/");
 				std::filesystem::path somePath(filePath);
 
 				auto ext = somePath.extension();
 
-				if (ext.string() == ".fbx")
-				{
-					fileName.append(L"Models/");
-				}
-				else if (ext.string() == ".dds")
-				{
-					fileName.append(L"Textures/");
-				}
-				else if (ext.string() == ".scene")
-				{
-					fileName.append(L"Scenes/");
-				}
-				else if (ext.string() == ".settings" || ext.string() == ".preset")
-				{
-					fileName.append(L"Settings/");
-				}
+				//if (ext.string() == ".fbx")
+				//{
+				//	fileName.append(L"Models/");
+				//}
+				//else if (ext.string() == ".dds")
+				//{
+				//	fileName.append(L"Textures/");
+				//}
+				//else if (ext.string() == ".scene")
+				//{
+				//	fileName.append(L"Scenes/");
+				//}
+				//else if (ext.string() == ".settings" || ext.string() == ".preset")
+				//{
+				//	fileName.append(L"Settings/");
+				//}
 
 				for (int i = filePathNameBegin; i < filePathLength; i++)
 				{
@@ -345,6 +346,8 @@ bool GraphicsEngine::Initialize(unsigned someX, unsigned someY,
 	TextureAssetHandler::LoadTexture("BlueNoise.dds");
 	myNoiceTexture = TextureAssetHandler::GetTexture("BlueNoise.dds");
 
+	myEditorLayer.Init();
+
 	return true;
 }
 
@@ -470,7 +473,7 @@ void GraphicsEngine::RenderFrame()
 
 		mySSAOTarget->SetAsTarget();
 		myNoiceTexture->SetAsResource(8);
-		myPostProcessRenderer.Render(PostProcessRenderer::PP_SSAO, mySSAOTarget->GetWidth(), mySSAOTarget->GetHeight(), camera);
+		myPostProcessRenderer.Render(PostProcessRenderer::PP_SSAO, camera);
 
 		DX11::myContext->OMSetRenderTargets(1, DX11::myRenderTarget.GetAddressOf(), DX11::myDepthStencil.Get());
 		SetDepthStencilState(DepthStencilState::DSS_Off);
@@ -517,31 +520,31 @@ void GraphicsEngine::RenderFrame()
 
 		myIntermediateTargetB->SetAsTarget();
 		myIntermediateTargetA->SetAsResource(0);
-		myPostProcessRenderer.Render(PostProcessRenderer::PP_LUMINANCE, myIntermediateTargetB->GetWidth(), myIntermediateTargetB->GetHeight());
+		myPostProcessRenderer.Render(PostProcessRenderer::PP_LUMINANCE);
 
 		myHalfSizeTarget->SetAsTarget();
 		myIntermediateTargetB->SetAsResource(0);
-		myPostProcessRenderer.Render(PostProcessRenderer::PP_COPY, myHalfSizeTarget->GetWidth(), myHalfSizeTarget->GetHeight());
+		myPostProcessRenderer.Render(PostProcessRenderer::PP_COPY);
 
 		myQuarterSizeTarget->SetAsTarget();
 		myHalfSizeTarget->SetAsResource(0);
-		myPostProcessRenderer.Render(PostProcessRenderer::PP_COPY, myQuarterSizeTarget->GetWidth(), myQuarterSizeTarget->GetHeight());
+		myPostProcessRenderer.Render(PostProcessRenderer::PP_COPY);
 
 		myBlurTargetA->SetAsTarget();
 		myQuarterSizeTarget->SetAsResource(0);
-		myPostProcessRenderer.Render(PostProcessRenderer::PP_GAUSSIAN, myBlurTargetA->GetWidth(), myBlurTargetA->GetHeight());
+		myPostProcessRenderer.Render(PostProcessRenderer::PP_GAUSSIAN);
 
 		myBlurTargetB->SetAsTarget();
 		myBlurTargetA->SetAsResource(0);
-		myPostProcessRenderer.Render(PostProcessRenderer::PP_GAUSSIAN, myBlurTargetB->GetWidth(), myBlurTargetB->GetHeight());
+		myPostProcessRenderer.Render(PostProcessRenderer::PP_GAUSSIAN);
 
 		myQuarterSizeTarget->SetAsTarget();
 		myBlurTargetB->SetAsResource(0);
-		myPostProcessRenderer.Render(PostProcessRenderer::PP_COPY, myQuarterSizeTarget->GetWidth(), myQuarterSizeTarget->GetHeight());
+		myPostProcessRenderer.Render(PostProcessRenderer::PP_COPY);
 
 		myHalfSizeTarget->SetAsTarget();
 		myQuarterSizeTarget->SetAsResource(0);
-		myPostProcessRenderer.Render(PostProcessRenderer::PP_COPY, myHalfSizeTarget->GetWidth(), myHalfSizeTarget->GetHeight());
+		myPostProcessRenderer.Render(PostProcessRenderer::PP_COPY);
 
 		D3D11_VIEWPORT viewport = {};
 		viewport.Width = DX11::myClientRect.right - DX11::myClientRect.left;
@@ -554,7 +557,7 @@ void GraphicsEngine::RenderFrame()
 		DX11::myContext->OMSetRenderTargets(1, DX11::myRenderTarget.GetAddressOf(), DX11::myDepthStencil.Get());
 		myIntermediateTargetA->SetAsResource(0);
 		myHalfSizeTarget->SetAsResource(1);
-		myPostProcessRenderer.Render(PostProcessRenderer::PP_BLOOM, myIntermediateTargetA->GetWidth(), myIntermediateTargetA->GetHeight());
+		myPostProcessRenderer.Render(PostProcessRenderer::PP_BLOOM);
 	}
 }
 

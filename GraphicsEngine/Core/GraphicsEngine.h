@@ -79,6 +79,7 @@ public:
 private:
 	friend class SceneHierarchyPanel;
 	friend class SettingsPanel;
+
 	void Controller();
 	
 	Entity myCamera;

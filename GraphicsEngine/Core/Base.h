@@ -1,5 +1,8 @@
 #pragma once
 #include <memory>
+#include <filesystem>
+
+const std::filesystem::path g_AssetPath = "../Assets";
 
 template<typename T>
 using Scope = std::unique_ptr<T>;

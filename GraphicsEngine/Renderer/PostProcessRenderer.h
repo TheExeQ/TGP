@@ -20,7 +20,7 @@ public:
 
 public:
 	bool Init();
-	void Render(PostProcessPass aPass, const int& width, const int& height, Entity aCameraEntity = Entity());
+	void Render(PostProcessPass aPass, Entity aCameraEntity = Entity());
 
 private:
 	FrameBufferData myFrameBufferData;

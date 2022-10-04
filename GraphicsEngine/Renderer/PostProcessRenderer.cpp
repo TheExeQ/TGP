@@ -59,11 +59,18 @@ bool PostProcessRenderer::Init()
     return true;
 }
 
-void PostProcessRenderer::Render(PostProcessPass aPass, const int& width, const int& height, Entity aCameraEntity)
+void PostProcessRenderer::Render(PostProcessPass aPass, Entity aCameraEntity)
 {
 	D3D11_MAPPED_SUBRESOURCE frameBufferData;
 
-	myFrameBufferData.Resolution = CommonUtilities::Vector2<float>(width, height);
+	DXGI_SWAP_CHAIN_DESC SwapChainDesc;
+	DX11::mySwapchain->GetDesc(&SwapChainDesc);
+	const HWND hwnd = SwapChainDesc.OutputWindow;
+	CommonUtilities::Vector2<float> res = CommonUtilities::Vector2<float>(DX11::myClientRect.right - DX11::myClientRect.left, DX11::myClientRect.bottom - DX11::myClientRect.top);
+	
+	myFrameBufferData.Resolution = res;
+	myFrameBufferData.Resolution = CommonUtilities::Vector2<float>(0.f, 0.f); // IDK why this works
+
 	if (aCameraEntity.IsValid() && aCameraEntity.HasComponent<CameraComponent>())
 	{
 		const auto& camera = aCameraEntity.GetComponent<CameraComponent>().camera;
@@ -72,13 +79,6 @@ void PostProcessRenderer::Render(PostProcessPass aPass, const int& width, const 
 		myFrameBufferData.CamTranslation = cameraTransform.position;
 		myFrameBufferData.nearPlane = camera.GetNear();
 		myFrameBufferData.farPlane = camera.GetFar();
-
-		DXGI_SWAP_CHAIN_DESC SwapChainDesc;
-		DX11::mySwapchain->GetDesc(&SwapChainDesc);
-		const HWND hwnd = SwapChainDesc.OutputWindow;
-		CommonUtilities::Vector2<float> res = CommonUtilities::Vector2<float>(DX11::myClientRect.right - DX11::myClientRect.left, DX11::myClientRect.bottom - DX11::myClientRect.top);
-
-		myFrameBufferData.Resolution = res;
 
 		const float aspectRatio = (float)myFrameBufferData.Resolution.x / (float)myFrameBufferData.Resolution.y;
 		const float farp = camera.GetFar();
