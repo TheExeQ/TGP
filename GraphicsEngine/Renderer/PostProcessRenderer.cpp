@@ -40,6 +40,7 @@ bool PostProcessRenderer::Init()
 	shaderPaths[PP_GAUSSIAN] = "PP-GaussianPS.cso";
 	shaderPaths[PP_BLOOM] = "PP-BloomPS.cso";
 	shaderPaths[PP_SSAO] = "PP-ScreenSpaceAmbientOcclusionPS.cso";
+	shaderPaths[PP_TONEMAP] = "PP-TonemapPS.cso";
 
 	for (uint32_t i = 0; i < PP_COUNT; i++)
 	{

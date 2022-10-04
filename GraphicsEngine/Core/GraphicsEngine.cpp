@@ -555,10 +555,14 @@ void GraphicsEngine::RenderFrame()
 		viewport.TopLeftX = 0;
 		viewport.TopLeftY = 0;
 		DX11::myContext->RSSetViewports(1, &viewport);
-		DX11::myContext->OMSetRenderTargets(1, DX11::myRenderTarget.GetAddressOf(), DX11::myDepthStencil.Get());
+		myIntermediateTargetB->SetAsTarget();
 		myIntermediateTargetA->SetAsResource(0);
 		myHalfSizeTarget->SetAsResource(1);
 		myPostProcessRenderer.Render(PostProcessRenderer::PP_BLOOM);
+
+		DX11::myContext->OMSetRenderTargets(1, DX11::myRenderTarget.GetAddressOf(), DX11::myDepthStencil.Get());
+		myIntermediateTargetB->SetAsResource(0);
+		myPostProcessRenderer.Render(PostProcessRenderer::PP_TONEMAP, camera);
 	}
 }
 

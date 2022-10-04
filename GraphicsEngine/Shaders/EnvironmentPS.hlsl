@@ -173,7 +173,7 @@ DeferredPixelOutput main(DeferredVertexToPixel input)
         }
     }
 
-    result.myColor.rgb = LinearToGamma(directLighting + ambientLighting + pointLight + spotLight);
+    result.myColor.rgb = directLighting + ambientLighting + pointLight + spotLight;
     result.myColor.a = 1.0f;
 
     return result;
