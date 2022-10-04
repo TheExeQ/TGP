@@ -18,7 +18,7 @@ public:
 	void OnRender();
 	void WindowController();
 
-	std::filesystem::path GetContentBrowserPath() const { return myContentBrowserPanel.m_CurrentDirectory; };
+	std::filesystem::path GetContentBrowserPath() const { return myContentBrowserPanel.myCurrentDirectory; };
 
 private:
 	bool myWindowEnabler[ImGuiWindows::COUNT];

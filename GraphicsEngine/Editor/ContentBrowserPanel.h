@@ -14,8 +14,8 @@ public:
 private:
 	friend class EditorLayer;
 
-	std::filesystem::path m_CurrentDirectory;
+	std::filesystem::path myCurrentDirectory;
 
-	Ref<Texture> m_DirectoryIcon;
-	Ref<Texture> m_FileIcon;
+	Ref<Texture> myDirectoryIcon;
+	Ref<Texture> myFileIcon;
 };

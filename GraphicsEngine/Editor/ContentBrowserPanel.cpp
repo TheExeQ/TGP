@@ -3,7 +3,7 @@
 #include <imgui/imgui.h>
 
 	ContentBrowserPanel::ContentBrowserPanel()
-		: m_CurrentDirectory(g_AssetPath)
+		: myCurrentDirectory(gAssetPath)
 	{
 	}
 
@@ -11,19 +11,19 @@
 	{
 		TextureAssetHandler::LoadTexture("Resources/Editor/Icons/ContentBrowser/DirectoryIcon.dds");
 		TextureAssetHandler::LoadTexture("Resources/Editor/Icons/ContentBrowser/FileIcon.dds");
-		m_DirectoryIcon = TextureAssetHandler::GetTexture("Resources/Editor/Icons/ContentBrowser/DirectoryIcon.dds");
-		m_FileIcon = TextureAssetHandler::GetTexture("Resources/Editor/Icons/ContentBrowser/FileIcon.dds");
+		myDirectoryIcon = TextureAssetHandler::GetTexture("Resources/Editor/Icons/ContentBrowser/DirectoryIcon.dds");
+		myFileIcon = TextureAssetHandler::GetTexture("Resources/Editor/Icons/ContentBrowser/FileIcon.dds");
 	}
 
 	void ContentBrowserPanel::OnImGuiRender()
 	{
 		ImGui::Begin("Content Browser");
 
-		if (m_CurrentDirectory != std::filesystem::path(g_AssetPath))
+		if (myCurrentDirectory != std::filesystem::path(gAssetPath))
 		{
 			if (ImGui::Button("<-"))
 			{
-				m_CurrentDirectory = m_CurrentDirectory.parent_path();
+				myCurrentDirectory = myCurrentDirectory.parent_path();
 			}
 		}
 
@@ -38,13 +38,13 @@
 
 		ImGui::Columns(columnCount, 0, false);
 
-		for (auto& directoryEntry : std::filesystem::directory_iterator(m_CurrentDirectory))
+		for (auto& directoryEntry : std::filesystem::directory_iterator(myCurrentDirectory))
 		{
 			const auto& path = directoryEntry.path();
 			std::string filenameString = path.filename().string();
 
 			ImGui::PushID(filenameString.c_str());
-			Ref<Texture> icon = directoryEntry.is_directory() ? m_DirectoryIcon : m_FileIcon;
+			Ref<Texture> icon = directoryEntry.is_directory() ? myDirectoryIcon : myFileIcon;
 			ImGui::PushStyleColor(ImGuiCol_Button, ImVec4(0, 0, 0, 0));
 			ImGui::ImageButton(icon->mySRV.Get(), { thumbnailSize, thumbnailSize }, { 1, 0 }, { 0, 1 });
 
@@ -60,7 +60,7 @@
 			if (ImGui::IsItemHovered() && ImGui::IsMouseDoubleClicked(ImGuiMouseButton_Left))
 			{
 				if (directoryEntry.is_directory())
-					m_CurrentDirectory /= path.filename();
+					myCurrentDirectory /= path.filename();
 
 			}
 			ImGui::TextWrapped(filenameString.c_str());

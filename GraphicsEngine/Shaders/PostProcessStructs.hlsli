@@ -46,7 +46,7 @@ float4 GetViewPosition(float2 uv)
 
 float4 GetViewNormal(float2 uv)
 {
-    const float4 worldNormal = float4(TextureSlot2.Sample(defaultSampler, uv).rgb, 1);
+    const float4 worldNormal = float4(TextureSlot2.Sample(defaultSampler, uv).rgb, 0);
     const float4 viewNormal = mul(FB_ToView, worldNormal);
     return viewNormal;
 }

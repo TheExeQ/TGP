@@ -41,12 +41,12 @@ PostProcessPixelOutput main(PostProcessVertexToPixel input)
 	result.Color.a = 1;
 
 	//TEST VIEW NORMAL DEBUG
-	//result.Color.rgb = (GetViewNormal(input.UV) + 1.0f) / 2.0f;
-	//result.Color.a = 1;
+    //result.Color.rgb = (GetViewNormal(input.UV) + 1.0f) / 2.0f;
+    //result.Color.a = 1;
 
 	//TEST VIEW POSITION DEBUG
-	//result.Color.rgb = (GetViewPosition(input.UV) + 1.0f) / 2.0f;
-	//result.Color.a = 1;
+    //result.Color.rgb = (GetViewPosition(input.UV) + 1.0f) / 2.0f;
+    //result.Color.a = 1;
 
 	return result;
 }

@@ -69,7 +69,7 @@ void PostProcessRenderer::Render(PostProcessPass aPass, Entity aCameraEntity)
 	CommonUtilities::Vector2<float> res = CommonUtilities::Vector2<float>(DX11::myClientRect.right - DX11::myClientRect.left, DX11::myClientRect.bottom - DX11::myClientRect.top);
 	
 	myFrameBufferData.Resolution = res;
-	myFrameBufferData.Resolution = CommonUtilities::Vector2<float>(0.f, 0.f); // IDK why this works
+	//myFrameBufferData.Resolution = CommonUtilities::Vector2<float>(0.f, 0.f); // IDK why this works
 
 	if (aCameraEntity.IsValid() && aCameraEntity.HasComponent<CameraComponent>())
 	{
