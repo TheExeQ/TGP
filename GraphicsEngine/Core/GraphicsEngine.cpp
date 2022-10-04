@@ -507,6 +507,7 @@ void GraphicsEngine::RenderFrame()
 		}
 
 		myIntermediateTargetA->SetAsTarget();
+		mySSAOTarget->SetAsResource(8);
 		myDeferredRenderer.Render(camera, lightEntitiesToRender, myDirectionalLight, myEnvironmentLight, myTimer.GetDeltaTime(), myTimer.GetTotalTime());
 
 		//myForwardRenderer.RenderModels(camera, modelEntitiesToRender, lightEntitiesToRender, myDirectionalLight, myEnvironmentLight);

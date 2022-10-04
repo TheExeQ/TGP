@@ -23,6 +23,7 @@ struct PostProcessPixelOutput
 };
 
 SamplerState defaultSampler : register(s0);
+SamplerState pointWrapSampler : register(s3);
 
 Texture2D TextureSlot1 : register(t0);
 Texture2D TextureSlot2 : register(t1);
@@ -53,7 +54,7 @@ float4 GetViewNormal(float2 uv)
 
 float2 GetRandom(float2 uv, float2 uvScale)
 {
-    const float3 random = 2.f * TextureSlot9.Sample(defaultSampler, uv).rgb - 1.f;
+    const float3 random = 2.f * TextureSlot9.Sample(pointWrapSampler, uv * uvScale).rgb - 1.f;
     return random.xy;
 }
 

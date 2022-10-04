@@ -123,7 +123,9 @@ struct GBufferOutput
 };
 
 SamplerState defaultSampler : register(s0);
-SamplerState pointClampSampler : register(s1);
+SamplerState wrapSampler : register(s1);
+SamplerState pointClampSampler : register(s2);
+SamplerState pointWrapSampler : register(s3);
 
 Texture2D albedoTexture : register(t0);
 Texture2D normalTexture : register(t1);
@@ -133,10 +135,5 @@ Texture2D worldPositionTexture : register(t4);
 Texture2D ambientOcclusionTexture : register(t5);
 Texture2D dirLightShadowMap : register(t6);
 Texture2D spotLightShadowMap : register(t7);
-Texture2D pointLightShadowMap1 : register(t8);
-Texture2D pointLightShadowMap2 : register(t9);
-Texture2D pointLightShadowMap3 : register(t10);
-Texture2D pointLightShadowMap4 : register(t11);
-Texture2D pointLightShadowMap5 : register(t12);
-Texture2D pointLightShadowMap6 : register(t13);
+Texture2D SSAOTexture : register(t8);
 TextureCube environmentTexture : register(t14);

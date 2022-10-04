@@ -28,7 +28,9 @@ DeferredPixelOutput main(DeferredVertexToPixel input)
     const float3 specularColor = lerp((float3) 0.04f, albedo.xyz, metalness);
     const float3 diffuseColor = lerp((float3) 0.00f, albedo.xyz, 1 - metalness);
 
-    const float3 ambientLighting = EvaluateAmbience(
+    const float ssaoValue = SSAOTexture.Sample(defaultSampler, input.UV).r;
+    
+    float3 ambientLighting = EvaluateAmbience(
 		environmentTexture,
 		pixelNormal,
 		vertexNormal,
@@ -37,6 +39,8 @@ DeferredPixelOutput main(DeferredVertexToPixel input)
 		ambientOcclusion,
 		diffuseColor,
 		specularColor);
+    
+    ambientLighting *= ssaoValue;
 
     float3 directLighting = EvaluateDirectionalLight(
 		diffuseColor,

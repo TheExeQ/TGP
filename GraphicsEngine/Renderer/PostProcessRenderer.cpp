@@ -63,14 +63,7 @@ void PostProcessRenderer::Render(PostProcessPass aPass, Entity aCameraEntity)
 {
 	D3D11_MAPPED_SUBRESOURCE frameBufferData;
 
-	DXGI_SWAP_CHAIN_DESC SwapChainDesc;
-	DX11::mySwapchain->GetDesc(&SwapChainDesc);
-	const HWND hwnd = SwapChainDesc.OutputWindow;
-	CommonUtilities::Vector2<float> res = CommonUtilities::Vector2<float>(DX11::myClientRect.right - DX11::myClientRect.left, DX11::myClientRect.bottom - DX11::myClientRect.top);
-	
-	myFrameBufferData.Resolution = res;
-	//myFrameBufferData.Resolution = CommonUtilities::Vector2<float>(0.f, 0.f); // IDK why this works
-
+	myFrameBufferData.Resolution = CommonUtilities::Vector2<float>(0.f, 0.f); // IDK why this works
 	if (aCameraEntity.IsValid() && aCameraEntity.HasComponent<CameraComponent>())
 	{
 		const auto& camera = aCameraEntity.GetComponent<CameraComponent>().camera;
@@ -89,6 +82,13 @@ void PostProcessRenderer::Render(PostProcessPass aPass, Entity aCameraEntity)
 		myFrameBufferData.FrustumCorners[1] = Vector4<float>(-halfWidth, halfHeight, farp, 0.f);
 		myFrameBufferData.FrustumCorners[2] = Vector4<float>(halfWidth, halfHeight, farp, 0.f);
 		myFrameBufferData.FrustumCorners[3] = Vector4<float>(halfWidth, -halfHeight, farp, 0.f);
+
+		DXGI_SWAP_CHAIN_DESC SwapChainDesc;
+		DX11::mySwapchain->GetDesc(&SwapChainDesc);
+		const HWND hwnd = SwapChainDesc.OutputWindow;
+		CommonUtilities::Vector2<float> res = CommonUtilities::Vector2<float>(DX11::myClientRect.right - DX11::myClientRect.left, DX11::myClientRect.bottom - DX11::myClientRect.top);
+
+		myFrameBufferData.Resolution = res;
 	}
 
 	auto result = DX11::myContext->Map(myFrameBuffer.Get(), 0, D3D11_MAP_WRITE_DISCARD, 0, &frameBufferData);
