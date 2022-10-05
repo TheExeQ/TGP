@@ -105,6 +105,7 @@ void DeferredRenderer::GenereteGBuffer(Entity aCamera, std::vector<Entity>& aMod
         auto& modelInst = model.GetComponent<ModelComponent>().modelInstance;
         auto& modelTransform = model.GetComponent<TransformComponent>();
         auto modelRef = modelInst.GetModel();
+		if (!modelRef) { continue; }
 
         D3D11_MAPPED_SUBRESOURCE objBufferData;
         ZeroMemory(&objBufferData, sizeof(objBufferData));
@@ -113,6 +114,7 @@ void DeferredRenderer::GenereteGBuffer(Entity aCamera, std::vector<Entity>& aMod
 
         myObjectBufferData.World = modelTransform.GetTransform();
         myObjectBufferData.HasBones = modelRef->HasBones();
+        myObjectBufferData.IsInstanced = modelInst.HasRenderedInstances();
         if (myObjectBufferData.HasBones)
         {
             memcpy_s(&myObjectBufferData.BoneData[0], sizeof(Matrix4x4<float>) * 128,

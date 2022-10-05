@@ -118,6 +118,7 @@ void ForwardRenderer::RenderModels(Entity aCamera, std::vector<Entity>& aModelLi
 
 		myObjectBufferData.World = modelTransform.GetTransform();
 		myObjectBufferData.HasBones = modelRef->HasBones();
+		myObjectBufferData.IsInstanced = modelInst.HasRenderedInstances();
 		if (myObjectBufferData.HasBones)
 		{
 			memcpy_s(&myObjectBufferData.BoneData[0], sizeof(Matrix4x4<float>) * 128,
@@ -160,7 +161,6 @@ void ForwardRenderer::RenderModels(Entity aCamera, std::vector<Entity>& aModelLi
 
 			DX11::myContext->Unmap(myMaterialBuffer.Get(), 0);
 
-			DX11::myContext->IASetVertexBuffers(0, 1, modelData.myVertexBuffer.GetAddressOf(), &modelData.myStride, &modelData.myOffset);
 			DX11::myContext->IASetIndexBuffer(modelData.myIndexBuffer.Get(), DXGI_FORMAT_R32_UINT, 0);
 
 			DX11::myContext->IASetPrimitiveTopology(static_cast<D3D11_PRIMITIVE_TOPOLOGY>(modelData.myPrimitiveTopology));
@@ -174,7 +174,21 @@ void ForwardRenderer::RenderModels(Entity aCamera, std::vector<Entity>& aModelLi
 			DX11::myContext->PSSetConstantBuffers(1, 1, myObjectBuffer.GetAddressOf());
 			DX11::myContext->PSSetConstantBuffers(2, 1, myMaterialBuffer.GetAddressOf());
 
-			DX11::myContext->DrawIndexed(modelData.myIndexCount, 0, 0);
+			if (model.GetComponent<ModelComponent>().modelInstance.HasRenderedInstances())
+			{
+				const auto& mdlInst = model.GetComponent<ModelComponent>().modelInstance;
+				ID3D11Buffer* buffers[2] = { modelData.myVertexBuffer.Get(), mdlInst.GetInstanceBuffer().Get() };
+				UINT stride[2] = { modelData.myStride, sizeof(ModelInstance::RenderedInstanceData) };
+				UINT offset[2] = { 0, 0 };
+
+				DX11::myContext->IASetVertexBuffers(0, 2, buffers, stride, offset);
+				DX11::myContext->DrawIndexedInstanced(modelData.myIndexCount, mdlInst.GetNumOfInstances(), 0, 0, 0);
+			}
+			else
+			{
+				DX11::myContext->IASetVertexBuffers(0, 1, modelData.myVertexBuffer.GetAddressOf(), &modelData.myStride, &modelData.myOffset);
+				DX11::myContext->DrawIndexed(modelData.myIndexCount, 0, 0);
+			}
 		}
 	}
 }

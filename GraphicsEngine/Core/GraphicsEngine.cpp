@@ -185,7 +185,7 @@ bool GraphicsEngine::Initialize(unsigned someX, unsigned someY,
 	{
 		return false;
 	}
-	
+
 	HRESULT result = S_FALSE;
 
 	D3D11_BLEND_DESC alphaBlendDesc = {};
@@ -386,12 +386,18 @@ bool GraphicsEngine::InitializeScene()
 	}
 
 	auto chest = myScene->GetEntityFromUUID(3316484318424843108);
+	auto chest2 = myScene->GetEntityFromUUID(11232748631693019462);
+	auto chest3 = myScene->GetEntityFromUUID(9820856010195557413);
 	if (chest.IsValid())
 	{
 		auto& chestModelComp = chest.GetComponent<ModelComponent>();
 
 		myModelAssetHandler.LoadModel("Models/SM/Particle_Chest.fbx");
 		chestModelComp.modelInstance = *myModelAssetHandler.GetModelInstance("Models/SM/Particle_Chest.fbx").get();
+		chestModelComp.modelInstance.AddRenderedInstance(chest.GetComponent<TransformComponent>().GetTransform());
+		chestModelComp.modelInstance.AddRenderedInstance(chest2.GetComponent<TransformComponent>().GetTransform());
+		chestModelComp.modelInstance.AddRenderedInstance(chest3.GetComponent<TransformComponent>().GetTransform());
+		chestModelComp.modelInstance.UpdateInstanceBuffer();
 	}
 
 	auto gremlin = myScene->GetEntityFromUUID(3446174191707793529);
@@ -568,6 +574,27 @@ void GraphicsEngine::RenderFrame()
 
 void GraphicsEngine::EndFrame()
 {
+	auto chest = myScene->GetEntityFromUUID(3316484318424843108);
+	auto chest2 = myScene->GetEntityFromUUID(11232748631693019462);
+	auto chest3 = myScene->GetEntityFromUUID(9820856010195557413);
+	if (chest.IsValid())
+	{
+		auto& chestModelComp = chest.GetComponent<ModelComponent>();
+
+		chestModelComp.modelInstance.ClearRenderedInstance();
+		chestModelComp.modelInstance.AddRenderedInstance(chest.GetComponent<TransformComponent>().GetTransform());
+		if (chest2.IsValid())
+		{
+			chestModelComp.modelInstance.AddRenderedInstance(chest2.GetComponent<TransformComponent>().GetTransform());
+		}
+		if (chest3.IsValid())
+		{
+			chestModelComp.modelInstance.AddRenderedInstance(chest3.GetComponent<TransformComponent>().GetTransform());
+		}
+		chestModelComp.modelInstance.UpdateInstanceBuffer();
+	}
+
+
 	// F1 - This is where we finish our rendering and tell the framework
 	// to present our result to the screen.
 	myImGuiLayer.End();

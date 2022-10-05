@@ -1,25 +1,9 @@
 Entities:
-  - Entity: 13168016240173744635
-    TagComponent:
-      Tag: LightGreen
-    TransformComponent:
-      Position: [195, 150, -96]
-      Rotation: [0.785374999, 0, 0]
-      Scale: [1, 1, 1]
-    LightComponent:
-      Color: [0, 1, 0]
-      Intensity: 1000000
-      Direction: [0, -1, 0]
-      Range: 1000
-      Attenuation: 100
-      SpotInnerRadius: 100
-      SpotOuterRadius: 1000
-      LightType: 2
   - Entity: 10641592637030116440
     TagComponent:
       Tag: LightBlue
     TransformComponent:
-      Position: [-200, 85, -120]
+      Position: [-400, 85, 100]
       Rotation: [0, 0, 0]
       Scale: [1, 1, 1]
     LightComponent:
@@ -35,7 +19,7 @@ Entities:
     TagComponent:
       Tag: ParticleSystem
     TransformComponent:
-      Position: [0, 50, 200]
+      Position: [-200, 50, 150]
       Rotation: [0, 0, 0]
       Scale: [1, 1, 1]
     ParticleSystemComponent:
@@ -44,7 +28,7 @@ Entities:
     TagComponent:
       Tag: Gremlin
     TransformComponent:
-      Position: [200, 50, 0]
+      Position: [-200, 50, -200]
       Rotation: [0, 3.1415, 0]
       Scale: [1, 1, 1]
     ModelComponent:
@@ -53,7 +37,7 @@ Entities:
     TagComponent:
       Tag: Chest
     TransformComponent:
-      Position: [-200, 50, 0]
+      Position: [-200, 50, 150]
       Rotation: [0, 3.1415, 0]
       Scale: [1, 1, 1]
     ModelComponent:
@@ -71,8 +55,8 @@ Entities:
     TagComponent:
       Tag: EditorCamera
     TransformComponent:
-      Position: [-293.746857, 143.409485, -196.471695]
-      Rotation: [0.163945556, 0.611409605, 0]
+      Position: [-482.803009, 370.173096, -674.409546]
+      Rotation: [0.386413187, 0.534773171, 0]
       Scale: [1, 1, 1]
     CameraComponent:
       {}
@@ -92,3 +76,21 @@ Entities:
       SpotInnerRadius: 0
       SpotOuterRadius: 0
       LightType: 1
+  - Entity: 11232748631693019462
+    TagComponent:
+      Tag: Chest2
+    TransformComponent:
+      Position: [-393, 50, 100]
+      Rotation: [0, 2.09433341, 0]
+      Scale: [1, 1, 1]
+    ModelComponent:
+      {}
+  - Entity: 9820856010195557413
+    TagComponent:
+      Tag: Chest3
+    TransformComponent:
+      Position: [0, 50, 100]
+      Rotation: [0, -2.09433341, 0]
+      Scale: [1, 1, 1]
+    ModelComponent:
+      {}

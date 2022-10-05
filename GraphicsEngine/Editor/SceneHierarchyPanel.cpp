@@ -428,9 +428,12 @@ void SceneHierarchyPanel::DrawComponents(Entity aEntity)
 					{
 						current_item2 = items[n];
 
-						Ref<Material> material = component.modelInstance.GetModel()->GetModelData(0).myMaterial;
-						TextureAssetHandler::LoadTexture(current_item2);
-						material->SetAlbedoTexture(TextureAssetHandler::GetTexture(current_item2));
+						if (component.modelInstance.GetModel())
+						{
+							Ref<Material> material = component.modelInstance.GetModel()->GetModelData(0).myMaterial;
+							TextureAssetHandler::LoadTexture(current_item2);
+							material->SetAlbedoTexture(TextureAssetHandler::GetTexture(current_item2));
+						}
 					}
 
 					if (is_selected)

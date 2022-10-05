@@ -24,8 +24,9 @@ struct ObjectBufferData
 {
 	CommonUtilities::Matrix4x4<float> World;
 	CommonUtilities::Matrix4x4<float> BoneData[128];
-	alignas(16) bool HasBones = false;
-	alignas(16) bool IsInstanced = false;
+	alignas(4) bool HasBones = false;
+	alignas(4) bool IsInstanced = false;
+	CommonUtilities::Vector2<float> padding7;
 };
 
 struct MaterialBufferData

@@ -23,6 +23,7 @@ public:
 
 	void AddRenderedInstance(const Matrix4x4<float>& aTransform);
 	bool UpdateInstanceBuffer();
+	void ClearRenderedInstance() { myRenderedInstances.clear(); };
 
 	FORCEINLINE Ref<Model> GetModel() { return myModel; }
 	FORCEINLINE Model::ModelData const& GetModelData(uint16_t anIndex) const { return myModel->GetModelData(anIndex); }
@@ -31,7 +32,8 @@ public:
 	FORCEINLINE void SetAnimationState(const eAnimationState& anAnimationState) { myCurrentAnimation.State = anAnimationState; }
 
 	FORCEINLINE bool HasRenderedInstances() const { return !myRenderedInstances.empty(); }
-	FORCEINLINE uint32_t GetNumOfInstances() const { return myRenderedInstances.size(); }
+	FORCEINLINE uint32_t GetNumOfInstances() const { 
+		return myRenderedInstances.size(); }
 	FORCEINLINE ComPtr<ID3D11Buffer> GetInstanceBuffer() const { return myInstanceBuffer; }
 
 private:

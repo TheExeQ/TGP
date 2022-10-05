@@ -76,6 +76,7 @@ cbuffer Objectbuffer : register(b1)
     float4x4 OB_BoneData[128];
     bool OB_HasBones = false;
     bool OB_Instanced = false;
+    float2 obpadding7;
 }
 
 cbuffer MaterialBuffer : register(b2)

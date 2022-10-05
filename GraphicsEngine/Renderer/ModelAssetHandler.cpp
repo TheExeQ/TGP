@@ -59,17 +59,17 @@ bool ModelAssetHandler::LoadModel(const std::string& someFilePath)
 				mdlSkeleton.Bones[j].BindPoseInverse(1, 2) = tgaModel.Skeleton.Bones[j].BindPoseInverse.Data[1];
 				mdlSkeleton.Bones[j].BindPoseInverse(1, 3) = tgaModel.Skeleton.Bones[j].BindPoseInverse.Data[2];
 				mdlSkeleton.Bones[j].BindPoseInverse(1, 4) = tgaModel.Skeleton.Bones[j].BindPoseInverse.Data[3];
-				
+
 				mdlSkeleton.Bones[j].BindPoseInverse(2, 1) = tgaModel.Skeleton.Bones[j].BindPoseInverse.Data[4];
 				mdlSkeleton.Bones[j].BindPoseInverse(2, 2) = tgaModel.Skeleton.Bones[j].BindPoseInverse.Data[5];
 				mdlSkeleton.Bones[j].BindPoseInverse(2, 3) = tgaModel.Skeleton.Bones[j].BindPoseInverse.Data[6];
 				mdlSkeleton.Bones[j].BindPoseInverse(2, 4) = tgaModel.Skeleton.Bones[j].BindPoseInverse.Data[7];
-				
+
 				mdlSkeleton.Bones[j].BindPoseInverse(3, 1) = tgaModel.Skeleton.Bones[j].BindPoseInverse.Data[8];
 				mdlSkeleton.Bones[j].BindPoseInverse(3, 2) = tgaModel.Skeleton.Bones[j].BindPoseInverse.Data[9];
 				mdlSkeleton.Bones[j].BindPoseInverse(3, 3) = tgaModel.Skeleton.Bones[j].BindPoseInverse.Data[10];
 				mdlSkeleton.Bones[j].BindPoseInverse(3, 4) = tgaModel.Skeleton.Bones[j].BindPoseInverse.Data[11];
-				
+
 				mdlSkeleton.Bones[j].BindPoseInverse(4, 1) = tgaModel.Skeleton.Bones[j].BindPoseInverse.Data[12];
 				mdlSkeleton.Bones[j].BindPoseInverse(4, 2) = tgaModel.Skeleton.Bones[j].BindPoseInverse.Data[13];
 				mdlSkeleton.Bones[j].BindPoseInverse(4, 3) = tgaModel.Skeleton.Bones[j].BindPoseInverse.Data[14];
@@ -128,7 +128,7 @@ bool ModelAssetHandler::LoadModel(const std::string& someFilePath)
 			std::vector<Vertex> mdlVertices;
 			mdlVertices.resize(mesh.Vertices.size());
 			std::vector<uint32_t> mdlIndices = mesh.Indices;
-			
+
 			for (size_t v = 0; v < mesh.Vertices.size(); v++)
 			{
 				mdlVertices[v].Position.x = mesh.Vertices[v].Position[0];
@@ -156,14 +156,14 @@ bool ModelAssetHandler::LoadModel(const std::string& someFilePath)
 
 				for (int uvCh = 0; uvCh < 4; uvCh++)
 				{
-					mdlVertices[v].UVs[uvCh] = {mesh.Vertices[v].UVs[uvCh][0], mesh.Vertices[v].UVs[uvCh][1]};
+					mdlVertices[v].UVs[uvCh] = { mesh.Vertices[v].UVs[uvCh][0], mesh.Vertices[v].UVs[uvCh][1] };
 				}
 
 				mdlVertices[v].Tangent =
-				{ 
+				{
 					mesh.Vertices[v].Tangent[0],
 					mesh.Vertices[v].Tangent[1],
-					mesh.Vertices[v].Tangent[2] 
+					mesh.Vertices[v].Tangent[2]
 				};
 				mdlVertices[v].Binormal =
 				{
@@ -178,7 +178,7 @@ bool ModelAssetHandler::LoadModel(const std::string& someFilePath)
 					mesh.Vertices[v].Normal[2]
 				};
 			}
-			
+
 			D3D11_BUFFER_DESC vertexBufferDesc;
 			vertexBufferDesc.Usage = D3D11_USAGE_DEFAULT;
 			vertexBufferDesc.ByteWidth = sizeof(Vertex) * mdlVertices.size();
@@ -318,7 +318,7 @@ bool ModelAssetHandler::LoadAnimation(const std::string& aModelName, const std::
 				result.Frames[f].LocalTransforms[i](3, 2) = tgaAnimation.Frames[f].LocalTransforms[i].Data[9];
 				result.Frames[f].LocalTransforms[i](3, 3) = tgaAnimation.Frames[f].LocalTransforms[i].Data[10];
 				result.Frames[f].LocalTransforms[i](3, 4) = tgaAnimation.Frames[f].LocalTransforms[i].Data[11];
-													
+
 				result.Frames[f].LocalTransforms[i](4, 1) = tgaAnimation.Frames[f].LocalTransforms[i].Data[12];
 				result.Frames[f].LocalTransforms[i](4, 2) = tgaAnimation.Frames[f].LocalTransforms[i].Data[13];
 				result.Frames[f].LocalTransforms[i](4, 3) = tgaAnimation.Frames[f].LocalTransforms[i].Data[14];
@@ -326,14 +326,14 @@ bool ModelAssetHandler::LoadAnimation(const std::string& aModelName, const std::
 				result.Frames[f].LocalTransforms[i] = CommonUtilities::Matrix4x4<float>::Transpose(result.Frames[f].LocalTransforms[i]);
 			}
 		}
-		
+
 		result.Length = tgaAnimation.Length;
 		result.Name = tgaAnimation.Name;
 		result.FramesPerSecond = tgaAnimation.FramesPerSecond;
 		result.Duration = tgaAnimation.Duration;
 		result.CurrentFrame = 1;
 		result.State = eAnimationState::Stopped;
-			
+
 		model->AddAnimation(result);
 		return true;
 	}
@@ -352,31 +352,31 @@ bool ModelAssetHandler::InitUnitCube()
 		Vertex(50, 50, -50, 1, 1, 1, 1, 1, 0, {1,0,0}, {0,-1,0}, {0,0,-1}),
 		Vertex(50, -50, -50, 1, 1, 1, 1, 1, 1, {1,0,0}, {0,-1,0}, {0,0,-1}),
 		Vertex(-50, -50, -50, 1, 1, 1, 1, 0, 1, {1,0,0}, {0,-1,0}, {0,0,-1}),
-		
+
 		//Back
 		Vertex(50, 50, 50, 1, 1, 1, 1, 0, 0, {-1,0,0}, {0,-1,0}, {0,0,1}),
 		Vertex(-50, 50, 50, 1, 1, 1, 1, 1, 0, {-1,0,0}, {0,-1,0}, {0,0,1}),
 		Vertex(-50, -50, 50, 1, 1, 1, 1, 1, 1, {-1,0,0}, {0,-1,0}, {0,0,1}),
 		Vertex(50, -50, 50, 1, 1, 1, 1, 0, 1, {-1,0,0}, {0,-1,0}, {0,0,1}),
-		
+
 		//Left
 		Vertex(-50, 50, 50, 1, 1, 1, 1, 0, 0, {0,0,1}, {0,-1,0}, {-1,0,0}),
 		Vertex(-50, 50, -50, 1, 1, 1, 1, 1, 0, {0,0,1}, {0,-1,0}, {-1,0,0}),
 		Vertex(-50, -50, -50, 1, 1, 1, 1, 1, 1, {0,0,1}, {0,-1,0}, {-1,0,0}),
 		Vertex(-50, -50, 50, 1, 1, 1, 1, 0, 1, {0,0,1}, {0,-1,0}, {-1,0,0}),
-		
+
 		//Right
 		Vertex(50, 50, -50, 1, 1, 1, 1, 0, 0, {0,0,-1}, {0,-1,0}, {1,0,0}),
 		Vertex(50, 50, 50, 1, 1, 1, 1, 1, 0, {0,0,-1}, {0,-1,0}, {1,0,0}),
 		Vertex(50, -50, 50, 1, 1, 1, 1, 1, 1, {0,0,-1}, {0,-1,0}, {1,0,0}),
 		Vertex(50, -50, -50, 1, 1, 1, 1, 0, 1, {0,0,-1}, {0,-1,0}, {1,0,0}),
-		
+
 		//Top
 		Vertex(-50, 50, 50, 1, 1, 1, 1, 0, 0, {1,0,0}, {0,0,1}, {0,1,0}),
 		Vertex(50, 50, 50, 1, 1, 1, 1, 1, 0, {1,0,0}, {0,0,1}, {0,1,0}),
 		Vertex(50, 50, -50, 1, 1, 1, 1, 1, 1, {1,0,0}, {0,0,1}, {0,1,0}),
 		Vertex(-50, 50, -50, 1, 1, 1, 1, 0, 1, {1,0,0}, {0,0,1}, {0,1,0}),
-		
+
 		//Bottom
 		Vertex(-50, -50, -50, 1, 1, 1, 1, 0, 0, {1,0,0}, {0,0,-1}, {0,-1,0}),
 		Vertex(50, -50, -50, 1, 1, 1, 1, 1, 0, {1,0,0}, {0,0,-1}, {0,-1,0}),
@@ -389,37 +389,37 @@ bool ModelAssetHandler::InitUnitCube()
 		//Front
 		0,1,2,
 		2,3,0,
-		
+
 		//Back
 		4,5,6,
 		6,7,4,
-		
+
 		//Left
 		8,9,10,
 		10,11,8,
-		
+
 		//Right
 		12,13,14,
 		14,15,12,
-		
+
 		//Top
 		16,17,18,
 		18,19,16,
-		
+
 		//Bottom
 		20,21,22,
 		22,23,20,
 	};
 
 	Ref<Material> meshMaterial;
-	
+
 	meshMaterial = CreateRef<Material>();
 
 	if (TextureAssetHandler::LoadTexture("T_Default_C.dds"))
 	{
 		meshMaterial->SetAlbedoTexture(TextureAssetHandler::GetTexture("T_Default_C.dds"));
 	}
-	
+
 	if (TextureAssetHandler::LoadTexture("T_Default_N.dds"))
 	{
 		meshMaterial->SetNormalTexture(TextureAssetHandler::GetTexture("T_Default_N.dds"));
@@ -429,7 +429,7 @@ bool ModelAssetHandler::InitUnitCube()
 	{
 		meshMaterial->SetMaterialTexture(TextureAssetHandler::GetTexture("T_Default_M.dds"));
 	}
-	
+
 	myMaterialRegistry.insert({ "Cube", meshMaterial });
 	modelData.myMaterial = meshMaterial;
 
@@ -505,6 +505,12 @@ bool ModelAssetHandler::InitUnitCube()
 		{"TANGENT", 0, DXGI_FORMAT_R32G32B32_FLOAT, 0, D3D11_APPEND_ALIGNED_ELEMENT, D3D11_INPUT_PER_VERTEX_DATA, 0},
 		{"BINORMAL", 0, DXGI_FORMAT_R32G32B32_FLOAT, 0, D3D11_APPEND_ALIGNED_ELEMENT, D3D11_INPUT_PER_VERTEX_DATA, 0},
 		{"NORMAL", 0, DXGI_FORMAT_R32G32B32_FLOAT, 0, D3D11_APPEND_ALIGNED_ELEMENT, D3D11_INPUT_PER_VERTEX_DATA, 0},
+
+		//INSTANCE DATA
+		{"WORLD", 0, DXGI_FORMAT_R32G32B32A32_FLOAT, 1, D3D11_APPEND_ALIGNED_ELEMENT, D3D11_INPUT_PER_INSTANCE_DATA, 1},
+		{"WORLD", 1, DXGI_FORMAT_R32G32B32A32_FLOAT, 1, D3D11_APPEND_ALIGNED_ELEMENT, D3D11_INPUT_PER_INSTANCE_DATA, 1},
+		{"WORLD", 2, DXGI_FORMAT_R32G32B32A32_FLOAT, 1, D3D11_APPEND_ALIGNED_ELEMENT, D3D11_INPUT_PER_INSTANCE_DATA, 1},
+		{"WORLD", 3, DXGI_FORMAT_R32G32B32A32_FLOAT, 1, D3D11_APPEND_ALIGNED_ELEMENT, D3D11_INPUT_PER_INSTANCE_DATA, 1},
 	};
 
 	result = DX11::myDevice->CreateInputLayout(layout, sizeof(layout) / sizeof(D3D11_INPUT_ELEMENT_DESC), vsData.data(), vsData.size(), modelData.myInputLayout.GetAddressOf());
@@ -520,7 +526,7 @@ bool ModelAssetHandler::InitUnitCube()
 	modelData.myOffset = 0;
 
 	auto mdl = CreateRef<Model>();
-	
+
 	modelDataVector.push_back(modelData);
 
 	mdl->Init(modelDataVector, "Cube");

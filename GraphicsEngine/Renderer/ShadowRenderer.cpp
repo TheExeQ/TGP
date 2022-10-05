@@ -142,6 +142,7 @@ void ShadowRenderer::Render(std::vector<Entity>& aLightList, Ref<DirectionalLigh
 			{
 				auto& mdlInst = ent.GetComponent<ModelComponent>().modelInstance;
 				auto& mdlTransform = ent.GetComponent<TransformComponent>();
+				if (!mdlInst.GetModel()) { continue; }
 
 				D3D11_MAPPED_SUBRESOURCE objBufferData;
 				ZeroMemory(&objBufferData, sizeof(objBufferData));
@@ -150,6 +151,7 @@ void ShadowRenderer::Render(std::vector<Entity>& aLightList, Ref<DirectionalLigh
 
 				myObjectBufferData.World = mdlTransform.GetTransform();
 				myObjectBufferData.HasBones = mdlInst.GetModel()->HasBones();
+				myObjectBufferData.IsInstanced = mdlInst.HasRenderedInstances();
 				if (myObjectBufferData.HasBones)
 				{
 					memcpy_s(&myObjectBufferData.BoneData[0], sizeof(Matrix4x4<float>) * 128,
@@ -181,7 +183,22 @@ void ShadowRenderer::Render(std::vector<Entity>& aLightList, Ref<DirectionalLigh
 					mdlData.myMaterial->SetAsResource(myMaterialBuffer);
 
 					DX11::myContext->PSSetShader(nullptr, nullptr, 0);
-					DX11::myContext->DrawIndexed(mdlData.myIndexCount, 0, 0);
+
+					if (ent.GetComponent<ModelComponent>().modelInstance.HasRenderedInstances())
+					{
+						const auto& mdlInst = ent.GetComponent<ModelComponent>().modelInstance;
+						ID3D11Buffer* buffers[2] = { mdlData.myVertexBuffer.Get(), mdlInst.GetInstanceBuffer().Get() };
+						UINT stride[2] = { mdlData.myStride, sizeof(ModelInstance::RenderedInstanceData) };
+						UINT offset[2] = { 0, 0 };
+
+						DX11::myContext->IASetVertexBuffers(0, 2, buffers, stride, offset);
+						DX11::myContext->DrawIndexedInstanced(mdlData.myIndexCount, mdlInst.GetNumOfInstances(), 0, 0, 0);
+					}
+					else
+					{
+						DX11::myContext->IASetVertexBuffers(0, 1, mdlData.myVertexBuffer.GetAddressOf(), &mdlData.myStride, &mdlData.myOffset);
+						DX11::myContext->DrawIndexed(mdlData.myIndexCount, 0, 0);
+					}
 				}
 			}
 		}
