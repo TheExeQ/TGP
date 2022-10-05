@@ -5,6 +5,7 @@ void Model::Init(std::vector<ModelData>& someModelData, const std::string& aName
 {
 	myName = aName;
 	myData = someModelData;
+	mySkeleton = Skeleton();
 }
 
 void Model::Init(std::vector<ModelData>& someModelData, const std::string& aName, Skeleton& aSkeleton)

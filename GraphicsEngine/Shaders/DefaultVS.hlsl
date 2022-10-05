@@ -25,8 +25,13 @@ VertexToPixel main(VertexInput input)
     
 	// Move the vertex from Object Space (Local) to World space.
 	// (Incidentally moving it from world to object space is the inverse of this)
-    const float4 vertexWorldPosition = mul(OB_ToWorld, mul(vertexPosition, skinningMatrix));
+    float4 vertexWorldPosition = mul(OB_ToWorld, mul(vertexPosition, skinningMatrix));
     result.myVxPosition = vertexWorldPosition;
+    
+    if (OB_Instanced)
+    {
+        vertexWorldPosition = mul(input.World, mul(vertexPosition, skinningMatrix));
+    }
     
 	// Move the vertex from World to View Space (Camera space)
     const float4 vertexViewPosition = mul(FB_ToView, vertexWorldPosition);

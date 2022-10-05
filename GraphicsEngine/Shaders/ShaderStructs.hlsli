@@ -16,6 +16,8 @@ struct VertexInput
     float3 myTangent : TANGENT;
     float3 myBinormal : BINORMAL;
     float3 myNormal : NORMAL;
+    float4x4 World : WORLD;
+    uint InstanceId : SV_InstanceID;
 };
 
 struct VertexToPixel
@@ -73,6 +75,7 @@ cbuffer Objectbuffer : register(b1)
     float4x4 OB_ToWorld;
     float4x4 OB_BoneData[128];
     bool OB_HasBones = false;
+    bool OB_Instanced = false;
 }
 
 cbuffer MaterialBuffer : register(b2)

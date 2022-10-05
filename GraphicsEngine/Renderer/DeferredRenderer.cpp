@@ -155,7 +155,6 @@ void DeferredRenderer::GenereteGBuffer(Entity aCamera, std::vector<Entity>& aMod
 
             DX11::myContext->Unmap(myMaterialBuffer.Get(), 0);
 
-            DX11::myContext->IASetVertexBuffers(0, 1, meshData.myVertexBuffer.GetAddressOf(), &meshData.myStride, &meshData.myOffset);
             DX11::myContext->IASetIndexBuffer(meshData.myIndexBuffer.Get(), DXGI_FORMAT_R32_UINT, 0);
 
             DX11::myContext->IASetPrimitiveTopology(static_cast<D3D11_PRIMITIVE_TOPOLOGY>(meshData.myPrimitiveTopology));
@@ -169,7 +168,21 @@ void DeferredRenderer::GenereteGBuffer(Entity aCamera, std::vector<Entity>& aMod
             DX11::myContext->PSSetConstantBuffers(1, 1, myObjectBuffer.GetAddressOf());
             DX11::myContext->PSSetConstantBuffers(2, 1, myMaterialBuffer.GetAddressOf());
 
-            DX11::myContext->DrawIndexed(meshData.myIndexCount, 0, 0);
+            if (model.GetComponent<ModelComponent>().modelInstance.HasRenderedInstances())
+            {
+                const auto& mdlInst = model.GetComponent<ModelComponent>().modelInstance;
+				ID3D11Buffer* buffers[2] = { meshData.myVertexBuffer.Get(), mdlInst.GetInstanceBuffer().Get() };
+				UINT stride[2] = { meshData.myStride, sizeof(ModelInstance::RenderedInstanceData) };
+				UINT offset[2] = { 0, 0 };
+
+				DX11::myContext->IASetVertexBuffers(0, 2, buffers, stride, offset);
+                DX11::myContext->DrawIndexedInstanced(meshData.myIndexCount, mdlInst.GetNumOfInstances(), 0, 0, 0);
+            }
+            else
+            {
+				DX11::myContext->IASetVertexBuffers(0, 1, meshData.myVertexBuffer.GetAddressOf(), &meshData.myStride, &meshData.myOffset);
+				DX11::myContext->DrawIndexed(meshData.myIndexCount, 0, 0);
+            }
         }
     }
 }
