@@ -82,8 +82,6 @@ private:
 
 	void Controller();
 	
-	Entity myCamera;
-
 	DX11 myFramework;
 	ForwardRenderer myForwardRenderer;
 	DeferredRenderer myDeferredRenderer;

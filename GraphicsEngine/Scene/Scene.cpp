@@ -130,6 +130,11 @@ void Scene::UnparentEntity(Entity aEntity)
 	entityRelationShip.Parent = 0;
 }
 
+void Scene::ForEach(std::function<void(entt::entity)> aFunc)
+{
+	myRegistry.each(aFunc);
+}
+
 void Scene::SetMainCamera(Entity aCamera)
 {
 	myMainCameraEntity = (entt::entity)aCamera;

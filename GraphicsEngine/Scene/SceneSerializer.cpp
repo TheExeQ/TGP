@@ -83,7 +83,7 @@ void SceneSerializer::Serialize(const char* aFileName)
 	out << YAML::EndSeq;
 	out << YAML::EndMap;
 
-	std::ofstream fout((std::string(aFileName) + ".scene").c_str());
+	std::ofstream fout((std::string(aFileName)).c_str());
 	fout << out.c_str();
 }
 
@@ -134,7 +134,7 @@ bool SceneSerializer::DeserializePreset(const char* aFileName)
 
 bool SceneSerializer::Deserialize(const char* aFileName)
 {
-	std::ifstream stream((std::string(aFileName) + ".scene").c_str());
+	std::ifstream stream((std::string(aFileName)).c_str());
 	std::stringstream strStream;
 	strStream << stream.rdbuf();
 
@@ -147,6 +147,7 @@ bool SceneSerializer::Deserialize(const char* aFileName)
 	auto entities = data["Entities"];
 	if (entities)
 	{
+		myScene->myRegistry.clear();
 		for (auto ent : entities)
 		{
 			Entity DeserializedEntity;
@@ -172,11 +173,17 @@ bool SceneSerializer::Deserialize(const char* aFileName)
 			if (ent["ModelComponent"])
 			{
 				auto& comp = DeserializedEntity.AddComponent<ModelComponent>();
+				if (ent["ModelComponent"]["ModelPath"])
+				{
+					ModelAssetHandler::LoadModel(ent["ModelComponent"]["ModelPath"].as<std::string>());
+					comp.modelInstance = *ModelAssetHandler::GetModelInstance(ent["ModelComponent"]["ModelPath"].as<std::string>()).get();
+				}
 			}
 
 			if (ent["CameraComponent"])
 			{
 				auto& comp = DeserializedEntity.AddComponent<CameraComponent>();
+				comp.camera.SetProjectionValues(90, 9.f / 16.f, 0.1f, 10000.0f);
 			}
 
 			if (ent["ParticleSystemComponent"])
@@ -282,6 +289,10 @@ void SceneSerializer::SerializeEntity(YAML::Emitter& outEmitter, Entity aEntity)
 		outEmitter << YAML::Key << "ModelComponent";
 		outEmitter << YAML::BeginMap;
 		// Save data
+		if (comp.modelInstance.GetModel())
+		{
+			outEmitter << YAML::Key << "ModelPath" << YAML::Value << comp.modelInstance.GetModel()->GetName();
+		}
 		outEmitter << YAML::EndMap;
 	}
 

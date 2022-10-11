@@ -348,6 +348,9 @@ bool GraphicsEngine::Initialize(unsigned someX, unsigned someY,
 
 	myEditorLayer.Init();
 
+	myModelAssetHandler.Init();
+	ParticleAssetHandler::Init();
+
 	return true;
 }
 
@@ -357,7 +360,7 @@ bool GraphicsEngine::InitializeScene()
 	Scene::SetActiveScene(myScene);
 
 	SceneSerializer serializer(myScene);
-	serializer.Deserialize("../Assets/Scenes/default");
+	serializer.Deserialize("../Assets/Scenes/default.scene");
 	serializer.DeserializeSettings("../Assets/Settings/default");
 	serializer.DeserializePreset((std::string("../Assets/Settings/") + SettingsPanel::preset1).c_str());
 	SettingsPanel::preset1Color = DX11::myClearColor;
@@ -366,59 +369,26 @@ bool GraphicsEngine::InitializeScene()
 	
 	SettingsPanel::colorSlider = SettingsPanel::preset1Color;
 
-	myCamera = myScene->GetEntityFromUUID(7509847562195690);
-	myScene->SetMainCamera(myCamera);
+	Entity camera;
+	myScene->ForEach([&](entt::entity aEnt)
+		{
+			Entity ent(aEnt, myScene);
+			if (ent.HasComponent<CameraComponent>() && ent.GetComponent<TagComponent>().name == "EditorCamera")
+			{
+				camera = ent;
+			}
+		});
 
-	myModelAssetHandler.Init();
-	ParticleAssetHandler::Init();
-
-	if (myCamera.IsValid())
+	if (camera.IsValid())
 	{
-		auto& cameraComp = myCamera.GetComponent<CameraComponent>();
-		cameraComp.camera.SetProjectionValues(90, 9.f / 16.f, 0.1f, 10000.0f);
+		myScene->SetMainCamera(camera);
 	}
-
-	auto cube = myScene->GetEntityFromUUID(6057646693852787664);
-	if (cube.IsValid())
+	else
 	{
-		auto& cubeModelComp = cube.GetComponent<ModelComponent>();
-		cubeModelComp.modelInstance = *myModelAssetHandler.GetModelInstance("Cube").get();
-	}
-
-	auto chest = myScene->GetEntityFromUUID(3316484318424843108);
-	auto chest2 = myScene->GetEntityFromUUID(11232748631693019462);
-	auto chest3 = myScene->GetEntityFromUUID(9820856010195557413);
-	if (chest.IsValid())
-	{
-		auto& chestModelComp = chest.GetComponent<ModelComponent>();
-
-		myModelAssetHandler.LoadModel("Models/SM/Particle_Chest.fbx");
-		chestModelComp.modelInstance = *myModelAssetHandler.GetModelInstance("Models/SM/Particle_Chest.fbx").get();
-		chestModelComp.modelInstance.AddRenderedInstance(chest.GetComponent<TransformComponent>().GetTransform());
-		chestModelComp.modelInstance.AddRenderedInstance(chest2.GetComponent<TransformComponent>().GetTransform());
-		chestModelComp.modelInstance.AddRenderedInstance(chest3.GetComponent<TransformComponent>().GetTransform());
-		chestModelComp.modelInstance.UpdateInstanceBuffer();
-	}
-
-	auto gremlin = myScene->GetEntityFromUUID(3446174191707793529);
-	if (gremlin.IsValid())
-	{
-		auto& gremlinModelComp = gremlin.GetComponent<ModelComponent>();
-
-		myModelAssetHandler.LoadModel("Models/SK/gremlin.fbx");
-		myModelAssetHandler.LoadAnimation("Models/SK/gremlin.fbx", "Models/Animations/gremlin@run.fbx");
-		myModelAssetHandler.LoadAnimation("Models/SK/gremlin.fbx", "Models/Animations/gremlin@walk.fbx");
-		gremlinModelComp.modelInstance = *myModelAssetHandler.GetModelInstance("Models/SK/gremlin.fbx").get();
-		gremlinModelComp.modelInstance.SetAnimation("Models/Animations/gremlin@walk.fbx");
-		gremlinModelComp.modelInstance.SetAnimationState(eAnimationState::Playing);
-	}
-
-	auto particleSystem = myScene->GetEntityFromUUID(3905982894324659577);
-	if (particleSystem.IsValid())
-	{
-		auto& particleSystemComp = particleSystem.GetComponent<ParticleSystemComponent>();
-
-		particleSystemComp.system = *ParticleAssetHandler::GetParticleSystem("Core").get();
+		auto newCam = myScene->CreateEntity("EditorCamera", myScene);
+		auto& comp = newCam.AddComponent<CameraComponent>();
+		comp.camera.SetProjectionValues(90, 9.f / 16.f, 0.1f, 10000.0f);
+		myScene->SetMainCamera(newCam);
 	}
 
 	TextureAssetHandler::LoadTexture("studio_cubemap.dds");
@@ -574,27 +544,6 @@ void GraphicsEngine::RenderFrame()
 
 void GraphicsEngine::EndFrame()
 {
-	auto chest = myScene->GetEntityFromUUID(3316484318424843108);
-	auto chest2 = myScene->GetEntityFromUUID(11232748631693019462);
-	auto chest3 = myScene->GetEntityFromUUID(9820856010195557413);
-	if (chest.IsValid())
-	{
-		auto& chestModelComp = chest.GetComponent<ModelComponent>();
-
-		chestModelComp.modelInstance.ClearRenderedInstance();
-		chestModelComp.modelInstance.AddRenderedInstance(chest.GetComponent<TransformComponent>().GetTransform());
-		if (chest2.IsValid())
-		{
-			chestModelComp.modelInstance.AddRenderedInstance(chest2.GetComponent<TransformComponent>().GetTransform());
-		}
-		if (chest3.IsValid())
-		{
-			chestModelComp.modelInstance.AddRenderedInstance(chest3.GetComponent<TransformComponent>().GetTransform());
-		}
-		chestModelComp.modelInstance.UpdateInstanceBuffer();
-	}
-
-
 	// F1 - This is where we finish our rendering and tell the framework
 	// to present our result to the screen.
 	myImGuiLayer.End();
@@ -603,6 +552,8 @@ void GraphicsEngine::EndFrame()
 
 void GraphicsEngine::Controller()
 {
+	auto camera = Scene::GetActiveScene()->GetMainCamera();
+
 	if (myInputHandler.IsKeyPressed(KeyCode::Z) && myInputHandler.IsKeyDown(KeyCode::CONTROL))
 	{
 		CommandManager::Undo();
@@ -617,7 +568,7 @@ void GraphicsEngine::Controller()
 	static float moveSpeed = 100.f;
 	static float mouseSens = 0.25f;
 
-	auto& transform = myCamera.GetComponent<TransformComponent>();
+	auto& transform = camera.GetComponent<TransformComponent>();
 
 	if (myInputHandler.IsKeyDown(KeyCode::W))
 	{

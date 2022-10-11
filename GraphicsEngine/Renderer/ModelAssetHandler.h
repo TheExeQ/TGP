@@ -18,9 +18,9 @@ public:
 	static bool LoadModel(const std::string& someFilePath);
 	static bool LoadAnimation(const std::string& aModelName, const std::string& someFilePath);
 	
+	static bool InitUnitCube();
+
 private:
-	bool InitUnitCube();
-	
 	static std::unordered_map<std::string, Ref<Model>> myModelRegistry;
 	static std::unordered_map<std::string, Ref<Material>> myMaterialRegistry;
 };
