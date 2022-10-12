@@ -148,8 +148,10 @@ bool SceneSerializer::Deserialize(const char* aFileName)
 	if (entities)
 	{
 		myScene->myRegistry.clear();
-		for (auto ent : entities)
+		for (int i = entities.size(); i-- > 0;)
 		{
+			auto ent = entities[i];
+
 			Entity DeserializedEntity;
 			if (ent["TagComponent"])
 			{

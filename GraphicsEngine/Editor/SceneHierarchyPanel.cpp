@@ -372,7 +372,10 @@ void SceneHierarchyPanel::DrawComponents(Entity aEntity)
 		{
 			char buffer[256];
 			memset(buffer, 0, sizeof(buffer));
-			std::strncpy(buffer, component.modelInstance.GetModel()->GetName().c_str(), sizeof(buffer));
+			if (component.modelInstance.GetModel())
+			{
+				std::strncpy(buffer, component.modelInstance.GetModel()->GetName().c_str(), sizeof(buffer));
+			}
 			if (ImGui::InputText("Model", buffer, sizeof(buffer)))
 			{
 				if (ModelAssetHandler::LoadModel(std::string(buffer)))
@@ -391,6 +394,14 @@ void SceneHierarchyPanel::DrawComponents(Entity aEntity)
 
 					std::wstring pathInWString(path);
 					std::string pathInString(pathInWString.begin(), pathInWString.end());
+
+					for (auto& c : pathInString)
+					{
+						if (c == '\\')
+						{
+							c = '/';
+						}
+					}
 
 					if (ModelAssetHandler::LoadModel(pathInString))
 					{
