@@ -39,6 +39,8 @@ public:
 	void SetMainCamera(Entity aCamera);
 	Entity GetMainCamera() const;
 
+	const entt::registry& GetRegistry() const { return myRegistry; };
+
 	static void SetActiveScene(Ref<Scene> aScene) { myActiveScene = aScene; };
 	static Ref<Scene> GetActiveScene() { return myActiveScene; };
 

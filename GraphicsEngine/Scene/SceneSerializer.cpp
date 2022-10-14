@@ -172,6 +172,13 @@ bool SceneSerializer::Deserialize(const char* aFileName)
 				comp.scale = scale.as<Vector3f>();
 			}
 
+			if (ent["RelationshipComponent"])
+			{
+				auto parent = ent["RelationshipComponent"]["ParentUUID"];
+				auto& comp = DeserializedEntity.AddComponent<RelationshipComponent>();
+				comp.Parent = parent.as<uint64_t>();
+			}
+
 			if (ent["ModelComponent"])
 			{
 				auto& comp = DeserializedEntity.AddComponent<ModelComponent>();
@@ -231,6 +238,20 @@ bool SceneSerializer::Deserialize(const char* aFileName)
 				comp.light.ourLightBuffer.Attenuation = ent["LightComponent"]["Attenuation"].as<float>();
 			}
 		}
+
+		for (auto& ent : myScene->GetRegistry().view<RelationshipComponent>())
+		{
+			auto entity = Entity(ent, myScene);
+			if (entity.IsValid())
+			{
+				auto parentEntity = myScene->GetEntityFromUUID(entity.GetComponent<RelationshipComponent>().Parent);
+				if (parentEntity.IsValid())
+				{
+					auto& parentRelComp = parentEntity.GetComponent<RelationshipComponent>();
+					parentRelComp.Children.push_back(entity.GetUUID());
+				}
+			}
+		}
 	}
 
 	return true;
@@ -281,6 +302,16 @@ void SceneSerializer::SerializeEntity(YAML::Emitter& outEmitter, Entity aEntity)
 		outEmitter << YAML::Key << "Position" << YAML::Value << comp.position;
 		outEmitter << YAML::Key << "Rotation" << YAML::Value << comp.rotation;
 		outEmitter << YAML::Key << "Scale" << YAML::Value << comp.scale;
+		outEmitter << YAML::EndMap;
+	}
+
+	if (aEntity.HasComponent<RelationshipComponent>())
+	{
+		const auto& comp = aEntity.GetComponent<RelationshipComponent>();
+
+		outEmitter << YAML::Key << "RelationshipComponent";
+		outEmitter << YAML::BeginMap;
+		outEmitter << YAML::Key << "ParentUUID" << YAML::Value << (uint64_t)comp.Parent;
 		outEmitter << YAML::EndMap;
 	}
 
