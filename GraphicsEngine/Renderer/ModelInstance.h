@@ -25,7 +25,7 @@ public:
 	bool UpdateInstanceBuffer();
 	void ClearRenderedInstance() { myRenderedInstances.clear(); };
 
-	FORCEINLINE Ref<Model> GetModel() { return myModel; }
+	FORCEINLINE Ref<Model> GetModel() const { return myModel; }
 	FORCEINLINE Model::ModelData const& GetModelData(uint16_t anIndex) const { return myModel->GetModelData(anIndex); }
 	FORCEINLINE uint16_t GetNumMeshes() const { return myModel->GetNumMeshes(); }
 	FORCEINLINE void SetAnimation(const std::string& anAnimationName) { myCurrentAnimation = myModel->GetSkeleton()->Animations.at("../Assets/" + anAnimationName); }

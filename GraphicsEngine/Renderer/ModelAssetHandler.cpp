@@ -16,7 +16,6 @@ std::unordered_map<std::string, Ref<Material>> ModelAssetHandler::myMaterialRegi
 
 bool ModelAssetHandler::Init()
 {
-	InitUnitCube();
 	return true;
 }
 
@@ -35,6 +34,10 @@ Ref<Model> ModelAssetHandler::GetModel(const std::string& name)
 
 bool ModelAssetHandler::LoadModel(const std::string& someFilePath)
 {
+	if (someFilePath == "Cube") 
+	{ 
+		return InitUnitCube(); 
+	}
 	std::vector<Model::ModelData> modelDataVector;
 	const std::string filePath = "../Assets/" + someFilePath;
 	TGA::FBXModel tgaModel;

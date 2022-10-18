@@ -7,6 +7,7 @@
 #include <unordered_map>
 #include <memory>
 #include <vector>
+#include <functional>
 
 using EntityMap = std::unordered_map<TGA::UUID, entt::entity>;
 
@@ -33,8 +34,12 @@ public:
 	void ParentEntity(Entity aChild, Entity aParent);
 	void UnparentEntity(Entity aEntity);
 
+	void ForEach(std::function<void(entt::entity)> aFunc);
+
 	void SetMainCamera(Entity aCamera);
 	Entity GetMainCamera() const;
+
+	const entt::registry& GetRegistry() const { return myRegistry; };
 
 	static void SetActiveScene(Ref<Scene> aScene) { myActiveScene = aScene; };
 	static Ref<Scene> GetActiveScene() { return myActiveScene; };

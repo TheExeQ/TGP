@@ -84,7 +84,7 @@ void SceneSerializer::Serialize(const char* aFileName)
 	out << YAML::EndSeq;
 	out << YAML::EndMap;
 
-	std::ofstream fout((std::string(aFileName) + ".scene").c_str());
+	std::ofstream fout((std::string(aFileName)).c_str());
 	fout << out.c_str();
 }
 
@@ -135,7 +135,7 @@ bool SceneSerializer::DeserializePreset(const char* aFileName)
 
 bool SceneSerializer::Deserialize(const char* aFileName)
 {
-	std::ifstream stream((std::string(aFileName) + ".scene").c_str());
+	std::ifstream stream((std::string(aFileName)).c_str());
 	std::stringstream strStream;
 	strStream << stream.rdbuf();
 
@@ -148,8 +148,11 @@ bool SceneSerializer::Deserialize(const char* aFileName)
 	auto entities = data["Entities"];
 	if (entities)
 	{
-		for (auto ent : entities)
+		myScene->myRegistry.clear();
+		for (int i = entities.size(); i-- > 0;)
 		{
+			auto ent = entities[i];
+
 			Entity DeserializedEntity;
 			if (ent["TagComponent"])
 			{
@@ -170,14 +173,27 @@ bool SceneSerializer::Deserialize(const char* aFileName)
 				comp.scale = scale.as<Vector3f>();
 			}
 
+			if (ent["RelationshipComponent"])
+			{
+				auto parent = ent["RelationshipComponent"]["ParentUUID"];
+				auto& comp = DeserializedEntity.AddComponent<RelationshipComponent>();
+				comp.Parent = parent.as<uint64_t>();
+			}
+
 			if (ent["ModelComponent"])
 			{
 				auto& comp = DeserializedEntity.AddComponent<ModelComponent>();
+				if (ent["ModelComponent"]["ModelPath"])
+				{
+					ModelAssetHandler::LoadModel(ent["ModelComponent"]["ModelPath"].as<std::string>());
+					comp.modelInstance = *ModelAssetHandler::GetModelInstance(ent["ModelComponent"]["ModelPath"].as<std::string>()).get();
+				}
 			}
 
 			if (ent["CameraComponent"])
 			{
 				auto& comp = DeserializedEntity.AddComponent<CameraComponent>();
+				comp.camera.SetProjectionValues(90, 9.f / 16.f, 0.1f, 10000.0f);
 			}
 
 			if (ent["ParticleSystemComponent"])
@@ -221,6 +237,20 @@ bool SceneSerializer::Deserialize(const char* aFileName)
 				}
 				comp.light.ourLightBuffer.Direction = ent["LightComponent"]["Direction"].as<Vector3f>();
 				comp.light.ourLightBuffer.Attenuation = ent["LightComponent"]["Attenuation"].as<float>();
+			}
+		}
+
+		for (auto& ent : myScene->GetRegistry().view<RelationshipComponent>())
+		{
+			auto entity = Entity(ent, myScene);
+			if (entity.IsValid())
+			{
+				auto parentEntity = myScene->GetEntityFromUUID(entity.GetComponent<RelationshipComponent>().Parent);
+				if (parentEntity.IsValid())
+				{
+					auto& parentRelComp = parentEntity.GetComponent<RelationshipComponent>();
+					parentRelComp.Children.push_back(entity.GetUUID());
+				}
 			}
 		}
 	}
@@ -276,6 +306,16 @@ void SceneSerializer::SerializeEntity(YAML::Emitter& outEmitter, Entity aEntity)
 		outEmitter << YAML::EndMap;
 	}
 
+	if (aEntity.HasComponent<RelationshipComponent>())
+	{
+		const auto& comp = aEntity.GetComponent<RelationshipComponent>();
+
+		outEmitter << YAML::Key << "RelationshipComponent";
+		outEmitter << YAML::BeginMap;
+		outEmitter << YAML::Key << "ParentUUID" << YAML::Value << (uint64_t)comp.Parent;
+		outEmitter << YAML::EndMap;
+	}
+
 	if (aEntity.HasComponent<ModelComponent>())
 	{
 		const auto& comp = aEntity.GetComponent<ModelComponent>();
@@ -283,6 +323,10 @@ void SceneSerializer::SerializeEntity(YAML::Emitter& outEmitter, Entity aEntity)
 		outEmitter << YAML::Key << "ModelComponent";
 		outEmitter << YAML::BeginMap;
 		// Save data
+		if (comp.modelInstance.GetModel())
+		{
+			outEmitter << YAML::Key << "ModelPath" << YAML::Value << comp.modelInstance.GetModel()->GetName();
+		}
 		outEmitter << YAML::EndMap;
 	}
 

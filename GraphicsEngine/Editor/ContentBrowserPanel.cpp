@@ -49,13 +49,13 @@
 			ImGui::PushStyleColor(ImGuiCol_Button, ImVec4(0, 0, 0, 0));
 			ImGui::ImageButton(icon->mySRV.Get(), { thumbnailSize, thumbnailSize }, { 1, 0 }, { 0, 1 });
 
-			//if (ImGui::BeginDragDropSource())
-			//{
-			//	auto relativePath = std::filesystem::relative(path, g_AssetPath);
-			//	const wchar_t* itemPath = relativePath.c_str();
-			//	ImGui::SetDragDropPayload("CONTENT_BROWSER_ITEM", itemPath, (wcslen(itemPath) + 1) * sizeof(wchar_t));
-			//	ImGui::EndDragDropSource();
-			//}
+			if (ImGui::BeginDragDropSource())
+			{
+				auto relativePath = std::filesystem::relative(path, gAssetPath);
+				const wchar_t* itemPath = relativePath.c_str();
+				ImGui::SetDragDropPayload("CONTENT_BROWSER_ITEM", itemPath, (wcslen(itemPath) + 1) * sizeof(wchar_t));
+				ImGui::EndDragDropSource();
+			}
 
 			ImGui::PopStyleColor();
 			if (ImGui::IsItemHovered() && ImGui::IsMouseDoubleClicked(ImGuiMouseButton_Left))

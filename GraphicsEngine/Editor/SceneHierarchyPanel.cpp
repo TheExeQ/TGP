@@ -28,7 +28,7 @@ void SceneHierarchyPanel::OnImGuiRender()
 			{
 				Entity entity(entityID, myContext);
 				if (entity.IsValid() && !entity.HasParent() &&
-					(entt::entity)entity != (entt::entity)GraphicsEngine::Get().myCamera)
+					(entt::entity)entity != myContext->GetMainCamera())
 				{
 					DrawEntityNode(entity);
 				}
@@ -371,46 +371,50 @@ void SceneHierarchyPanel::DrawComponents(Entity aEntity)
 
 	DrawComponent<ModelComponent>("Model", aEntity, [](auto& component)
 		{
+			char buffer[256];
+			memset(buffer, 0, sizeof(buffer));
+			if (component.modelInstance.GetModel())
+			{
+				std::strncpy(buffer, component.modelInstance.GetModel()->GetName().c_str(), sizeof(buffer));
+			}
+			if (ImGui::InputText("Model", buffer, sizeof(buffer)))
+			{
+				if (ModelAssetHandler::LoadModel(std::string(buffer)))
+				{
+					component.modelInstance = *ModelAssetHandler::GetModelInstance(std::string(buffer)).get();
+				}
+			}
+
+			if (ImGui::BeginDragDropTarget())
+			{
+				const ImGuiPayload* payload = ImGui::AcceptDragDropPayload("CONTENT_BROWSER_ITEM");
+
+				if (payload)
+				{
+					const wchar_t* path = (const wchar_t*)payload->Data;
+
+					std::wstring pathInWString(path);
+					std::string pathInString(pathInWString.begin(), pathInWString.end());
+
+					for (auto& c : pathInString)
+					{
+						if (c == '\\')
+						{
+							c = '/';
+						}
+					}
+
+					if (ModelAssetHandler::LoadModel(pathInString))
+					{
+						component.modelInstance = *ModelAssetHandler::GetModelInstance(pathInString).get();
+					}
+				}
+
+				ImGui::EndDragDropTarget();
+			}
+
 			std::vector<std::string> items;
 			std::string path;
-
-			//path = "../Assets/Models/SM";
-			//for (const auto& entry : std::filesystem::directory_iterator(path))
-			//{
-			//	items.push_back(std::string("SM/") + entry.path().filename().string());
-			//}
-
-			//path = "../Assets/Models/SK";
-			//for (const auto& entry : std::filesystem::directory_iterator(path))
-			//{
-			//	items.push_back(std::string("SK/") + entry.path().filename().string());
-			//}
-
-			//static std::string current_item;
-
-			//if (ImGui::BeginCombo("Model", current_item.c_str()))
-			//{
-			//	for (int n = 0; n < items.size(); n++)
-			//	{
-			//		bool is_selected = (current_item == items[n]);
-			//		if (ImGui::Selectable(items[n].c_str(), is_selected))
-			//		{
-			//			current_item = items[n];
-
-			//			Ref<Model>& model = component.modelInstance.GetModel();
-			//			ModelAssetHandler::LoadModel(current_item);
-			//			model = ModelAssetHandler::GetModel(current_item);
-			//		}
-
-			//		if (is_selected)
-			//		{
-			//			ImGui::SetItemDefaultFocus();
-			//		}
-			//	}
-			//	ImGui::EndCombo();
-			//}
-
-			//items.clear();
 
 			path = "../Assets/Textures/";
 			for (const auto& entry : std::filesystem::directory_iterator(path))
