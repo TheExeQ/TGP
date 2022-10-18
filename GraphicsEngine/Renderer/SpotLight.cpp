@@ -1,3 +1,4 @@
+#include "gepch.h"
 #include "SpotLight.h"
 
 void SpotLight::SetRange(float aRange)

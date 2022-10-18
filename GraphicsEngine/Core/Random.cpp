@@ -1,3 +1,4 @@
+#include "gepch.h"
 #include "Random.h"
 
 std::random_device Random::myRd;

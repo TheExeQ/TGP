@@ -1,3 +1,4 @@
+#include "gepch.h"
 #include "ModelAssetHandler.h"
 #include <filesystem>
 #include <fstream>

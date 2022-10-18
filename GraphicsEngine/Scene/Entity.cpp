@@ -1,3 +1,4 @@
+#include "gepch.h"
 #include "Entity.h"
 
 Entity::Entity(entt::entity aEntityHandle, Ref<Scene> aScene)

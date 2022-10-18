@@ -1,3 +1,4 @@
+#include "gepch.h"
 #include "ShadowRenderer.h"
 #include "Core/DX11.h"
 #include "Scene/Components.h"

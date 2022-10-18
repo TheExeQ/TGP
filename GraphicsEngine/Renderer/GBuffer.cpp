@@ -1,3 +1,4 @@
+#include "gepch.h"
 #include "GBuffer.h"
 
 void GBuffer::SetAsTarget() const

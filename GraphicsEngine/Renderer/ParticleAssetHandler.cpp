@@ -1,3 +1,4 @@
+#include "gepch.h"
 #include "ParticleAssetHandler.h"
 
 bool ParticleAssetHandler::Init()

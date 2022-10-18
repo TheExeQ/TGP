@@ -1,3 +1,4 @@
+#include "gepch.h"
 #include "Light.h"
 #include "Core/DX11.h"
 

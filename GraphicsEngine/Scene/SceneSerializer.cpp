@@ -1,3 +1,4 @@
+#include "gepch.h"
 #include "SceneSerializer.h"
 #include "Math/Vector.hpp"
 #include "Core/DX11.h"

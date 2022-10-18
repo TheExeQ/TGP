@@ -1,3 +1,4 @@
+#include "gepch.h"
 #include "SettingsPanel.h"
 #include "Scene/Scene.h"
 #include "Scene/SceneSerializer.h"

@@ -1,4 +1,4 @@
-#include "Core/GraphicsEngine.pch.h"
+#include "gepch.h"
 #include "Model.h"
 
 void Model::Init(std::vector<ModelData>& someModelData, const std::string& aName)

@@ -1,3 +1,4 @@
+#include "gepch.h"
 #include "DeferredRenderer.h"
 #include "Core/GraphicsEngine.h"
 #include "Core/DX11.h"

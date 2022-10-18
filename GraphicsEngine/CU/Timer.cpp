@@ -1,3 +1,4 @@
+#include "gepch.h"
 #include "Timer.hpp"
 
 namespace CommonUtilities

@@ -2,6 +2,10 @@ project "GraphicsEngine"
 	kind "StaticLib"
 	language "C++"
 	
+	warnings "High"
+	pchsource("gepch.cpp")
+	pchheader "gepch.h"
+
 	targetdir ("../libs/")
 	targetname ("%{prj.name}-%{cfg.buildcfg}")
 	objdir ("../bin-int/" .. outputdir .. "/%{prj.name}")
@@ -36,7 +40,7 @@ project "GraphicsEngine"
 	{
 		"ThirdParty"
 	}
-	
+
 	filter { "files:**.hlsl" }
 		shadermodel "5.0"
 		shaderobjectfileoutput "../Assets/Shaders/%{file.basename}.cso"

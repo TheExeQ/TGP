@@ -1,3 +1,4 @@
+#include "gepch.h"
 #include "LightAssetHandler.h"
 #include "Math/Matrix.hpp"
 #include "TextureAssetHandler.h"

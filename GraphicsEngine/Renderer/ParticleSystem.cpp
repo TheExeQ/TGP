@@ -1,3 +1,4 @@
+#include "gepch.h"
 #include "ParticleSystem.h"
 
 void ParticleSystem::Update(float aDeltaTime)
