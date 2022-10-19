@@ -21,14 +21,12 @@ public:
 	bool Init();
 	void GenereteGBuffer(
 		Entity aCamera,
-		std::vector<Entity>& aModelList,
-		float aDeltaTime, float aTotalTime);
+		std::vector<Entity>& aModelList);
 	void Render(
 		Entity aCamera,
 		std::vector<Entity>& aLightList,
 		const Ref<DirectionalLight>& aDirectionalLight, 
-		const Ref<EnvironmentLight>& aEnvironmentLight,
-		float aDeltaTime, float aTotalTime);
+		const Ref<EnvironmentLight>& aEnvironmentLight);
 
 private:
 	FrameBufferData myFrameBufferData;

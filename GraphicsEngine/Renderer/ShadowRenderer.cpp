@@ -62,10 +62,10 @@ void ShadowRenderer::Render(std::vector<Entity>& aLightList, Ref<DirectionalLigh
 			auto& lightComp = aLightList[i - 1].GetComponent<LightComponent>();
 			if (lightComp.light.GetLightBufferData().LightType == 1)
 			{
-				continue;
 				lightComp.light.ClearShadowMap();
 				lightComp.light.SetShadowMapAsDepth(0);
 				timesToDraw = 6;
+				continue;
 			}
 			else
 			{
@@ -170,7 +170,7 @@ void ShadowRenderer::Render(std::vector<Entity>& aLightList, Ref<DirectionalLigh
 
 				for (uint32_t m = 0; m < mdlInst.GetNumMeshes(); m++)
 				{
-					const auto& mdlData = mdlInst.GetModelData(m);
+					const auto& mdlData = mdlInst.GetModelData((uint16_t)m);
 
 					DX11::myContext->VSSetConstantBuffers(1, 1, myObjectBuffer.GetAddressOf());
 
@@ -187,7 +187,6 @@ void ShadowRenderer::Render(std::vector<Entity>& aLightList, Ref<DirectionalLigh
 
 					if (ent.GetComponent<ModelComponent>().modelInstance.HasRenderedInstances())
 					{
-						const auto& mdlInst = ent.GetComponent<ModelComponent>().modelInstance;
 						ID3D11Buffer* buffers[2] = { mdlData.myVertexBuffer.Get(), mdlInst.GetInstanceBuffer().Get() };
 						UINT stride[2] = { mdlData.myStride, sizeof(ModelInstance::RenderedInstanceData) };
 						UINT offset[2] = { 0, 0 };

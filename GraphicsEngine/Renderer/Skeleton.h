@@ -11,7 +11,7 @@ struct Skeleton
 	struct Bone
 	{
 		CommonUtilities::Matrix4x4<float> BindPoseInverse;
-		int Parent;
+		int Parent = 0;
 		std::vector<unsigned int> Children;
 		std::string Name;
 	};

@@ -12,7 +12,14 @@ namespace TGA
 
 		bool operator==(const Matrix& other) const
 		{
-			return Data == other.Data;
+			for (int i = 0; i < 16; i++)
+			{
+				if (Data[i] != other.Data[i])
+				{
+					return false;
+				}
+			}
+			return true;
 		}
 	};
 
@@ -165,13 +172,13 @@ namespace TGA
 		std::vector<Frame> Frames;
 
 		// How long this animation is in frames.
-		unsigned int Length;
+		unsigned int Length = 0;
 
 		// The duration of this animation.
-		double Duration;
+		double Duration = 0;
 
 		// The FPS of this animation.
-		float FramesPerSecond;
+		float FramesPerSecond = 0.f;
 
 		std::string Name;
 	};

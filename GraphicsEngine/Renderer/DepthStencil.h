@@ -18,7 +18,7 @@ public:
 
 protected:
 	ComPtr<ID3D11DepthStencilView> myDSV;
-	D3D11_VIEWPORT myViewport;
+	D3D11_VIEWPORT myViewport = { 0.f, 0.f, 0.f, 0.f, 0.f, 0.f };
 private:
 	friend class TextureAssetHandler;
 };

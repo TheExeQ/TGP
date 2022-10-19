@@ -11,8 +11,8 @@ Texture::~Texture()
 void Texture::SetAsTarget()
 {
 	D3D11_VIEWPORT viewport = {};
-	viewport.Width = myWidth;
-	viewport.Height = myHeight;
+	viewport.Width = (float)myWidth;
+	viewport.Height = (float)myHeight;
 	viewport.MinDepth = 0.0f;
 	viewport.MaxDepth = 1.0f;
 	viewport.TopLeftX = 0;

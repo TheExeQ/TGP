@@ -185,7 +185,7 @@ bool ModelAssetHandler::LoadModel(const std::string& someFilePath)
 
 			D3D11_BUFFER_DESC vertexBufferDesc;
 			vertexBufferDesc.Usage = D3D11_USAGE_DEFAULT;
-			vertexBufferDesc.ByteWidth = sizeof(Vertex) * mdlVertices.size();
+			vertexBufferDesc.ByteWidth = sizeof(Vertex) * (UINT)mdlVertices.size();
 			vertexBufferDesc.BindFlags = D3D11_BIND_VERTEX_BUFFER;
 			vertexBufferDesc.CPUAccessFlags = 0;
 			vertexBufferDesc.MiscFlags = 0;
@@ -201,7 +201,7 @@ bool ModelAssetHandler::LoadModel(const std::string& someFilePath)
 
 			D3D11_BUFFER_DESC indexBufferDesc;
 			indexBufferDesc.Usage = D3D11_USAGE_DEFAULT;
-			indexBufferDesc.ByteWidth = sizeof(uint32_t) * mdlIndices.size();
+			indexBufferDesc.ByteWidth = sizeof(uint32_t) * (UINT)mdlIndices.size();
 			indexBufferDesc.BindFlags = D3D11_BIND_INDEX_BUFFER;
 			indexBufferDesc.CPUAccessFlags = 0;
 			indexBufferDesc.MiscFlags = 0;
@@ -269,8 +269,8 @@ bool ModelAssetHandler::LoadModel(const std::string& someFilePath)
 				return false;
 			}
 
-			modelData.myVertexCount = mdlVertices.size();
-			modelData.myIndexCount = mdlIndices.size();
+			modelData.myVertexCount = (UINT)mdlVertices.size();
+			modelData.myIndexCount = (UINT)mdlIndices.size();
 			modelData.myPrimitiveTopology = D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST;
 			modelData.myStride = sizeof(Vertex);
 			modelData.myOffset = 0;
@@ -334,7 +334,7 @@ bool ModelAssetHandler::LoadAnimation(const std::string& aModelName, const std::
 		result.Length = tgaAnimation.Length;
 		result.Name = tgaAnimation.Name;
 		result.FramesPerSecond = tgaAnimation.FramesPerSecond;
-		result.Duration = tgaAnimation.Duration;
+		result.Duration = (float)tgaAnimation.Duration;
 		result.CurrentFrame = 1;
 		result.State = eAnimationState::Stopped;
 
@@ -439,7 +439,7 @@ bool ModelAssetHandler::InitUnitCube()
 
 	D3D11_BUFFER_DESC vertexBufferDesc;
 	vertexBufferDesc.Usage = D3D11_USAGE_DEFAULT;
-	vertexBufferDesc.ByteWidth = sizeof(Vertex) * mdlVertices.size();
+	vertexBufferDesc.ByteWidth = sizeof(Vertex) * (UINT)mdlVertices.size();
 	vertexBufferDesc.BindFlags = D3D11_BIND_VERTEX_BUFFER;
 	vertexBufferDesc.CPUAccessFlags = 0;
 	vertexBufferDesc.MiscFlags = 0;
@@ -455,7 +455,7 @@ bool ModelAssetHandler::InitUnitCube()
 
 	D3D11_BUFFER_DESC indexBufferDesc;
 	indexBufferDesc.Usage = D3D11_USAGE_DEFAULT;
-	indexBufferDesc.ByteWidth = sizeof(int) * mdlIndices.size();
+	indexBufferDesc.ByteWidth = sizeof(int) * (UINT)mdlIndices.size();
 	indexBufferDesc.BindFlags = D3D11_BIND_INDEX_BUFFER;
 	indexBufferDesc.CPUAccessFlags = 0;
 	indexBufferDesc.MiscFlags = 0;
@@ -523,8 +523,8 @@ bool ModelAssetHandler::InitUnitCube()
 		return false;
 	}
 
-	modelData.myVertexCount = mdlVertices.size();
-	modelData.myIndexCount = mdlIndices.size();
+	modelData.myVertexCount = (UINT)mdlVertices.size();
+	modelData.myIndexCount = (UINT)mdlIndices.size();
 	modelData.myPrimitiveTopology = D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST;
 	modelData.myStride = sizeof(Vertex);
 	modelData.myOffset = 0;

@@ -1,4 +1,3 @@
-#pragma once
 #include "ShaderStructs.hlsli"
 
 GBufferOutput main(VertexToPixel input)

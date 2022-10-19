@@ -111,22 +111,22 @@ void CommonUtilities::InputHandler::UpdateEvents(UINT message, WPARAM wParam, LP
 	case WM_KEYDOWN:
 		if (!(lParam & (1 << 30)))
 		{
-			OnKeyPressed(wParam);
+			OnKeyPressed((char)wParam);
 		}
 		else
 		{
 			myKeystates[wParam] = false;
-			OnKeyHold(wParam);
+			OnKeyHold((char)wParam);
 		}
 		break;
 
 	case WM_SYSKEYUP:
 	case WM_KEYUP:
-		OnKeyReleased(wParam);
+		OnKeyReleased((char)wParam);
 		break;
 
 	case WM_CHAR:
-		OnChar(wParam);
+		OnChar((char)wParam);
 		break;
 
 	case WM_MOUSEMOVE:

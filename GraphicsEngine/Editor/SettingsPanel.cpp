@@ -26,7 +26,7 @@ void SettingsPanel::OnImGuiRender()
 
 	char buffer[256];
 	memset(buffer, 0, sizeof(buffer));
-	std::strncpy(buffer, preset1.c_str(), sizeof(buffer));
+	strncpy_s(buffer, preset1.c_str(), sizeof(buffer));
 	if (ImGui::InputText("##Fpreset", buffer, sizeof(buffer)))
 	{
 		preset1 = std::string(buffer);
@@ -43,7 +43,7 @@ void SettingsPanel::OnImGuiRender()
 
 	char buffer2[256];
 	memset(buffer2, 0, sizeof(buffer2));
-	std::strncpy(buffer2, preset2.c_str(), sizeof(buffer2));
+	strncpy_s(buffer2, preset2.c_str(), sizeof(buffer2));
 	if (ImGui::InputText("##Spreset", buffer2, sizeof(buffer2)))
 	{
 		preset2 = std::string(buffer2);
@@ -100,7 +100,7 @@ void SettingsPanel::OnImGuiRender()
 
 	char buffer3[256];
 	memset(buffer3, 0, sizeof(buffer3));
-	std::strncpy(buffer3, savefilename.c_str(), sizeof(buffer3));
+	strncpy_s(buffer3, savefilename.c_str(), sizeof(buffer3));
 	if (ImGui::InputText("Save/Delete preset filename", buffer3, sizeof(buffer3)))
 	{
 		savefilename = std::string(buffer3);

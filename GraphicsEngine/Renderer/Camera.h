@@ -21,8 +21,8 @@ private:
 	friend class SceneHierarchyPanel;
 	Matrix4x4<float> myProjectionMatrix;
 	
-	float myFov;
-	float myNear;
-	float myFar;
+	float myFov = 0.f;
+	float myNear = 0.f;
+	float myFar = 0.f;
 };
 

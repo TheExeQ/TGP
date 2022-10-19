@@ -1,5 +1,3 @@
-#pragma once
-
 struct ParticleVertexData
 {
     float4 myPosition : POSITION;

@@ -19,7 +19,7 @@ struct Animation
 
 	std::vector<Frame> Frames;
 	size_t CurrentFrame = 1;
-	eAnimationState State;
+	eAnimationState State = eAnimationState::Playing;
 
 	bool Looping = true;
 	float Timer = 0.f;

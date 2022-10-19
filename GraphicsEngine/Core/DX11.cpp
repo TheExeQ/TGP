@@ -9,7 +9,7 @@ ComPtr<ID3D11DepthStencilView> DX11::myDepthStencil = nullptr;
 
 bool DX11::Initialize(HWND aWindowHandle, bool aDebug)
 {
-	myClearColor = {0.5f, 0.5f, 0.5f, 1.f};
+	myClearColor = { 0.5f, 0.5f, 0.5f, 1.f };
 
 	HRESULT result;
 
@@ -54,12 +54,6 @@ bool DX11::Initialize(HWND aWindowHandle, bool aDebug)
 		return false;
 	}
 
-	result = backBufferTexture->Release();
-	if (FAILED(result))
-	{
-		return false;
-	}
-
 	GetClientRect(aWindowHandle, &myClientRect);
 
 	Microsoft::WRL::ComPtr<ID3D11Texture2D> depthBufferTexture;
@@ -78,12 +72,6 @@ bool DX11::Initialize(HWND aWindowHandle, bool aDebug)
 	}
 
 	result = myDevice->CreateDepthStencilView(depthBufferTexture.Get(), nullptr, myDepthStencil.GetAddressOf());
-	if (FAILED(result))
-	{
-		return false;
-	}
-	
-	result = depthBufferTexture->Release();
 	if (FAILED(result))
 	{
 		return false;
@@ -125,8 +113,8 @@ void DX11::EndFrame()
 void DX11::SetViewport(const int& width, const int& height)
 {
 	D3D11_VIEWPORT viewport = {};
-	viewport.Width = width;
-	viewport.Height = height;
+	viewport.Width = (float)width;
+	viewport.Height = (float)height;
 	viewport.MinDepth = 0.0f;
 	viewport.MaxDepth = 1.0f;
 	viewport.TopLeftX = 0;

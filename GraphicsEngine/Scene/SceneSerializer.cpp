@@ -149,7 +149,7 @@ bool SceneSerializer::Deserialize(const char* aFileName)
 	if (entities)
 	{
 		myScene->myRegistry.clear();
-		for (int i = entities.size(); i-- > 0;)
+		for (size_t i = entities.size(); i-- > 0;)
 		{
 			auto ent = entities[i];
 
@@ -199,6 +199,7 @@ bool SceneSerializer::Deserialize(const char* aFileName)
 			if (ent["ParticleSystemComponent"])
 			{
 				auto& comp = DeserializedEntity.AddComponent<ParticleSystemComponent>();
+				comp;
 			}
 
 			if (ent["LightComponent"])
@@ -333,6 +334,7 @@ void SceneSerializer::SerializeEntity(YAML::Emitter& outEmitter, Entity aEntity)
 	if (aEntity.HasComponent<CameraComponent>())
 	{
 		const auto& comp = aEntity.GetComponent<CameraComponent>();
+		comp;
 
 		outEmitter << YAML::Key << "CameraComponent";
 		outEmitter << YAML::BeginMap;
@@ -343,6 +345,7 @@ void SceneSerializer::SerializeEntity(YAML::Emitter& outEmitter, Entity aEntity)
 	if (aEntity.HasComponent<ParticleSystemComponent>())
 	{
 		const auto& comp = aEntity.GetComponent<ParticleSystemComponent>();
+		comp;
 
 		outEmitter << YAML::Key << "ParticleSystemComponent";
 		outEmitter << YAML::BeginMap;

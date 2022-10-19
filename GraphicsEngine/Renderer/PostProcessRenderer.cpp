@@ -87,8 +87,7 @@ void PostProcessRenderer::Render(PostProcessPass aPass, Entity aCameraEntity)
 
 		DXGI_SWAP_CHAIN_DESC SwapChainDesc;
 		DX11::mySwapchain->GetDesc(&SwapChainDesc);
-		const HWND hwnd = SwapChainDesc.OutputWindow;
-		CommonUtilities::Vector2<float> res = CommonUtilities::Vector2<float>(DX11::myClientRect.right - DX11::myClientRect.left, DX11::myClientRect.bottom - DX11::myClientRect.top);
+		CommonUtilities::Vector2<float> res = CommonUtilities::Vector2<float>((float)DX11::myClientRect.right - (float)DX11::myClientRect.left, (float)DX11::myClientRect.bottom - (float)DX11::myClientRect.top);
 
 		myFrameBufferData.Resolution = res;
 	}

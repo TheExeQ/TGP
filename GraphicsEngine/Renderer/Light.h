@@ -19,19 +19,19 @@ public:
 		Matrix4x4<float> LightProj;
 
 		Vector3<float> Color;
-		float Intensity;
+		float Intensity = 0.f;
 		Vector3<float> Direction;
-		float Range;
+		float Range = 0.f;
 		Vector3<float> Position;
-		float Attenuation;
+		float Attenuation = 0.f;
 
-		float SpotInnerRadius;
-		float SpotOuterRadius;
-		int LightType;
-		bool CastShadows;
+		float SpotInnerRadius = 0.f;
+		float SpotOuterRadius = 0.f;
+		int LightType = 0;
+		bool CastShadows = true;
 
-		float Near;
-		float Far;
+		float Near = 0.f;
+		float Far = 0.f;
 
 		Vector2f Padding;
 	};

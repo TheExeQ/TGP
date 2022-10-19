@@ -76,7 +76,7 @@ bool DeferredRenderer::Init()
     return true;
 }
 
-void DeferredRenderer::GenereteGBuffer(Entity aCamera, std::vector<Entity>& aModelList, float aDeltaTime, float aTotalTime)
+void DeferredRenderer::GenereteGBuffer(Entity aCamera, std::vector<Entity>& aModelList)
 {
     HRESULT result = S_FALSE;
     D3D11_MAPPED_SUBRESOURCE frameBufferData;
@@ -133,7 +133,7 @@ void DeferredRenderer::GenereteGBuffer(Entity aCamera, std::vector<Entity>& aMod
 
         for (unsigned int m = 0; m < modelRef->GetNumMeshes(); ++m)
         {
-            const Model::ModelData& meshData = modelRef->GetModelData(m);
+            const Model::ModelData& meshData = modelRef->GetModelData((uint16_t)m);
 
             if (meshData.myMaterial)
             {
@@ -190,7 +190,7 @@ void DeferredRenderer::GenereteGBuffer(Entity aCamera, std::vector<Entity>& aMod
     }
 }
 
-void DeferredRenderer::Render(Entity aCamera, std::vector<Entity>& aLightList, const Ref<DirectionalLight>& aDirectionalLight, const Ref<EnvironmentLight>& aEnvironmentLight, float aDeltaTime, float aTotalTime)
+void DeferredRenderer::Render(Entity aCamera, std::vector<Entity>& aLightList, const Ref<DirectionalLight>& aDirectionalLight, const Ref<EnvironmentLight>& aEnvironmentLight)
 {
     if (aDirectionalLight)
     {

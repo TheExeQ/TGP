@@ -22,7 +22,7 @@ void SceneHierarchyPanel::OnImGuiRender()
 	ImGui::Begin("Scene Hierarchy");
 	ImRect windowRect = { ImGui::GetWindowContentRegionMin(), ImGui::GetWindowContentRegionMax() };
 
-	if (myContext);
+	if (myContext)
 	{
 		myContext->myRegistry.each([&](auto entityID)
 			{
@@ -301,7 +301,7 @@ void SceneHierarchyPanel::DrawComponents(Entity aEntity)
 
 		char buffer[256];
 		memset(buffer, 0, sizeof(buffer));
-		std::strncpy(buffer, tag.c_str(), sizeof(buffer));
+		strncpy_s(buffer, tag.c_str(), sizeof(buffer));
 		if (ImGui::InputText("##Tag", buffer, sizeof(buffer)))
 		{
 			tag = std::string(buffer);
@@ -375,7 +375,7 @@ void SceneHierarchyPanel::DrawComponents(Entity aEntity)
 			memset(buffer, 0, sizeof(buffer));
 			if (component.modelInstance.GetModel())
 			{
-				std::strncpy(buffer, component.modelInstance.GetModel()->GetName().c_str(), sizeof(buffer));
+				strncpy_s(buffer, component.modelInstance.GetModel()->GetName().c_str(), sizeof(buffer));
 			}
 			if (ImGui::InputText("Model", buffer, sizeof(buffer)))
 			{
@@ -452,7 +452,7 @@ void SceneHierarchyPanel::DrawComponents(Entity aEntity)
 
 	DrawComponent<ParticleSystemComponent>("Particle System", aEntity, [](auto& component)
 		{
-
+			component;
 		});
 
 	DrawComponent<LightComponent>("Light", aEntity, [](auto& component)

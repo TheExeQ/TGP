@@ -25,11 +25,11 @@ public:
 		ComPtr<ID3D11VertexShader> myVS;
 		ComPtr<ID3D11PixelShader> myPS;
 
-		UINT myPrimitiveTopology;
-		UINT myVertexCount;
-		UINT myIndexCount;
-		UINT myStride;
-		UINT myOffset;
+		UINT myPrimitiveTopology = 0;
+		UINT myVertexCount = 0;
+		UINT myIndexCount = 0;
+		UINT myStride = 0;
+		UINT myOffset = 0;
 
 		Ref<Material> myMaterial;
 	};
@@ -37,7 +37,7 @@ public:
 	void Init(std::vector<ModelData>& someModelData, const std::string& aName);
 	void Init(std::vector<ModelData>& someModelData, const std::string& aName, Skeleton& aSkeleton);
 	FORCEINLINE ModelData const& GetModelData(uint16_t aIndex) const { return myData[aIndex]; }
-	FORCEINLINE uint16_t GetNumMeshes() const { return myData.size(); }
+	FORCEINLINE uint16_t GetNumMeshes() const { return (uint16_t)myData.size(); }
 	FORCEINLINE std::string GetName() const { return myName; }
 	FORCEINLINE const Skeleton* GetSkeleton() const { return &mySkeleton; }
 	FORCEINLINE std::array<CommonUtilities::Matrix4x4<float>, 128>& GetBoneTransforms() { return myBoneTransforms; }

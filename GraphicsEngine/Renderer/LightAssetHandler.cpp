@@ -55,6 +55,8 @@ Ref<PointLight> LightAssetHandler::CreatePointLight(Vector3<float> aColor, float
 	result->Init(aColor, aIntensity);
 	result->SetRange(aRange);
 	result->ourLightBuffer.LightType = 1;
+	
+	fov;
 
 	constexpr float nearPlane = 0.01f;
 	constexpr float farPlane = 25000.f;
@@ -107,6 +109,8 @@ Ref<SpotLight> LightAssetHandler::CreateSpotLight(Vector3<float> aColor, float a
 
 	constexpr float nearPlane = 0.1f;
 	constexpr float farPlane = 25000.f;
+	aspectRatio;
+	fov;
 
 	POINT res = { 2048, 2048 };
 

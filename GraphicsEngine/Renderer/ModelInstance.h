@@ -33,7 +33,7 @@ public:
 
 	FORCEINLINE bool HasRenderedInstances() const { return !myRenderedInstances.empty(); }
 	FORCEINLINE uint32_t GetNumOfInstances() const { 
-		return myRenderedInstances.size(); }
+		return (uint16_t)myRenderedInstances.size(); }
 	FORCEINLINE ComPtr<ID3D11Buffer> GetInstanceBuffer() const { return myInstanceBuffer; }
 
 private:

@@ -55,9 +55,9 @@ LRESULT CALLBACK GraphicsEngine::WinProc(_In_ HWND hWnd, _In_ UINT uMsg, _In_ WP
 
 		TCHAR filePath[MAX_FILENAME];
 
-		auto fileCount = DragQueryFile(droppedFile, -1, NULL, 0);
+		auto fileCount = DragQueryFile(droppedFile, (UINT)0, NULL, (UINT)0);
 
-		for (int fileId = 0; fileId < fileCount; fileId++)
+		for (int fileId = 0; fileId < (int)fileCount; fileId++)
 		{
 			if (DragQueryFile(droppedFile, fileId, filePath, MAX_FILENAME) > 0)
 			{
@@ -176,7 +176,7 @@ bool GraphicsEngine::Initialize(unsigned someX, unsigned someY,
 	DragAcceptFiles(myWindowHandle, true);
 
 	// F1 -- This is where we should init our Framework
-	if (!myFramework.Initialize(myWindowHandle, false))
+	if (!myFramework.Initialize(myWindowHandle, enableDeviceDebug))
 	{
 		return false;
 	}
@@ -251,7 +251,7 @@ bool GraphicsEngine::Initialize(unsigned someX, unsigned someY,
 	samplerDesc.AddressV = D3D11_TEXTURE_ADDRESS_CLAMP;
 	samplerDesc.AddressW = D3D11_TEXTURE_ADDRESS_CLAMP;
 	samplerDesc.MipLODBias = 0.f;
-	samplerDesc.MaxAnisotropy = 1.f;
+	samplerDesc.MaxAnisotropy = 1;
 	samplerDesc.ComparisonFunc = D3D11_COMPARISON_LESS;
 	samplerDesc.BorderColor[0] = 0.f;
 	samplerDesc.BorderColor[1] = 0.f;
@@ -285,7 +285,7 @@ bool GraphicsEngine::Initialize(unsigned someX, unsigned someY,
 	pointSamplerDesc.AddressV = D3D11_TEXTURE_ADDRESS_CLAMP;
 	pointSamplerDesc.AddressW = D3D11_TEXTURE_ADDRESS_CLAMP;
 	pointSamplerDesc.MipLODBias = 0.f;
-	pointSamplerDesc.MaxAnisotropy = 1.f;
+	pointSamplerDesc.MaxAnisotropy = 1;
 	pointSamplerDesc.ComparisonFunc = D3D11_COMPARISON_NEVER;
 	pointSamplerDesc.BorderColor[0] = 0.f;
 	pointSamplerDesc.BorderColor[1] = 0.f;
@@ -443,7 +443,7 @@ void GraphicsEngine::RenderFrame()
 		DX11::SetViewport(width, height);
 
 		myGBuffer->SetAsTarget();
-		myDeferredRenderer.GenereteGBuffer(camera, modelEntitiesToRender, myTimer.GetDeltaTime(), myTimer.GetTotalTime());
+		myDeferredRenderer.GenereteGBuffer(camera, modelEntitiesToRender);
 		myGBuffer->ClearTarget();
 		myGBuffer->SetAsResource(0);
 
@@ -484,7 +484,7 @@ void GraphicsEngine::RenderFrame()
 
 		myIntermediateTargetA->SetAsTarget();
 		mySSAOTarget->SetAsResource(8);
-		myDeferredRenderer.Render(camera, lightEntitiesToRender, myDirectionalLight, myEnvironmentLight, myTimer.GetDeltaTime(), myTimer.GetTotalTime());
+		myDeferredRenderer.Render(camera, lightEntitiesToRender, myDirectionalLight, myEnvironmentLight);
 
 		//myForwardRenderer.RenderModels(camera, modelEntitiesToRender, lightEntitiesToRender, myDirectionalLight, myEnvironmentLight);
 
@@ -524,8 +524,8 @@ void GraphicsEngine::RenderFrame()
 		myPostProcessRenderer.Render(PostProcessRenderer::PP_COPY);
 
 		D3D11_VIEWPORT viewport = {};
-		viewport.Width = DX11::myClientRect.right - DX11::myClientRect.left;
-		viewport.Height = DX11::myClientRect.bottom - DX11::myClientRect.top;
+		viewport.Width = (float)DX11::myClientRect.right - (float)DX11::myClientRect.left;
+		viewport.Height = (float)DX11::myClientRect.bottom - (float)DX11::myClientRect.top;
 		viewport.MinDepth = 0.0f;
 		viewport.MaxDepth = 1.0f;
 		viewport.TopLeftX = 0;

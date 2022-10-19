@@ -6,8 +6,6 @@
 #include "Renderer/ParticleSystem.h"
 #include "Scene/Entity.h"
 
-#define PI 3.14f
-
 Entity Scene::GetEntityFromUUID(TGA::UUID aID)
 {
 	if (auto it = myEnttMap.find(aID); it != myEnttMap.end())
@@ -90,7 +88,6 @@ std::vector<Entity> Scene::CullLights(Entity camera)
 
 	for (auto& entity : view)
 	{
-		LightComponent& light = myRegistry.get<LightComponent>(entity);
 		visibleEntity.push_back(Entity(entity, myActiveScene));
 	}
 
