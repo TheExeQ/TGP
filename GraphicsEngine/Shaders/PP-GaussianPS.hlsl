@@ -1,3 +1,5 @@
+#pragma warning(push)
+#pragma warning(disable: 3570)
 #include "PostProcessStructs.hlsli"
 
 PostProcessPixelOutput main(PostProcessVertexToPixel input)
@@ -35,3 +37,4 @@ PostProcessPixelOutput main(PostProcessVertexToPixel input)
     
     return result;
 }
+#pragma warning(pop)

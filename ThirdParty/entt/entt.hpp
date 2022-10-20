@@ -1,3 +1,6 @@
+#pragma warning(push)
+#pragma warning(disable: 4996)
+
 // #include "config/config.h"
 #ifndef ENTT_CONFIG_CONFIG_H
 #define ENTT_CONFIG_CONFIG_H
@@ -66341,3 +66344,4 @@ sink(sigh<Ret(Args...), Allocator> &) -> sink<sigh<Ret(Args...), Allocator>>;
 
 #endif
 
+#pragma warning(pop)

@@ -1,4 +1,6 @@
 #pragma once
+#pragma warning(push)
+#pragma warning(disable: 4324)
 #include <vector>
 #include "Math/Matrix4x4.hpp"
 #include "Math/Vector.hpp"
