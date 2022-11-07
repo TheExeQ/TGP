@@ -12,7 +12,8 @@ project "GraphicsEngine"
 
 	postbuildcommands 
 	{
-		"{COPY} ../ThirdParty/FBXImporter/lib/libfbxsdk.dll ../bin/"
+		"{MKDIR} ../bin/",
+		"{COPYFILE} ../ThirdParty/FBXImporter/lib/libfbxsdk.dll ../bin/"
 	}
 
 	files
