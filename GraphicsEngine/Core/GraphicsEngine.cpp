@@ -423,18 +423,48 @@ void GraphicsEngine::RenderFrame()
 	// Will be fleshed out later!
 	if (myScene)
 	{
+		Entity camera = myScene->GetMainCamera();
+
 		static float timer = 2.f;
 		static int modelsLoaded = 0;
 		timer -= myTimer.GetDeltaTime();
 
 		if (timer < 0.f)
 		{
-			// Load model
-			auto newEntity = myScene->CreateEntity("Model", myScene);
+			if (future.valid())
+			{
+				future.get();
+			}
 
-			myModelAssetHandler.LoadModel(modelPaths[modelsLoaded]);
-			auto& modelComp = newEntity.AddComponent<ModelComponent>();
-			modelComp.modelInstance = *myModelAssetHandler.GetModelInstance(modelPaths[modelsLoaded]);
+			future = std::async(std::launch::async, [&]() 
+				{
+				// Load model
+				auto newEntity = myScene->CreateEntity("Model", myScene);
+				auto newEntity2 = myScene->CreateEntity("Model", myScene);
+
+				myModelAssetHandler.LoadModel(modelPaths[modelsLoaded]);
+				auto& modelComp = newEntity.AddComponent<ModelComponent>();
+				auto& modelComp2 = newEntity2.AddComponent<ModelComponent>();
+
+				auto& transComp = newEntity.GetComponent<TransformComponent>();
+				auto& transComp2 = newEntity2.GetComponent<TransformComponent>();
+
+				Entity cam = myScene->GetMainCamera();
+
+				transComp.position.x = 100.f;
+				transComp2.position.x = -100.f;
+				transComp.position.z = cam.GetComponent<TransformComponent>().position.z + 300.f;
+				transComp2.position.z = cam.GetComponent<TransformComponent>().position.z + 300.f;
+
+				if (modelsLoaded == 1)
+				{
+					transComp.scale = { 10.f, 10.f, 10.f };
+					transComp2.scale = { 10.f, 10.f, 10.f };
+				}
+
+				modelComp.modelInstance = *myModelAssetHandler.GetModelInstance(modelPaths[modelsLoaded]);
+				modelComp2.modelInstance = *myModelAssetHandler.GetModelInstance(modelPaths[modelsLoaded]);
+				});
 
 			modelsLoaded++;
 			timer = 2.f;
@@ -444,10 +474,9 @@ void GraphicsEngine::RenderFrame()
 			}
 		}
 
-		//Controller();
+		Controller();
 		myEditorLayer.OnRender();
-
-		Entity camera = myScene->GetMainCamera();
+		
 		std::vector<Entity> modelEntitiesToRender = myScene->CullModels(camera);
 		std::vector<Entity> lightEntitiesToRender = myScene->CullLights(camera);
 		std::vector<Entity> particlesEntitiesToRender = myScene->CullParticles(camera);
@@ -577,64 +606,64 @@ void GraphicsEngine::Controller()
 {
 	auto camera = Scene::GetActiveScene()->GetMainCamera();
 
-	if (myInputHandler.IsKeyPressed(KeyCode::Z) && myInputHandler.IsKeyDown(KeyCode::CONTROL))
-	{
-		CommandManager::Undo();
-	}
-	if (myInputHandler.IsKeyPressed(KeyCode::Y) && myInputHandler.IsKeyDown(KeyCode::CONTROL))
-	{
-		CommandManager::Redo();
-	}
+	//if (myInputHandler.IsKeyPressed(KeyCode::Z) && myInputHandler.IsKeyDown(KeyCode::CONTROL))
+	//{
+	//	CommandManager::Undo();
+	//}
+	//if (myInputHandler.IsKeyPressed(KeyCode::Y) && myInputHandler.IsKeyDown(KeyCode::CONTROL))
+	//{
+	//	CommandManager::Redo();
+	//}
 
-	if (!movementActive) { return; }
+	//if (!movementActive) { return; }
 
-	static float moveSpeed = 100.f;
-	static float mouseSens = 0.25f;
+	//static float moveSpeed = 100.f;
+	//static float mouseSens = 0.25f;
 
 	auto& transform = camera.GetComponent<TransformComponent>();
 
-	if (myInputHandler.IsKeyDown(KeyCode::W))
-	{
-		transform.position += (Matrix4::Forward(transform.GetTransform()) * moveSpeed * myTimer.GetDeltaTime());
-	}
-	if (myInputHandler.IsKeyDown(KeyCode::A))
-	{
-		transform.position += (Matrix4::Right(transform.GetTransform()) * -moveSpeed * myTimer.GetDeltaTime());
-	}
-	if (myInputHandler.IsKeyDown(KeyCode::S))
-	{
-		transform.position += (Matrix4::Forward(transform.GetTransform()) * -moveSpeed * myTimer.GetDeltaTime());
-	}
-	if (myInputHandler.IsKeyDown(KeyCode::D))
-	{
-		transform.position += (Matrix4::Right(transform.GetTransform()) * moveSpeed * myTimer.GetDeltaTime());
-	}
+	//if (myInputHandler.IsKeyDown(KeyCode::W))
+	//{
+	//	transform.position += (Matrix4::Forward(transform.GetTransform()) * moveSpeed * myTimer.GetDeltaTime());
+	//}
+	//if (myInputHandler.IsKeyDown(KeyCode::A))
+	//{
+	//	transform.position += (Matrix4::Right(transform.GetTransform()) * -moveSpeed * myTimer.GetDeltaTime());
+	//}
+	//if (myInputHandler.IsKeyDown(KeyCode::S))
+	//{
+	transform.position += (Matrix4::Forward(transform.GetTransform()) * 100.0f * myTimer.GetDeltaTime());
+	//}
+	//if (myInputHandler.IsKeyDown(KeyCode::D))
+	//{
+	//	transform.position += (Matrix4::Right(transform.GetTransform()) * moveSpeed * myTimer.GetDeltaTime());
+	//}
 
-	if (myInputHandler.IsKeyDown(KeyCode::E))
-	{
-		transform.position.y += (moveSpeed * myTimer.GetDeltaTime());
-	}
-	if (myInputHandler.IsKeyDown(KeyCode::Q))
-	{
-		transform.position.y += (-moveSpeed * myTimer.GetDeltaTime());
-	}
+	//if (myInputHandler.IsKeyDown(KeyCode::E))
+	//{
+	//	transform.position.y += (moveSpeed * myTimer.GetDeltaTime());
+	//}
+	//if (myInputHandler.IsKeyDown(KeyCode::Q))
+	//{
+	//	transform.position.y += (-moveSpeed * myTimer.GetDeltaTime());
+	//}
 
-	static POINT prevFrame = myInputHandler.GetMousePosition();
-	static POINT currFrame = myInputHandler.GetMousePosition();
-	if (myInputHandler.IsKeyDown(KeyCode::MOUSERBUTTON))
-	{
-		currFrame = myInputHandler.GetMousePosition();
-		auto deltaX = currFrame.x - prevFrame.x;
-		auto deltaY = currFrame.y - prevFrame.y;
-		if (deltaX != 0 || deltaY != 0)
-		{
-			transform.rotation += Vector3f(
-				deltaY * mouseSens * myTimer.GetDeltaTime(),
-				deltaX * mouseSens * myTimer.GetDeltaTime(), 
-				0.f);
-		}
-	}
-	prevFrame = myInputHandler.GetMousePosition();
+	//static POINT prevFrame = myInputHandler.GetMousePosition();
+	//static POINT currFrame = myInputHandler.GetMousePosition();
+	//if (myInputHandler.IsKeyDown(KeyCode::MOUSERBUTTON))
+	//{
+	//	currFrame = myInputHandler.GetMousePosition();
+	//	auto deltaX = currFrame.x - prevFrame.x;
+	//	auto deltaY = currFrame.y - prevFrame.y;
+	//	if (deltaX != 0 || deltaY != 0)
+	//	{
+	//		transform.rotation += Vector3f(
+	//			deltaY * mouseSens * myTimer.GetDeltaTime(),
+	//			deltaX * mouseSens * myTimer.GetDeltaTime(), 
+	//			0.f);
+	//	}
+	//}
+	//prevFrame = myInputHandler.GetMousePosition();
 }
 
 void GraphicsEngine::SetBlendState(BlendState aState)

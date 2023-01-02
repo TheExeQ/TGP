@@ -1,6 +1,8 @@
 #pragma once
 #include <vector>
 #include <memory>
+#include <future>
+
 #include "Core/DX11.h"
 #include "Renderer/ForwardRenderer.h"
 #include "Renderer/DeferredRenderer.h"
@@ -113,6 +115,8 @@ private:
 	Ref<Texture> myBlurTargetB;
 	Ref<Texture> mySSAOTarget;
 	Ref<Texture> myNoiceTexture;
+
+	std::future<void> future;
 
 	inline static GraphicsEngine* myInstance = nullptr;
 };

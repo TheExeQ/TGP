@@ -3,8 +3,8 @@ Entities:
     TagComponent:
       Tag: EditorCamera
     TransformComponent:
-      Position: [-482.803009, 370.173096, -674.409546]
-      Rotation: [0.386413187, 0.533949554, 0]
+      Position: [0, 0, -500]
+      Rotation: [0, 0, 0]
       Scale: [1, 1, 1]
     RelationshipComponent:
       ParentUUID: 0
