@@ -1,69 +1,12 @@
 Entities:
-  - Entity: 10641592637030116440
-    TagComponent:
-      Tag: LightBlue
-    TransformComponent:
-      Position: [-364, 85, 100]
-      Rotation: [0, 0, 0]
-      Scale: [1, 1, 1]
-    LightComponent:
-      Color: [0, 0, 1]
-      Intensity: 100000
-      Direction: [0, 0, 0]
-      Range: 100
-      Attenuation: 100
-      SpotInnerRadius: 0
-      SpotOuterRadius: 0
-      LightType: 1
-  - Entity: 3446174191707793529
-    TagComponent:
-      Tag: Gremlin
-    TransformComponent:
-      Position: [-200, 50, -200]
-      Rotation: [0, 3.1415, 0]
-      Scale: [1, 1, 1]
-    ModelComponent:
-      ModelPath: Models/SK/gremlin.fbx
-  - Entity: 3316484318424843108
-    TagComponent:
-      Tag: Chest
-    TransformComponent:
-      Position: [-200, 50, 150]
-      Rotation: [0, 3.1415, 0]
-      Scale: [1, 1, 1]
-    ModelComponent:
-      ModelPath: Models/SM/Particle_Chest.fbx
-  - Entity: 6057646693852787664
-    TagComponent:
-      Tag: Cube
-    TransformComponent:
-      Position: [0, 0, 0]
-      Rotation: [0, 0, 0]
-      Scale: [10, 1, 10]
-    ModelComponent:
-      ModelPath: Cube
   - Entity: 7509847562195690
     TagComponent:
       Tag: EditorCamera
     TransformComponent:
       Position: [-482.803009, 370.173096, -674.409546]
-      Rotation: [0.386413187, 0.533913076, 0]
+      Rotation: [0.386413187, 0.533949554, 0]
       Scale: [1, 1, 1]
+    RelationshipComponent:
+      ParentUUID: 0
     CameraComponent:
       {}
-  - Entity: 1728503541188748087
-    TagComponent:
-      Tag: LightRed
-    TransformComponent:
-      Position: [-247, 200, 85]
-      Rotation: [0, 0, 0]
-      Scale: [1, 1, 1]
-    LightComponent:
-      Color: [1, 0, 0]
-      Intensity: 100000
-      Direction: [0, 0, 0]
-      Range: 150
-      Attenuation: 100
-      SpotInnerRadius: 0
-      SpotOuterRadius: 0
-      LightType: 1

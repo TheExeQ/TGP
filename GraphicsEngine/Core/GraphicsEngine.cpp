@@ -414,6 +414,8 @@ void GraphicsEngine::BeginFrame()
 	myImGuiLayer.Begin();
 }
 
+std::array<std::string, 3> modelPaths = { "Models/SM/Particle_Chest.fbx", "Models/SM/pedal.fbx", "Models/SM/Buddah_Test_Bakes_low.fbx" };
+
 void GraphicsEngine::RenderFrame()
 {
 	myTimer.Update();
@@ -421,7 +423,28 @@ void GraphicsEngine::RenderFrame()
 	// Will be fleshed out later!
 	if (myScene)
 	{
-		Controller();
+		static float timer = 2.f;
+		static int modelsLoaded = 0;
+		timer -= myTimer.GetDeltaTime();
+
+		if (timer < 0.f)
+		{
+			// Load model
+			auto newEntity = myScene->CreateEntity("Model", myScene);
+
+			myModelAssetHandler.LoadModel(modelPaths[modelsLoaded]);
+			auto& modelComp = newEntity.AddComponent<ModelComponent>();
+			modelComp.modelInstance = *myModelAssetHandler.GetModelInstance(modelPaths[modelsLoaded]);
+
+			modelsLoaded++;
+			timer = 2.f;
+			if (modelsLoaded > modelPaths.size() - 1)
+			{
+				modelsLoaded = 0;
+			}
+		}
+
+		//Controller();
 		myEditorLayer.OnRender();
 
 		Entity camera = myScene->GetMainCamera();
