@@ -6,6 +6,7 @@
 #include <entt/entt.hpp>
 #include <unordered_map>
 #include <memory>
+#include <mutex>
 #include <vector>
 #include <functional>
 
@@ -41,6 +42,16 @@ public:
 
 	const entt::registry& GetRegistry() const { return myRegistry; };
 
+	void LockGuard() 
+	{
+		myGuard = CreateRef<std::lock_guard<std::mutex>>(myRegistryMutex);
+	};
+
+	void UnlockGuard()
+	{
+		myGuard.reset();
+	}
+
 	static void SetActiveScene(Ref<Scene> aScene) { myActiveScene = aScene; };
 	static Ref<Scene> GetActiveScene() { return myActiveScene; };
 
@@ -49,6 +60,8 @@ private:
 	friend class SceneHierarchyPanel;
 	friend class SceneSerializer;
 
+	Ref<std::lock_guard<std::mutex>> myGuard;
+	std::mutex myRegistryMutex;
 	entt::registry myRegistry;
 	EntityMap myEnttMap;
 	entt::entity myMainCameraEntity;

@@ -436,13 +436,17 @@ void GraphicsEngine::RenderFrame()
 				future.get();
 			}
 
-			future = std::async(std::launch::async, [&]() 
+			future = std::async(std::launch::async, [&]()
 				{
 				// Load model
+
+				myModelAssetHandler.LoadModel(modelPaths[modelsLoaded]);
+
+				myScene->LockGuard();
+
 				auto newEntity = myScene->CreateEntity("Model", myScene);
 				auto newEntity2 = myScene->CreateEntity("Model", myScene);
 
-				myModelAssetHandler.LoadModel(modelPaths[modelsLoaded]);
 				auto& modelComp = newEntity.AddComponent<ModelComponent>();
 				auto& modelComp2 = newEntity2.AddComponent<ModelComponent>();
 
@@ -456,6 +460,8 @@ void GraphicsEngine::RenderFrame()
 				transComp.position.z = cam.GetComponent<TransformComponent>().position.z + 300.f;
 				transComp2.position.z = cam.GetComponent<TransformComponent>().position.z + 300.f;
 
+				myScene->UnlockGuard();
+
 				if (modelsLoaded == 1)
 				{
 					transComp.scale = { 10.f, 10.f, 10.f };
@@ -464,6 +470,7 @@ void GraphicsEngine::RenderFrame()
 
 				modelComp.modelInstance = *myModelAssetHandler.GetModelInstance(modelPaths[modelsLoaded]);
 				modelComp2.modelInstance = *myModelAssetHandler.GetModelInstance(modelPaths[modelsLoaded]);
+
 				});
 
 			modelsLoaded++;
@@ -474,12 +481,16 @@ void GraphicsEngine::RenderFrame()
 			}
 		}
 
+		myScene->LockGuard();
+
 		Controller();
 		myEditorLayer.OnRender();
 		
 		std::vector<Entity> modelEntitiesToRender = myScene->CullModels(camera);
 		std::vector<Entity> lightEntitiesToRender = myScene->CullLights(camera);
 		std::vector<Entity> particlesEntitiesToRender = myScene->CullParticles(camera);
+
+		myScene->UnlockGuard();
 
 		DX11::myContext->OMSetRenderTargets(0, nullptr, nullptr);
 
