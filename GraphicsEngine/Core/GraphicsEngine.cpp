@@ -35,98 +35,98 @@ LRESULT CALLBACK GraphicsEngine::WinProc(_In_ HWND hWnd, _In_ UINT uMsg, _In_ WP
 
 	switch (uMsg)
 	{
-	case WM_DESTROY:
-	case WM_CLOSE:
-	{
-		PostQuitMessage(0);
-		break;
-	}
-
-	case WM_CREATE:
-	{
-		const CREATESTRUCT* createdStruct = reinterpret_cast<CREATESTRUCT*>(lParam);
-		graphicsEnginePtr = static_cast<GraphicsEngine*>(createdStruct->lpCreateParams);
-		break;
-	}
-
-	case WM_DROPFILES:
-	{
-		HDROP droppedFile = (HDROP)wParam;
-
-		TCHAR filePath[MAX_FILENAME];
-
-		auto fileCount = DragQueryFile(droppedFile, (UINT)0, NULL, (UINT)0);
-
-		for (int fileId = 0; fileId < (int)fileCount; fileId++)
+		case WM_DESTROY:
+		case WM_CLOSE:
 		{
-			if (DragQueryFile(droppedFile, fileId, filePath, MAX_FILENAME) > 0)
-			{
-				int filePathLength = 0;
-
-				for (int i = 0; i < MAX_FILENAME; i++)
-				{
-					if (filePath[i] == '\0')
-					{
-						filePathLength = i;
-						break;
-					}
-				}
-
-				int filePathNameBegin = 0;
-
-				for (int i = 0; i < filePathLength; i++)
-				{
-					if (filePath[filePathLength - i] == '\\')
-					{
-						filePathNameBegin = filePathLength - i + 1;
-						break;
-					}
-				}
-
-				std::wstring fileName = GraphicsEngine::Get().myEditorLayer.GetContentBrowserPath().wstring();
-				fileName.append(L"/");
-				std::filesystem::path somePath(filePath);
-
-				auto ext = somePath.extension();
-
-				//if (ext.string() == ".fbx")
-				//{
-				//	fileName.append(L"Models/");
-				//}
-				//else if (ext.string() == ".dds")
-				//{
-				//	fileName.append(L"Textures/");
-				//}
-				//else if (ext.string() == ".scene")
-				//{
-				//	fileName.append(L"Scenes/");
-				//}
-				//else if (ext.string() == ".settings" || ext.string() == ".preset")
-				//{
-				//	fileName.append(L"Settings/");
-				//}
-
-				for (int i = filePathNameBegin; i < filePathLength; i++)
-				{
-					fileName.push_back(filePath[i]);
-				}
-
-				auto orgFilename = fileName;
-				orgFilename = orgFilename.substr(0, orgFilename.length() - ext.wstring().length());
-
-				int count = 1;
-
-				while (!CopyFile(filePath, fileName.c_str(), true))
-				{
-					fileName = orgFilename + std::to_wstring(count) + ext.wstring();
-					count++;
-				}
-			}
+			PostQuitMessage(0);
+			break;
 		}
 
-		DragFinish(droppedFile);
-		break;
-	}
+		case WM_CREATE:
+		{
+			const CREATESTRUCT* createdStruct = reinterpret_cast<CREATESTRUCT*>(lParam);
+			graphicsEnginePtr = static_cast<GraphicsEngine*>(createdStruct->lpCreateParams);
+			break;
+		}
+
+		case WM_DROPFILES:
+		{
+			HDROP droppedFile = (HDROP)wParam;
+
+			TCHAR filePath[MAX_FILENAME];
+
+			auto fileCount = DragQueryFile(droppedFile, (UINT)0, NULL, (UINT)0);
+
+			for (int fileId = 0; fileId < (int)fileCount; fileId++)
+			{
+				if (DragQueryFile(droppedFile, fileId, filePath, MAX_FILENAME) > 0)
+				{
+					int filePathLength = 0;
+
+					for (int i = 0; i < MAX_FILENAME; i++)
+					{
+						if (filePath[i] == '\0')
+						{
+							filePathLength = i;
+							break;
+						}
+					}
+
+					int filePathNameBegin = 0;
+
+					for (int i = 0; i < filePathLength; i++)
+					{
+						if (filePath[filePathLength - i] == '\\')
+						{
+							filePathNameBegin = filePathLength - i + 1;
+							break;
+						}
+					}
+
+					std::wstring fileName = GraphicsEngine::Get().myEditorLayer.GetContentBrowserPath().wstring();
+					fileName.append(L"/");
+					std::filesystem::path somePath(filePath);
+
+					auto ext = somePath.extension();
+
+					//if (ext.string() == ".fbx")
+					//{
+					//	fileName.append(L"Models/");
+					//}
+					//else if (ext.string() == ".dds")
+					//{
+					//	fileName.append(L"Textures/");
+					//}
+					//else if (ext.string() == ".scene")
+					//{
+					//	fileName.append(L"Scenes/");
+					//}
+					//else if (ext.string() == ".settings" || ext.string() == ".preset")
+					//{
+					//	fileName.append(L"Settings/");
+					//}
+
+					for (int i = filePathNameBegin; i < filePathLength; i++)
+					{
+						fileName.push_back(filePath[i]);
+					}
+
+					auto orgFilename = fileName;
+					orgFilename = orgFilename.substr(0, orgFilename.length() - ext.wstring().length());
+
+					int count = 1;
+
+					while (!CopyFile(filePath, fileName.c_str(), true))
+					{
+						fileName = orgFilename + std::to_wstring(count) + ext.wstring();
+						count++;
+					}
+				}
+			}
+
+			DragFinish(droppedFile);
+			break;
+		}
 	}
 
 	return DefWindowProc(hWnd, uMsg, wParam, lParam);
@@ -171,7 +171,7 @@ bool GraphicsEngine::Initialize(unsigned someX, unsigned someY,
 		someHeight,
 		nullptr, nullptr, nullptr,
 		this
-		);
+	);
 
 	DragAcceptFiles(myWindowHandle, true);
 
@@ -180,7 +180,7 @@ bool GraphicsEngine::Initialize(unsigned someX, unsigned someY,
 	{
 		return false;
 	}
-	
+
 	if (!myForwardRenderer.Initialize())
 	{
 		return false;
@@ -318,7 +318,7 @@ bool GraphicsEngine::Initialize(unsigned someX, unsigned someY,
 	GetClientRect(GetWindowHandle(), &clientRect);
 
 	myGBuffer = TextureAssetHandler::CreateGBuffer(
-		clientRect.right - clientRect.left, 
+		clientRect.right - clientRect.left,
 		clientRect.bottom - clientRect.top);
 
 	myDeferredRenderer.Init();
@@ -342,7 +342,7 @@ bool GraphicsEngine::Initialize(unsigned someX, unsigned someY,
 	myBlurTargetA = TextureAssetHandler::CreateRenderTarget("BlurA", width / 4, height / 4, DXGI_FORMAT_R32G32B32A32_FLOAT);
 	myBlurTargetB = TextureAssetHandler::CreateRenderTarget("BlurB", width / 4, height / 4, DXGI_FORMAT_R32G32B32A32_FLOAT);
 	mySSAOTarget = TextureAssetHandler::CreateRenderTarget("SSAOTarget", width, height, DXGI_FORMAT_R32_FLOAT);
-	
+
 	TextureAssetHandler::LoadTexture("BlueNoise.dds");
 	myNoiceTexture = TextureAssetHandler::GetTexture("BlueNoise.dds");
 
@@ -355,31 +355,30 @@ bool GraphicsEngine::Initialize(unsigned someX, unsigned someY,
 }
 
 bool GraphicsEngine::InitializeScene()
-{	
+{
 	myScene = CreateRef<Scene>();
-	myBufferScene = CreateRef<Scene>();
-	Scene::SetActiveScene(myBufferScene);
+	Scene::SetActiveScene(myScene);
 
 	auto activeScene = Scene::GetActiveScene();
 
-	SceneSerializer serializer(myBufferScene);
+	SceneSerializer serializer(myScene);
 	serializer.Deserialize("../Assets/Scenes/default.scene");
 	serializer.DeserializeSettings("../Assets/Settings/default");
 	serializer.DeserializePreset((std::string("../Assets/Settings/") + SettingsPanel::preset1).c_str());
 	SettingsPanel::preset1Color = DX11::myClearColor;
 	serializer.DeserializePreset((std::string("../Assets/Settings/") + SettingsPanel::preset2).c_str());
 	SettingsPanel::preset2Color = DX11::myClearColor;
-	
+
 	SettingsPanel::colorSlider = SettingsPanel::preset1Color;
 
 	Entity camera;
 	activeScene->ForEach([&](entt::entity aEnt)
 		{
 			Entity ent(aEnt, activeScene);
-			if (ent.HasComponent<CameraComponent>() && ent.GetComponent<TagComponent>().name == "EditorCamera")
-			{
-				camera = ent;
-			}
+	if (ent.HasComponent<CameraComponent>() && ent.GetComponent<TagComponent>().name == "EditorCamera")
+	{
+		camera = ent;
+	}
 		});
 
 	if (camera.IsValid())
@@ -421,82 +420,79 @@ std::array<std::string, 3> modelPaths = { "Models/SM/Particle_Chest.fbx", "Model
 
 void GraphicsEngine::RenderFrame()
 {
-	auto activeScene = Scene::GetActiveScene();
-
 	myTimer.Update();
 
-	// Will be fleshed out later!
-	if (activeScene)
+	static float timer = 2.f;
+	static int modelsLoaded = 0;
+	timer -= myTimer.GetDeltaTime();
+
+	if (timer < 0.f)
 	{
-		Entity camera = activeScene->GetMainCamera();
-
-		static float timer = 2.f;
-		static int modelsLoaded = 0;
-		timer -= myTimer.GetDeltaTime();
-
-		if (timer < 0.f)
+		if (future.valid())
 		{
-			if (future.valid())
-			{
-				future.get();
-			}
-
-			future = std::async(std::launch::async, [&]()
-				{
-					// Load model
-
-					myModelAssetHandler.LoadModel(modelPaths[modelsLoaded]);
-
-			auto activeScene = Scene::GetActiveScene();
-			Entity camera = activeScene->GetMainCamera();
-
-			activeScene->LockGuard();
-
-			auto newEntity = activeScene->CreateEntity("Model", activeScene);
-			auto newEntity2 = activeScene->CreateEntity("Model", activeScene);
-
-			auto& modelComp = newEntity.AddComponent<ModelComponent>();
-			auto& modelComp2 = newEntity2.AddComponent<ModelComponent>();
-
-			auto& transComp = newEntity.GetComponent<TransformComponent>();
-			auto& transComp2 = newEntity2.GetComponent<TransformComponent>();
-
-			transComp.position.x = 100.f;
-			transComp2.position.x = -100.f;
-			transComp.position.z = camera.GetComponent<TransformComponent>().position.z + 300.f;
-			transComp2.position.z = camera.GetComponent<TransformComponent>().position.z + 300.f;
-
-			activeScene->UnlockGuard();
-
-			if (modelsLoaded == 1)
-			{
-				transComp.scale = { 10.f, 10.f, 10.f };
-				transComp2.scale = { 10.f, 10.f, 10.f };
-			}
-
-			modelComp.modelInstance = *myModelAssetHandler.GetModelInstance(modelPaths[modelsLoaded]);
-			modelComp2.modelInstance = *myModelAssetHandler.GetModelInstance(modelPaths[modelsLoaded]);
-
-				});
-
-			modelsLoaded++;
-			timer = 2.f;
-			if (modelsLoaded > modelPaths.size() - 1)
-			{
-				modelsLoaded = 0;
-			}
+			future.get();
 		}
 
-		activeScene->LockGuard();
+		future = std::async(std::launch::async, [&]()
+			{
+				// Load model
+
+		myModelAssetHandler.LoadModel(modelPaths[modelsLoaded]);
+
+		Scene::LockActiveScene();
+
+		auto activeScene = Scene::GetActiveScene();
+		Entity camera = activeScene->GetMainCamera();
+
+		auto newEntity = activeScene->CreateEntity("Model", activeScene);
+		auto newEntity2 = activeScene->CreateEntity("Model", activeScene);
+
+		auto& modelComp = newEntity.AddComponent<ModelComponent>();
+		auto& modelComp2 = newEntity2.AddComponent<ModelComponent>();
+
+		auto& transComp = newEntity.GetComponent<TransformComponent>();
+		auto& transComp2 = newEntity2.GetComponent<TransformComponent>();
+
+		transComp.position.x = 100.f;
+		transComp2.position.x = -100.f;
+		transComp.position.z = camera.GetComponent<TransformComponent>().position.z + 300.f;
+		transComp2.position.z = camera.GetComponent<TransformComponent>().position.z + 300.f;
+
+		Scene::UnlockActiveScene();
+
+		if (modelsLoaded == 1)
+		{
+			transComp.scale = { 10.f, 10.f, 10.f };
+			transComp2.scale = { 10.f, 10.f, 10.f };
+		}
+
+		modelComp.modelInstance = *myModelAssetHandler.GetModelInstance(modelPaths[modelsLoaded]);
+		modelComp2.modelInstance = *myModelAssetHandler.GetModelInstance(modelPaths[modelsLoaded]);
+
+			});
+
+		modelsLoaded++;
+		timer = 2.f;
+		if (modelsLoaded > modelPaths.size() - 1)
+		{
+			modelsLoaded = 0;
+		}
+	}
+
+	Scene::LockActiveScene();
+	auto activeScene = Scene::GetActiveScene();
+
+	if (activeScene)
+	{
+		myEditorLayer.OnRender();
+
+		Entity camera = activeScene->GetMainCamera();
 
 		Controller();
-		myEditorLayer.OnRender();
 
 		std::vector<Entity> modelEntitiesToRender = activeScene->CullModels(camera);
 		std::vector<Entity> lightEntitiesToRender = activeScene->CullLights(camera);
 		std::vector<Entity> particlesEntitiesToRender = activeScene->CullParticles(camera);
-
-		activeScene->UnlockGuard();
 
 		DX11::myContext->OMSetRenderTargets(0, nullptr, nullptr);
 
@@ -531,23 +527,23 @@ void GraphicsEngine::RenderFrame()
 			auto data = light.GetComponent<LightComponent>().light;
 			switch (data.GetLightBufferData().LightType)
 			{
-			case 1:
-			{
-				data.SetShadowMapAsResource(8, 6);
-				foundPoint = true;
-				break;
-			}
-			case 2:
-			{
-				data.SetShadowMapAsResource(7, 1);
-				foundSpot = true;
-				break;
-			}
-			default:
-			{
+				case 1:
+				{
+					data.SetShadowMapAsResource(8, 6);
+					foundPoint = true;
+					break;
+				}
+				case 2:
+				{
+					data.SetShadowMapAsResource(7, 1);
+					foundSpot = true;
+					break;
+				}
+				default:
+				{
 
-				break;
-			}
+					break;
+				}
 			}
 		}
 
@@ -609,6 +605,7 @@ void GraphicsEngine::RenderFrame()
 		myIntermediateTargetB->SetAsResource(0);
 		myPostProcessRenderer.Render(PostProcessRenderer::PP_TONEMAP, camera);
 	}
+	Scene::UnlockActiveScene();
 }
 
 void GraphicsEngine::EndFrame()
@@ -622,6 +619,8 @@ void GraphicsEngine::EndFrame()
 void GraphicsEngine::Controller()
 {
 	auto camera = Scene::GetActiveScene()->GetMainCamera();
+	auto& transform = camera.GetComponent<TransformComponent>();
+	transform.position += (Matrix4::Forward(transform.GetTransform()) * 100.0f * myTimer.GetDeltaTime());
 
 	//if (myInputHandler.IsKeyPressed(KeyCode::Z) && myInputHandler.IsKeyDown(KeyCode::CONTROL))
 	//{
@@ -637,7 +636,49 @@ void GraphicsEngine::Controller()
 	//static float moveSpeed = 100.f;
 	//static float mouseSens = 0.25f;
 
-	auto& transform = camera.GetComponent<TransformComponent>();
+	if (myInputHandler.IsKeyPressed(KeyCode::F))
+	{
+		if (sceneLoaderThread.valid())
+		{
+			sceneLoaderThread.get();
+		}
+
+		sceneLoaderThread = std::async(std::launch::async, [&]()
+			{
+				myScene = CreateRef<Scene>();
+		SceneSerializer serializer(myScene);
+		serializer.Deserialize("../Assets/Scenes/default.scene");
+
+		Scene::LockActiveScene();
+
+		Scene::SetActiveScene(myScene);
+		auto activeScene = Scene::GetActiveScene();
+
+		Entity camera;
+		activeScene->ForEach([&](entt::entity aEnt)
+			{
+				Entity ent(aEnt, activeScene);
+		if (ent.HasComponent<CameraComponent>() && ent.GetComponent<TagComponent>().name == "EditorCamera")
+		{
+			camera = ent;
+		}
+			});
+
+		if (camera.IsValid())
+		{
+			activeScene->SetMainCamera(camera);
+		}
+		else
+		{
+			auto newCam = activeScene->CreateEntity("EditorCamera", activeScene);
+			auto& comp = newCam.AddComponent<CameraComponent>();
+			comp.camera.SetProjectionValues(90, 9.f / 16.f, 0.1f, 10000.0f);
+			activeScene->SetMainCamera(newCam);
+		}
+
+		Scene::UnlockActiveScene();
+			});
+	}
 
 	//if (myInputHandler.IsKeyDown(KeyCode::W))
 	//{
@@ -649,7 +690,7 @@ void GraphicsEngine::Controller()
 	//}
 	//if (myInputHandler.IsKeyDown(KeyCode::S))
 	//{
-	transform.position += (Matrix4::Forward(transform.GetTransform()) * 100.0f * myTimer.GetDeltaTime());
+	//transform.position += (Matrix4::Forward(transform.GetTransform()) * 100.0f * myTimer.GetDeltaTime());
 	//}
 	//if (myInputHandler.IsKeyDown(KeyCode::D))
 	//{

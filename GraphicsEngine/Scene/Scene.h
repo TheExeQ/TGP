@@ -55,6 +55,9 @@ public:
 	static void SetActiveScene(Ref<Scene> aScene) { myActiveScene = aScene; };
 	static Ref<Scene>& GetActiveScene() { return myActiveScene; };
 
+	static void LockActiveScene() { myActiveSceneMutex.lock(); };
+	static void UnlockActiveScene() { myActiveSceneMutex.unlock(); };
+
 private:
 	friend class Entity;
 	friend class SceneHierarchyPanel;
@@ -66,6 +69,7 @@ private:
 	EntityMap myEnttMap;
 	entt::entity myMainCameraEntity;
 
+	inline static std::mutex myActiveSceneMutex;
 	inline static Ref<Scene> myActiveScene = nullptr;
 };
 

@@ -90,7 +90,6 @@ private:
 	ShadowRenderer myShadowRenderer;
 	PostProcessRenderer myPostProcessRenderer;
 	Ref<Scene> myScene;
-	Ref<Scene> myBufferScene;
 	ModelAssetHandler myModelAssetHandler;
 	
 	Scope<GBuffer> myGBuffer;
@@ -118,6 +117,7 @@ private:
 	Ref<Texture> myNoiceTexture;
 
 	std::future<void> future;
+	std::future<void> sceneLoaderThread;
 
 	inline static GraphicsEngine* myInstance = nullptr;
 };
