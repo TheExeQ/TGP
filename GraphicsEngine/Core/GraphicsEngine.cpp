@@ -357,8 +357,10 @@ bool GraphicsEngine::Initialize(unsigned someX, unsigned someY,
 bool GraphicsEngine::InitializeScene()
 {	
 	myScene = CreateRef<Scene>();
-	myBufferScene = myScene;
+	myBufferScene = CreateRef<Scene>();
 	Scene::SetActiveScene(myBufferScene);
+
+	auto activeScene = Scene::GetActiveScene();
 
 	SceneSerializer serializer(myBufferScene);
 	serializer.Deserialize("../Assets/Scenes/default.scene");
@@ -371,9 +373,9 @@ bool GraphicsEngine::InitializeScene()
 	SettingsPanel::colorSlider = SettingsPanel::preset1Color;
 
 	Entity camera;
-	myScene->ForEach([&](entt::entity aEnt)
+	activeScene->ForEach([&](entt::entity aEnt)
 		{
-			Entity ent(aEnt, myScene);
+			Entity ent(aEnt, activeScene);
 			if (ent.HasComponent<CameraComponent>() && ent.GetComponent<TagComponent>().name == "EditorCamera")
 			{
 				camera = ent;
@@ -382,14 +384,14 @@ bool GraphicsEngine::InitializeScene()
 
 	if (camera.IsValid())
 	{
-		myScene->SetMainCamera(camera);
+		activeScene->SetMainCamera(camera);
 	}
 	else
 	{
-		auto newCam = myScene->CreateEntity("EditorCamera", myScene);
+		auto newCam = activeScene->CreateEntity("EditorCamera", activeScene);
 		auto& comp = newCam.AddComponent<CameraComponent>();
 		comp.camera.SetProjectionValues(90, 9.f / 16.f, 0.1f, 10000.0f);
-		myScene->SetMainCamera(newCam);
+		activeScene->SetMainCamera(newCam);
 	}
 
 	TextureAssetHandler::LoadTexture("studio_cubemap.dds");
@@ -419,12 +421,14 @@ std::array<std::string, 3> modelPaths = { "Models/SM/Particle_Chest.fbx", "Model
 
 void GraphicsEngine::RenderFrame()
 {
+	auto activeScene = Scene::GetActiveScene();
+
 	myTimer.Update();
 
 	// Will be fleshed out later!
-	if (myScene)
+	if (activeScene)
 	{
-		Entity camera = myScene->GetMainCamera();
+		Entity camera = activeScene->GetMainCamera();
 
 		static float timer = 2.f;
 		static int modelsLoaded = 0;
@@ -439,38 +443,39 @@ void GraphicsEngine::RenderFrame()
 
 			future = std::async(std::launch::async, [&]()
 				{
-				// Load model
+					// Load model
 
-				myModelAssetHandler.LoadModel(modelPaths[modelsLoaded]);
+					myModelAssetHandler.LoadModel(modelPaths[modelsLoaded]);
 
-				myScene->LockGuard();
+			auto activeScene = Scene::GetActiveScene();
+			Entity camera = activeScene->GetMainCamera();
 
-				auto newEntity = myScene->CreateEntity("Model", myScene);
-				auto newEntity2 = myScene->CreateEntity("Model", myScene);
+			activeScene->LockGuard();
 
-				auto& modelComp = newEntity.AddComponent<ModelComponent>();
-				auto& modelComp2 = newEntity2.AddComponent<ModelComponent>();
+			auto newEntity = activeScene->CreateEntity("Model", activeScene);
+			auto newEntity2 = activeScene->CreateEntity("Model", activeScene);
 
-				auto& transComp = newEntity.GetComponent<TransformComponent>();
-				auto& transComp2 = newEntity2.GetComponent<TransformComponent>();
+			auto& modelComp = newEntity.AddComponent<ModelComponent>();
+			auto& modelComp2 = newEntity2.AddComponent<ModelComponent>();
 
-				Entity cam = myScene->GetMainCamera();
+			auto& transComp = newEntity.GetComponent<TransformComponent>();
+			auto& transComp2 = newEntity2.GetComponent<TransformComponent>();
 
-				transComp.position.x = 100.f;
-				transComp2.position.x = -100.f;
-				transComp.position.z = cam.GetComponent<TransformComponent>().position.z + 300.f;
-				transComp2.position.z = cam.GetComponent<TransformComponent>().position.z + 300.f;
+			transComp.position.x = 100.f;
+			transComp2.position.x = -100.f;
+			transComp.position.z = camera.GetComponent<TransformComponent>().position.z + 300.f;
+			transComp2.position.z = camera.GetComponent<TransformComponent>().position.z + 300.f;
 
-				myScene->UnlockGuard();
+			activeScene->UnlockGuard();
 
-				if (modelsLoaded == 1)
-				{
-					transComp.scale = { 10.f, 10.f, 10.f };
-					transComp2.scale = { 10.f, 10.f, 10.f };
-				}
+			if (modelsLoaded == 1)
+			{
+				transComp.scale = { 10.f, 10.f, 10.f };
+				transComp2.scale = { 10.f, 10.f, 10.f };
+			}
 
-				modelComp.modelInstance = *myModelAssetHandler.GetModelInstance(modelPaths[modelsLoaded]);
-				modelComp2.modelInstance = *myModelAssetHandler.GetModelInstance(modelPaths[modelsLoaded]);
+			modelComp.modelInstance = *myModelAssetHandler.GetModelInstance(modelPaths[modelsLoaded]);
+			modelComp2.modelInstance = *myModelAssetHandler.GetModelInstance(modelPaths[modelsLoaded]);
 
 				});
 
@@ -482,16 +487,16 @@ void GraphicsEngine::RenderFrame()
 			}
 		}
 
-		myScene->LockGuard();
+		activeScene->LockGuard();
 
 		Controller();
 		myEditorLayer.OnRender();
-		
-		std::vector<Entity> modelEntitiesToRender = myScene->CullModels(camera);
-		std::vector<Entity> lightEntitiesToRender = myScene->CullLights(camera);
-		std::vector<Entity> particlesEntitiesToRender = myScene->CullParticles(camera);
 
-		myScene->UnlockGuard();
+		std::vector<Entity> modelEntitiesToRender = activeScene->CullModels(camera);
+		std::vector<Entity> lightEntitiesToRender = activeScene->CullLights(camera);
+		std::vector<Entity> particlesEntitiesToRender = activeScene->CullParticles(camera);
+
+		activeScene->UnlockGuard();
 
 		DX11::myContext->OMSetRenderTargets(0, nullptr, nullptr);
 
