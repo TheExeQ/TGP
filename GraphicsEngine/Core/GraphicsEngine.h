@@ -90,6 +90,7 @@ private:
 	ShadowRenderer myShadowRenderer;
 	PostProcessRenderer myPostProcessRenderer;
 	Ref<Scene> myScene;
+	Ref<Scene> myBufferScene;
 	ModelAssetHandler myModelAssetHandler;
 	
 	Scope<GBuffer> myGBuffer;

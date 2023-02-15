@@ -357,9 +357,10 @@ bool GraphicsEngine::Initialize(unsigned someX, unsigned someY,
 bool GraphicsEngine::InitializeScene()
 {	
 	myScene = CreateRef<Scene>();
-	Scene::SetActiveScene(myScene);
+	myBufferScene = myScene;
+	Scene::SetActiveScene(myBufferScene);
 
-	SceneSerializer serializer(myScene);
+	SceneSerializer serializer(myBufferScene);
 	serializer.Deserialize("../Assets/Scenes/default.scene");
 	serializer.DeserializeSettings("../Assets/Settings/default");
 	serializer.DeserializePreset((std::string("../Assets/Settings/") + SettingsPanel::preset1).c_str());

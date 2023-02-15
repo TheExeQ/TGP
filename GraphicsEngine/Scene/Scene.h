@@ -53,7 +53,7 @@ public:
 	}
 
 	static void SetActiveScene(Ref<Scene> aScene) { myActiveScene = aScene; };
-	static Ref<Scene> GetActiveScene() { return myActiveScene; };
+	static Ref<Scene>& GetActiveScene() { return myActiveScene; };
 
 private:
 	friend class Entity;
