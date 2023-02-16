@@ -85,6 +85,9 @@ void SceneSerializer::Serialize(const char* aFileName)
 	out << YAML::EndMap;
 
 	std::ofstream fout((std::string(aFileName)).c_str());
+
+	if (fout.bad()) { return; }
+
 	fout << out.c_str();
 }
 
@@ -136,6 +139,9 @@ bool SceneSerializer::DeserializePreset(const char* aFileName)
 bool SceneSerializer::Deserialize(const char* aFileName)
 {
 	std::ifstream stream((std::string(aFileName)).c_str());
+
+	if (stream.bad()) { return false; }
+
 	std::stringstream strStream;
 	strStream << stream.rdbuf();
 

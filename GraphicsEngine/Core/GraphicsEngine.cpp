@@ -437,7 +437,9 @@ void GraphicsEngine::RenderFrame()
 			{
 				// Load model
 
+				myAssetHandlerMutex.lock();
 		myModelAssetHandler.LoadModel(modelPaths[modelsLoaded]);
+		myAssetHandlerMutex.unlock();
 
 		Scene::LockActiveScene();
 
@@ -636,49 +638,75 @@ void GraphicsEngine::Controller()
 	//static float moveSpeed = 100.f;
 	//static float mouseSens = 0.25f;
 
-	if (myInputHandler.IsKeyPressed(KeyCode::F))
+	if (!sceneSaving && !sceneLoading)
 	{
-		if (sceneLoaderThread.valid())
+		if (myInputHandler.IsKeyPressed(KeyCode::F))
 		{
-			sceneLoaderThread.get();
-		}
-
-		sceneLoaderThread = std::async(std::launch::async, [&]()
+			if (sceneLoaderThread.valid())
 			{
-				myScene = CreateRef<Scene>();
-		SceneSerializer serializer(myScene);
-		serializer.Deserialize("../Assets/Scenes/default.scene");
+				sceneLoaderThread.get();
+			}
 
-		Scene::LockActiveScene();
+			sceneLoaderThread = std::async(std::launch::async, [&]()
+				{
+					sceneLoading = true;
 
-		Scene::SetActiveScene(myScene);
-		auto activeScene = Scene::GetActiveScene();
+			myScene = CreateRef<Scene>();
+			SceneSerializer serializer(myScene);
+			myAssetHandlerMutex.lock();
+			serializer.Deserialize("../Assets/Scenes/default.scene");
+			myAssetHandlerMutex.unlock();
 
-		Entity camera;
-		activeScene->ForEach([&](entt::entity aEnt)
+			sceneLoading = false;
+
+			Scene::LockActiveScene();
+
+			Scene::SetActiveScene(myScene);
+			auto activeScene = Scene::GetActiveScene();
+
+			Entity camera;
+			activeScene->ForEach([&](entt::entity aEnt)
+				{
+					Entity ent(aEnt, activeScene);
+			if (ent.HasComponent<CameraComponent>() && ent.GetComponent<TagComponent>().name == "EditorCamera")
 			{
-				Entity ent(aEnt, activeScene);
-		if (ent.HasComponent<CameraComponent>() && ent.GetComponent<TagComponent>().name == "EditorCamera")
-		{
-			camera = ent;
-		}
-			});
+				camera = ent;
+			}
+				});
 
-		if (camera.IsValid())
-		{
-			activeScene->SetMainCamera(camera);
-		}
-		else
-		{
-			auto newCam = activeScene->CreateEntity("EditorCamera", activeScene);
-			auto& comp = newCam.AddComponent<CameraComponent>();
-			comp.camera.SetProjectionValues(90, 9.f / 16.f, 0.1f, 10000.0f);
-			activeScene->SetMainCamera(newCam);
+			if (camera.IsValid())
+			{
+				activeScene->SetMainCamera(camera);
+			}
+			else
+			{
+				auto newCam = activeScene->CreateEntity("EditorCamera", activeScene);
+				auto& comp = newCam.AddComponent<CameraComponent>();
+				comp.camera.SetProjectionValues(90, 9.f / 16.f, 0.1f, 10000.0f);
+				activeScene->SetMainCamera(newCam);
+			}
+
+			Scene::UnlockActiveScene();
+				});
 		}
 
-		Scene::UnlockActiveScene();
-			});
+		if (myInputHandler.IsKeyPressed(KeyCode::G))
+		{
+			if (sceneLoaderThread.valid())
+			{
+				sceneLoaderThread.get();
+			}
+
+			sceneLoaderThread = std::async(std::launch::async, [&]()
+				{
+					sceneSaving = true;
+			SceneSerializer serializer(Scene::GetActiveScene());
+			serializer.Serialize("../Assets/Scenes/default.scene");
+			sceneSaving = false;
+				});
+		}
 	}
+
 
 	//if (myInputHandler.IsKeyDown(KeyCode::W))
 	//{

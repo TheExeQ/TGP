@@ -1,9 +1,185 @@
 Entities:
+  - Entity: 15158806216717839161
+    TagComponent:
+      Tag: Model
+    TransformComponent:
+      Position: [-100, 0, 1286.57349]
+      Rotation: [0, 0, 0]
+      Scale: [1, 1, 1]
+    RelationshipComponent:
+      ParentUUID: 0
+    ModelComponent:
+      ModelPath: Models/SM/Particle_Chest.fbx
+  - Entity: 14533295702226619885
+    TagComponent:
+      Tag: Model
+    TransformComponent:
+      Position: [100, 0, 1286.57349]
+      Rotation: [0, 0, 0]
+      Scale: [1, 1, 1]
+    RelationshipComponent:
+      ParentUUID: 0
+    ModelComponent:
+      ModelPath: Models/SM/Particle_Chest.fbx
+  - Entity: 2069000719451956038
+    TagComponent:
+      Tag: Model
+    TransformComponent:
+      Position: [-100, 0, 1119.70703]
+      Rotation: [0, 0, 0]
+      Scale: [1, 1, 1]
+    RelationshipComponent:
+      ParentUUID: 0
+    ModelComponent:
+      ModelPath: Models/SM/Buddah_Test_Bakes_low.fbx
+  - Entity: 6831971092931842161
+    TagComponent:
+      Tag: Model
+    TransformComponent:
+      Position: [100, 0, 1119.70703]
+      Rotation: [0, 0, 0]
+      Scale: [1, 1, 1]
+    RelationshipComponent:
+      ParentUUID: 0
+    ModelComponent:
+      ModelPath: Models/SM/Buddah_Test_Bakes_low.fbx
+  - Entity: 6481352190886643488
+    TagComponent:
+      Tag: Model
+    TransformComponent:
+      Position: [-100, 0, 881.933777]
+      Rotation: [0, 0, 0]
+      Scale: [10, 10, 10]
+    RelationshipComponent:
+      ParentUUID: 0
+    ModelComponent:
+      ModelPath: Models/SM/pedal.fbx
+  - Entity: 10476000957502027349
+    TagComponent:
+      Tag: Model
+    TransformComponent:
+      Position: [100, 0, 881.933777]
+      Rotation: [0, 0, 0]
+      Scale: [10, 10, 10]
+    RelationshipComponent:
+      ParentUUID: 0
+    ModelComponent:
+      ModelPath: Models/SM/pedal.fbx
+  - Entity: 3731086999969150142
+    TagComponent:
+      Tag: Model
+    TransformComponent:
+      Position: [-100, 0, 676.544495]
+      Rotation: [0, 0, 0]
+      Scale: [1, 1, 1]
+    RelationshipComponent:
+      ParentUUID: 0
+    ModelComponent:
+      ModelPath: Models/SM/Buddah_Test_Bakes_low.fbx
+  - Entity: 15130644103487388077
+    TagComponent:
+      Tag: Model
+    TransformComponent:
+      Position: [100, 0, 676.544495]
+      Rotation: [0, 0, 0]
+      Scale: [1, 1, 1]
+    RelationshipComponent:
+      ParentUUID: 0
+    ModelComponent:
+      ModelPath: Models/SM/Buddah_Test_Bakes_low.fbx
+  - Entity: 1386376194601603473
+    TagComponent:
+      Tag: Model
+    TransformComponent:
+      Position: [-100, 0, 429.069916]
+      Rotation: [0, 0, 0]
+      Scale: [10, 10, 10]
+    RelationshipComponent:
+      ParentUUID: 0
+    ModelComponent:
+      ModelPath: Models/SM/pedal.fbx
+  - Entity: 10902247635884739222
+    TagComponent:
+      Tag: Model
+    TransformComponent:
+      Position: [100, 0, 429.069916]
+      Rotation: [0, 0, 0]
+      Scale: [10, 10, 10]
+    RelationshipComponent:
+      ParentUUID: 0
+    ModelComponent:
+      ModelPath: Models/SM/pedal.fbx
+  - Entity: 7409373554324166463
+    TagComponent:
+      Tag: Model
+    TransformComponent:
+      Position: [-100, 0, 233.020813]
+      Rotation: [0, 0, 0]
+      Scale: [1, 1, 1]
+    RelationshipComponent:
+      ParentUUID: 0
+    ModelComponent:
+      ModelPath: Models/SM/Particle_Chest.fbx
+  - Entity: 8907737638677436776
+    TagComponent:
+      Tag: Model
+    TransformComponent:
+      Position: [100, 0, 233.020813]
+      Rotation: [0, 0, 0]
+      Scale: [1, 1, 1]
+    RelationshipComponent:
+      ParentUUID: 0
+    ModelComponent:
+      ModelPath: Models/SM/Particle_Chest.fbx
+  - Entity: 17769047599729101866
+    TagComponent:
+      Tag: Model
+    TransformComponent:
+      Position: [-100, 0, 32.84552]
+      Rotation: [0, 0, 0]
+      Scale: [10, 10, 10]
+    RelationshipComponent:
+      ParentUUID: 0
+    ModelComponent:
+      ModelPath: Models/SM/pedal.fbx
+  - Entity: 6276660662607842024
+    TagComponent:
+      Tag: Model
+    TransformComponent:
+      Position: [100, 0, 32.84552]
+      Rotation: [0, 0, 0]
+      Scale: [10, 10, 10]
+    RelationshipComponent:
+      ParentUUID: 0
+    ModelComponent:
+      ModelPath: Models/SM/pedal.fbx
+  - Entity: 4735704214968870508
+    TagComponent:
+      Tag: Model
+    TransformComponent:
+      Position: [-100, 0, -163.19632]
+      Rotation: [0, 0, 0]
+      Scale: [1, 1, 1]
+    RelationshipComponent:
+      ParentUUID: 0
+    ModelComponent:
+      ModelPath: Models/SM/Particle_Chest.fbx
+  - Entity: 587566769456804014
+    TagComponent:
+      Tag: Model
+    TransformComponent:
+      Position: [100, 0, -163.19632]
+      Rotation: [0, 0, 0]
+      Scale: [1, 1, 1]
+    RelationshipComponent:
+      ParentUUID: 0
+    ModelComponent:
+      ModelPath: Models/SM/Particle_Chest.fbx
   - Entity: 7509847562195690
     TagComponent:
       Tag: EditorCamera
     TransformComponent:
-      Position: [0, 0, -500]
+      Position: [0, 0, 1152.69287]
       Rotation: [0, 0, 0]
       Scale: [1, 1, 1]
     RelationshipComponent:

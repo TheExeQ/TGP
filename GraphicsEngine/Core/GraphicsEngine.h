@@ -2,6 +2,7 @@
 #include <vector>
 #include <memory>
 #include <future>
+#include <mutex>
 
 #include "Core/DX11.h"
 #include "Renderer/ForwardRenderer.h"
@@ -90,6 +91,8 @@ private:
 	ShadowRenderer myShadowRenderer;
 	PostProcessRenderer myPostProcessRenderer;
 	Ref<Scene> myScene;
+	
+	std::mutex myAssetHandlerMutex;
 	ModelAssetHandler myModelAssetHandler;
 	
 	Scope<GBuffer> myGBuffer;
@@ -115,6 +118,9 @@ private:
 	Ref<Texture> myBlurTargetB;
 	Ref<Texture> mySSAOTarget;
 	Ref<Texture> myNoiceTexture;
+
+	std::atomic<bool> sceneLoading = false;
+	std::atomic<bool> sceneSaving = false;
 
 	std::future<void> future;
 	std::future<void> sceneLoaderThread;
