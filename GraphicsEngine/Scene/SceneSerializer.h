@@ -8,7 +8,7 @@
 class SceneSerializer
 {
 public:
-	SceneSerializer(Ref<Scene> aScene) { myScene = aScene; };
+	SceneSerializer(Ref<Scene>& aScene) : myScene(aScene) { };
 	~SceneSerializer() = default;
 
 	void SerializeSettings(const char* aFileName);
@@ -21,5 +21,5 @@ public:
 private:
 	void SerializeEntity(YAML::Emitter& outEmitter, Entity aEntity);
 
-	Ref<Scene> myScene;
+	Ref<Scene>& myScene;
 };
